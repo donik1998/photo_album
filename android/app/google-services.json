@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "176483108320",
+    "project_id": "photo-album-fc996",
+    "storage_bucket": "photo-album-fc996.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176483108320:android:cc00da8e4f11a6cf389785",
+        "android_client_info": {
+          "package_name": "ru.photo.edit.photo_album"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176483108320-llvhcp67abdpfvikp13ifrj4mac83i75.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.photo.edit.photo_album",
+            "certificate_hash": "96b21006c6e39f3b01980a5fe1bf11726ff7943d"
+          }
+        },
+        {
+          "client_id": "176483108320-1b4rk3frcdcucsp6pmg0ociuavugiei9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlOIowTrEllAt_55KfxU3_ScsMR4wzaJ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176483108320-1b4rk3frcdcucsp6pmg0ociuavugiei9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
