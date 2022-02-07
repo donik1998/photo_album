@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:photo_album/presentation/auth/login_page/bloc/login_page_cubit.dart';
 import 'package:photo_album/presentation/root/root_page.dart';
 
 void main() async {
@@ -16,7 +18,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: RootPage(),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => LoginPageCubit(),lazy: true),
+        ],
+        child: RootPage(),
+      ),
     );
   }
 }
