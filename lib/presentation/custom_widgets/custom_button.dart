@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
-import 'package:photo_album/presentation/theme/app_instets.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 
 class CustomButton extends StatelessWidget {

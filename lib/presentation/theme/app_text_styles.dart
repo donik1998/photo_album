@@ -24,4 +24,18 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     color: AppColors.dark,
   );
+
+  static const TextStyle ttxt = const TextStyle(
+    fontFamily: 'ProximaNove',
+    fontSize: 18,
+    fontWeight: FontWeight.w800,
+    color: AppColors.white,
+  );
+
+  static const TextStyle ttxt1 = const TextStyle(
+    fontFamily: 'ProximaNove',
+    fontSize: 24,
+    fontWeight: FontWeight.w400,
+    color: Color(0xFF2E2E2E),
+  );
 }
