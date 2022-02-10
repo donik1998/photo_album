@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_album/presentation/home_page/bloc/home_page_cubit.dart';
+import 'package:photo_album/presentation/my_albums_page/bloc/my_albums_page_cubit.dart';
+import 'package:photo_album/presentation/profile/bloc/profile_page_cubit.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
-
 
 import '../../custom_widgets/custom_button.dart';
 import '../../home_page/home_page.dart';
@@ -38,10 +39,7 @@ class LoginWithEmailPage extends StatelessWidget {
                     ),
                   ),
                   AppSpacing.verticalSpace24,
-                  Align(
-                      alignment: Alignment.center,
-                      child: Text('Введите свои данные',
-                          style: AppTextStyles.title)),
+                  Align(alignment: Alignment.center, child: Text('Введите свои данные', style: AppTextStyles.title)),
                   Container(
                     margin: EdgeInsets.all(12),
                     child: TextFormField(
@@ -97,8 +95,12 @@ class LoginWithEmailPage extends StatelessWidget {
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BlocProvider(
-                            create: (context) => HomePageCubit(),
+                          builder: (context) => MultiBlocProvider(
+                            providers: [
+                              BlocProvider(create: (context) => ProfilePageCubit(), lazy: true),
+                              BlocProvider(create: (context) => HomePageCubit(), lazy: true),
+                              BlocProvider(create: (context) => MyAlbumsPageCubit(), lazy: true),
+                            ],
                             child: HomePage(),
                           ),
                         ),

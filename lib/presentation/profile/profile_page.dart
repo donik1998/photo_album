@@ -16,8 +16,9 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ProfilePageCubit>();
     return BlocConsumer<ProfilePageCubit, ProfilePageState>(
-      bloc: context.read<ProfilePageCubit>(),
+      bloc: cubit,
       builder: (context, state) {
         if (state is ProfileLoading)
           return Loader();
@@ -27,25 +28,43 @@ class ProfilePage extends StatelessWidget {
             children: [
               Text('Меню', style: AppTextStyles.ttxt1),
               AppSpacing.verticalSpace32,
-              ListTile(
-                leading: CircleAvatar(
-                  child: CachedNetworkImage(
-                    imageUrl: FirebaseAuth.instance.currentUser?.photoURL ?? '',
-                    errorWidget: (context, url, error) => const Center(child: Icon(Icons.error_outline)),
+              SizedBox(
+                height: 48,
+                child: ListTile(
+                  leading: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.black, width: 1.0),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: FirebaseAuth.instance.currentUser?.photoURL ?? '',
+                      errorWidget: (context, url, error) => const Center(child: Icon(Icons.error_outline)),
+                    ),
                   ),
+                  title: Text(FirebaseAuth.instance.currentUser?.displayName ?? 'Имя не указано', style: AppTextStyles.smallTitleBold),
+                  subtitle: Text('Изменить фото', style: AppTextStyles.smallPinkText),
+                  trailing: SvgPicture.asset('assets/svgs/more_vertical.svg'),
                 ),
-                title: Text(FirebaseAuth.instance.currentUser?.displayName ?? '', style: AppTextStyles.ttxt),
-                subtitle: Text('Изменить фото', style: AppTextStyles.smallPinkText),
-                trailing: IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
               ),
-              AppSpacing.verticalSpace24,
+              AppSpacing.verticalSpace16,
               Divider(thickness: 0.5),
-              ListTile(leading: Icon(Icons.image_outlined), title: Text('Фото')),
-              AppSpacing.verticalSpace24,
-              ListTile(leading: SvgPicture.asset('assets/svgs/book.svg'), title: Text('Фото')),
-              AppSpacing.verticalSpace24,
-              ListTile(leading: SvgPicture.asset('assets/svgs/dollar.svg'), title: Text('Фото')),
-              AppSpacing.verticalSpace24,
+              SizedBox(
+                height: 48,
+                child: ListTile(leading: SvgPicture.asset('assets/svgs/image.svg'), title: Text('Фото')),
+              ),
+              AppSpacing.verticalSpace16,
+              SizedBox(
+                height: 48,
+                child: ListTile(leading: SvgPicture.asset('assets/svgs/book_bold.svg'), title: Text('Мои альбомы')),
+              ),
+              AppSpacing.verticalSpace16,
+              SizedBox(
+                height: 48,
+                child: ListTile(leading: SvgPicture.asset('assets/svgs/dollar.svg'), title: Text('Оплата')),
+              ),
+              AppSpacing.verticalSpace16,
               Divider(thickness: 0.5),
               ListTile(
                 leading: Icon(Icons.add, color: AppColors.pinkLight),
@@ -55,8 +74,10 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               Divider(thickness: 0.5),
-              const SizedBox(height: 108),
+              Expanded(child: SizedBox()),
               Image.asset('assets/images/profile.png'),
+              AppSpacing.verticalSpace20,
+              AppSpacing.verticalSpace20,
             ],
           );
       },
