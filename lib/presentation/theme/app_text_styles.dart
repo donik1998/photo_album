@@ -52,4 +52,10 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     color: Color(0xFF2E2E2E),
   );
+  static const TextStyle txt13 = const TextStyle(
+    fontFamily: 'ProximaNova',
+    fontSize: 13,
+    fontWeight: FontWeight.w400,
+    color: Color(0xFF2E2E2E),
+  );
 }

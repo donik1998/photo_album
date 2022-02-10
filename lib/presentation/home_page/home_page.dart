@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:photo_album/data/models/album_template.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_album/presentation/bottom_navigation_icons.dart';
 import 'package:photo_album/presentation/home_page/bloc/home_page_cubit.dart';
@@ -8,6 +9,8 @@ import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 import 'package:titled_navigation_bar/titled_navigation_bar.dart';
+
+import '../custom_widgets/templates_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,6 +23,36 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _textController = TextEditingController();
   bool? enabled;
   int _pageIndex = 0;
+  List<Album> art = List.generate(
+      6,
+      (index) => Album(
+            title: 'free',
+            thumbnailLink: 'assets/templatesImages/art${++index}.jpeg',
+            widthCm: 110,
+            heightCm: 110,
+            widthInch: 10,
+            heightInch: 10,
+          ));
+  List<Album> love = List.generate(
+      6,
+      (index) => Album(
+            title: 'free',
+            thumbnailLink: 'assets/templatesImages/l${++index}.jpeg',
+            widthCm: 110,
+            heightCm: 110,
+            widthInch: 10,
+            heightInch: 10,
+          ));
+  List<Album> travel = List.generate(
+      6,
+      (index) => Album(
+            title: 'free',
+            thumbnailLink: 'assets/templatesImages/t${++index}.jpeg',
+            widthCm: 110,
+            heightCm: 110,
+            widthInch: 10,
+            heightInch: 10,
+          ));
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +131,20 @@ class _HomePageState extends State<HomePage> {
                       'Создайте свой альбом',
                       style: AppTextStyles.ttxt1,
                     ),
+                    AppSpacing.verticalSpace24,
+                    ResolutionTemplate(itemCount: 3, size: ['20x20','23x23','25x25'],),
+                    AppSpacing.verticalSpace24,
+                    TemplatesWidget(
+                      dataList: travel,
+                      title: 'Путешествие',
+                      type: 'Бесплатный',
+                    ),
+                    AppSpacing.verticalSpace24,
+                    TemplatesWidget(
+                        dataList: love, title: 'Любовь', type: 'Бесплатный'),
+                    AppSpacing.verticalSpace24,
+                    TemplatesWidget(
+                        dataList: art, title: 'Искусство', type: 'Бесплатный'),
                   ],
                 ),
               );
