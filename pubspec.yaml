@@ -24,6 +24,7 @@ dependencies:
   outline_search_bar: ^2.3.0
  
  
+  titled_navigation_bar: ^4.1.0
 
 dev_dependencies:
   flutter_test:
@@ -52,4 +53,7 @@ flutter:
     - family: ProximaNova
       fonts:
         - asset: assets/fonts/ProximaNova-Regular.ttf
+    - family: TabBarIcons
+      fonts:
+        - asset: assets/fonts/BottomNavigation.ttf
 

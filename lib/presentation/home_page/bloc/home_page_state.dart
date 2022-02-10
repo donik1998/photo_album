@@ -1,9 +1,16 @@
+import 'package:photo_album/data/models/album_template.dart';
+
 abstract class HomePageState {}
 
 class HomePageInitial extends HomePageState {}
-
 class HomePageLoading extends HomePageState {}
+class HomePageSuccess extends HomePageState {
+  final List<Album> albums;
 
-class HomePageSuccess extends HomePageState {}
+  HomePageSuccess({required this.albums});
+}
+class HomePageError extends HomePageState {
+  final String error;
 
-class HomePageError extends HomePageState {}
+  HomePageError({required this.error});
+}

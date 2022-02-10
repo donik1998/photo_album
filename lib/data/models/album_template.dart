@@ -1,4 +1,6 @@
-abstract class Album {
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class Album {
   final String title;
   final String thumbnailLink;
   final double widthCm;
@@ -14,4 +16,13 @@ abstract class Album {
     required this.widthInch,
     required this.heightInch,
   });
+
+  factory Album.fromDoc(QueryDocumentSnapshot<Map<String, dynamic>> data) => Album(
+        title: data['title'],
+        thumbnailLink: data['thumbnail_link'],
+        widthCm: data['width_cm'],
+        heightCm: data['height_cm'],
+        widthInch: data['width_inch'],
+        heightInch: data['height_inch'],
+      );
 }
