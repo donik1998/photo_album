@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:photo_album/presentation/bottom_navigation_icons.dart';
 import 'package:photo_album/presentation/home_page/bloc/home_page_cubit.dart';
 import 'package:photo_album/presentation/home_page/bloc/home_page_state.dart';
+import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
+import 'package:titled_navigation_bar/titled_navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,16 +19,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController _textController = TextEditingController();
   bool? enabled;
+  int _pageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Container(
-        child: BlocConsumer<HomePageCubit, HomePageState>(
-          listener: (context, state) {},
-          builder: (context, state) {
-            return SingleChildScrollView(
+        child: Container(
+          child: BlocConsumer<HomePageCubit, HomePageState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -73,19 +78,19 @@ class _HomePageState extends State<HomePage> {
                           width: 358,
                           height: 156,
                           decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/Rectangle 386.png'))),
+                            image: DecorationImage(image: AssetImage('assets/images/Rectangle 386.png')),
+                          ),
                         ),
                         Positioned(
-                            left: 16,
-                            top: 16,
-                            right: 131,
-                            bottom: 76,
-                            child: Text(
-                              'Создавайте альбомы\nсо своими истроиями',
-                              style: AppTextStyles.ttxt,
-                            )),
+                          left: 16,
+                          top: 16,
+                          right: 131,
+                          bottom: 76,
+                          child: Text(
+                            'Создавайте альбомы\nсо своими истроиями',
+                            style: AppTextStyles.ttxt,
+                          ),
+                        ),
                       ],
                     ),
                     AppSpacing.verticalSpace32,
@@ -94,10 +99,43 @@ class _HomePageState extends State<HomePage> {
                       style: AppTextStyles.ttxt1,
                     ),
                   ],
-                ));
-          },
+                ),
+              );
+            },
+          ),
         ),
-      )),
+      ),
+      bottomNavigationBar: TitledBottomNavigationBar(
+        currentIndex: _pageIndex,
+        onTap: (value) => setState(() => _pageIndex = value),
+        indicatorColor: AppColors.pinkLight,
+        activeColor: AppColors.pinkLight,
+        inactiveColor: AppColors.black,
+        inactiveStripColor: AppColors.grey,
+        items: [
+          TitledNavigationBarItem(
+            icon: Text(
+              'Главная',
+              style: AppTextStyles.smallBoldText.copyWith(fontSize: 10),
+            ),
+            title: SvgPicture.asset('assets/svgs/home.svg'),
+          ),
+          TitledNavigationBarItem(
+            title: SvgPicture.asset('assets/svgs/book.svg'),
+            icon: Text(
+              'Мои альбомы',
+              style: AppTextStyles.smallBoldText.copyWith(fontSize: 10),
+            ),
+          ),
+          TitledNavigationBarItem(
+            title: SvgPicture.asset('assets/svgs/menu.svg'),
+            icon: Text(
+              'Меню',
+              style: AppTextStyles.smallBoldText.copyWith(fontSize: 10),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
