@@ -29,6 +29,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
 
 flutter_native_splash:
   background_image: 'assets/images/splash.png'
@@ -39,6 +40,12 @@ flutter_native_splash:
 #  image_path: 'assets/images/appLauncher.png'
 #  android: true
 #  ios: true
+
+
+flutter_icons:
+  image_path: 'assets/images/appIcon.png'
+  android: true
+  ios: true
 
 flutter:
   uses-material-design: true
@@ -57,4 +64,7 @@ flutter:
     - family: TabBarIcons
       fonts:
         - asset: assets/fonts/BottomNavigation.ttf
+    - family:  MyFlutterApp
+      fonts:
+        - asset: assets/fonts/MyFlutterApp.ttf   
 

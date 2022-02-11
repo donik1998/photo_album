@@ -4,7 +4,6 @@ import 'package:photo_album/presentation/home_page/bloc/home_page_cubit.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 
-
 import '../../custom_widgets/custom_button.dart';
 import '../../home_page/home_page.dart';
 import '../../theme/app_colors.dart';
@@ -94,6 +93,8 @@ class LoginWithEmailPage extends StatelessWidget {
                     margin: EdgeInsets.all(20),
                     child: CustomButton.text(
                       text: "Продолжить",
+                      textStyle: AppTextStyles.bodyTextStyle
+                          .copyWith(color: AppColors.white),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
