@@ -38,8 +38,7 @@ class LoginPage extends StatelessWidget {
                     AppSpacing.verticalSpace20,
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Image.asset('assets/images/login_form_pic.png',
-                          width: 100, height: 96),
+                      child: Image.asset('assets/images/login_form_pic.png', width: 100, height: 96),
                     ),
                     AppSpacing.verticalSpace24,
                     Text(
@@ -60,8 +59,7 @@ class LoginPage extends StatelessWidget {
                         children: [
                           SvgPicture.asset('assets/svgs/google.svg'),
                           AppSpacing.horizontalSpace20,
-                          Text('Войти через Google',
-                              style: AppTextStyles.bodyTextStyle)
+                          Text('Войти через Google', style: AppTextStyles.bodyTextStyle)
                         ],
                       ),
                     ),
@@ -74,8 +72,10 @@ class LoginPage extends StatelessWidget {
                         children: [
                           SvgPicture.asset('assets/svgs/facebook.svg'),
                           AppSpacing.horizontalSpace20,
-                          Text('Войти через Facebook',
-                              style: AppTextStyles.bodyTextStyle)
+                          Text(
+                            'Войти через Facebook',
+                            style: AppTextStyles.bodyTextStyle,
+                          )
                         ],
                       ),
                     ),
@@ -84,8 +84,7 @@ class LoginPage extends StatelessWidget {
                     AppSpacing.verticalSpace32,
                     CustomButton.text(
                       text: 'Продолжить с почтой',
-                      textStyle: AppTextStyles.bodyTextStyle
-                          .copyWith(color: AppColors.white),
+                      textStyle: AppTextStyles.bodyTextStyle.copyWith(color: AppColors.white),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
