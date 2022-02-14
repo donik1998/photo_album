@@ -28,7 +28,7 @@ class CustomButton extends StatelessWidget {
         onTap: onTap,
         color: color,
         text: text,
-        textStyle: textStyle ?? AppTextStyles.bodyTextStyle,
+        textStyle: textStyle ?? AppTextStyles.bodyTextStyle.copyWith(color: AppColors.white, fontWeight: FontWeight.w700),
       );
 
   factory CustomButton.child({
@@ -57,9 +57,8 @@ class CustomButton extends StatelessWidget {
         child: Ink(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-          color: color,
-        borderRadius: BorderRadius.circular(6),
-
+            color: color,
+            borderRadius: BorderRadius.circular(6),
           ),
           child: text.isEmpty ? child : Center(child: Text(text, style: textStyle)),
         ),
