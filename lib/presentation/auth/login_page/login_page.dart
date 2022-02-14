@@ -98,7 +98,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     AppSpacing.verticalSpace16,
                     Text(
-                      'Продолжая, вы принимаете условия пользовательского сошлашения и политику конфиденциальности “App”',
+                      'Продолжая, вы принимаете условия пользовательского соглашения и политику конфиденциальности “App”',
                       style: AppTextStyles.smallText,
                       textAlign: TextAlign.center,
                     ),
