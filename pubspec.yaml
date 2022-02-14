@@ -43,10 +43,6 @@ flutter_icons:
   remove_alpha_ios: true
 
 
-flutter_icons:
-  image_path: 'assets/images/appIcon.png'
-  android: true
-  ios: true
 
 flutter:
   uses-material-design: true
