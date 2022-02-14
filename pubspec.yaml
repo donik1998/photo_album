@@ -36,10 +36,11 @@ flutter_native_splash:
   android: true
   ios: true
 
-#flutter_icons:
-#  image_path: 'assets/images/appLauncher.png'
-#  android: true
-#  ios: true
+flutter_icons:
+  image_path: 'assets/images/app_logo.png'
+  android: true
+  ios: true
+  remove_alpha_ios: true
 
 
 flutter_icons:

@@ -19,7 +19,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
+        ),
+      ),
       home: MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => LoginPageCubit(), lazy: true),
