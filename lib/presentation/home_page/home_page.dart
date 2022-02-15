@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:photo_album/presentation/editor_page/editor_page.dart';
 import 'package:photo_album/presentation/main_page/main_page_body.dart';
 import 'package:photo_album/presentation/my_albums_page/my_albums_page_body.dart';
 import 'package:photo_album/presentation/profile/profile_page.dart';
@@ -28,6 +29,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: SafeArea(
         child: _tabs.elementAt(_pageIndex),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.pinkLight,
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RedactorPage()),
+        ),
+        child: Icon(Icons.add),
       ),
       bottomNavigationBar: TitledBottomNavigationBar(
         currentIndex: _pageIndex,

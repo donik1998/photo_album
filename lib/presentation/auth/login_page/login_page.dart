@@ -84,7 +84,7 @@ class LoginPage extends StatelessWidget {
                     AppSpacing.verticalSpace32,
                     CustomButton.text(
                       text: 'Продолжить с почтой',
-                      textStyle: AppTextStyles.bodyTextStyle.copyWith(color: AppColors.white),
+                      textStyle: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(

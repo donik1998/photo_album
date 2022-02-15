@@ -30,7 +30,7 @@ class TemplatesWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title, style: AppTextStyles.ttxt1, textAlign: TextAlign.left),
-            IconButton(onPressed: () {}, icon: SvgPicture.asset('assets/images/arrow_right.svg'))
+            IconButton(onPressed: () {}, icon: SvgPicture.asset('assets/svgs/arrow_right.svg'))
           ],
         ),
         AppSpacing.verticalSpace24,
