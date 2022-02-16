@@ -18,38 +18,40 @@ class MainPageBody extends StatefulWidget {
 }
 
 class _MainPageBodyState extends State<MainPageBody> {
-  List<Album> art = List.generate(
+  List<AlbumModel> art = List.generate(
     6,
-    (index) => Album(
+    (index) => AlbumModel(
       type: 'Бесплатный',
       title: 'free',
-      thumbnailLink: 'assets/templatesImages/art${++index}.jpeg',
+      thumbnailPath: 'assets/templatesImages/art${++index}.jpeg',
       widthCm: 110,
       heightCm: 110,
+      widthInch: 10,
+      heightInch: 10, cover: AlbumCover(localPath: '', title: '', downloadLink: ''), pages: [],
+    ),
+  );
+  List<AlbumModel> love = List.generate(
+    6,
+    (index) => AlbumModel(
+      type: 'Бесплатный',
+      title: 'free',
+      thumbnailPath: 'assets/templatesImages/l${++index}.jpeg',
+      widthCm: 110,
+      heightCm: 110,
+      cover: AlbumCover(localPath: '', title: '', downloadLink: ''), pages: [],
       widthInch: 10,
       heightInch: 10,
     ),
   );
-  List<Album> love = List.generate(
+  List<AlbumModel> travel = List.generate(
     6,
-    (index) => Album(
+    (index) => AlbumModel(
       type: 'Бесплатный',
       title: 'free',
-      thumbnailLink: 'assets/templatesImages/l${++index}.jpeg',
+      thumbnailPath: 'assets/templatesImages/t${++index}.jpeg',
       widthCm: 110,
       heightCm: 110,
-      widthInch: 10,
-      heightInch: 10,
-    ),
-  );
-  List<Album> travel = List.generate(
-    6,
-    (index) => Album(
-      type: 'Бесплатный',
-      title: 'free',
-      thumbnailLink: 'assets/templatesImages/t${++index}.jpeg',
-      widthCm: 110,
-      heightCm: 110,
+      cover: AlbumCover(localPath: '', title: '', downloadLink: ''), pages: [],
       widthInch: 10,
       heightInch: 10,
     ),

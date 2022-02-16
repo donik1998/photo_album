@@ -4,9 +4,14 @@ import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 
 class AlbumCard extends StatelessWidget {
-  final Album album;
+  final AlbumModel album;
+  final bool showText;
 
-  const AlbumCard({Key? key, required this.album}) : super(key: key);
+  const AlbumCard({
+    Key? key,
+    required this.album,
+     this.showText=true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +25,11 @@ class AlbumCard extends StatelessWidget {
           margin: EdgeInsets.only(right: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            image: DecorationImage(fit: BoxFit.fill, image: AssetImage(album.thumbnailLink)),
+            image: DecorationImage(fit: BoxFit.fill, image: AssetImage(album.thumbnailPath)),
           ),
         ),
-        AppSpacing.verticalSpace7,
-        Text(album.type, style: AppTextStyles.txt13),
+        if (showText) AppSpacing.verticalSpace7,
+        if (showText) Text(album.type, style: AppTextStyles.txt13),
       ],
     );
   }
