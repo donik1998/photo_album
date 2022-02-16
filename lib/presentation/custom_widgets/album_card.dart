@@ -20,7 +20,7 @@ class AlbumCard extends StatelessWidget {
           margin: EdgeInsets.only(right: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            image: DecorationImage(fit: BoxFit.fill, image: AssetImage(album.thumbnailLink)),
+            image: DecorationImage(fit: BoxFit.fill, image: AssetImage(album.thumbnailPath)),
           ),
         ),
         AppSpacing.verticalSpace7,

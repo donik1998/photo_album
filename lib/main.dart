@@ -5,22 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_album/presentation/auth/login_page/bloc/login_page_cubit.dart';
 import 'package:photo_album/presentation/root/root_page.dart';
 
+import 'presentation/home_page/bloc/home_page_cubit.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [
-    SystemUiOverlay.bottom,
-    SystemUiOverlay.top,
-  ]);
-
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarBrightness: Brightness.dark,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.transparent,
-    systemNavigationBarDividerColor: Colors.transparent,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  ));
   runApp(const MyApp());
 }
 
@@ -30,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Screenfile',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -46,6 +35,7 @@ class MyApp extends StatelessWidget {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(create: (context) => LoginPageCubit(), lazy: true),
+            BlocProvider(create: (context) => HomePageCubit(), lazy: true),
           ],
           child: RootPage(),
         ),

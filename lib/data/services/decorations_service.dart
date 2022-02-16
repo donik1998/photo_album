@@ -13,6 +13,6 @@ class DecorationService extends _DecorationService {
   @override
   Future<List<DecorationElement>> getDecorationElements(String type) async {
     final decorationElements = await FirebaseFirestore.instance.collection('decorations').where('type', isEqualTo: type).get();
-    return decorationElements.docs.map<DecorationElement>((e) => DecorationElement.fromDoc(e)).toList();
+    return decorationElements.docs.map<DecorationElement>((e) => DecorationElement.fromMap(e.data())).toList();
   }
 }

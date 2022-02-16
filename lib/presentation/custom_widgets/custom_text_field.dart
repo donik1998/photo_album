@@ -18,21 +18,24 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText ?? false,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        fillColor: AppColors.grey,
-        filled: true,
-        labelText: labelText,
-        labelStyle: AppTextStyles.smallPinkText.copyWith(color: AppColors.dark),
-        border: InputBorder.none,
-        disabledBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        focusedErrorBorder: InputBorder.none,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText ?? false,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          fillColor: AppColors.grey,
+          filled: true,
+          labelText: labelText,
+          labelStyle: AppTextStyles.smallPinkText.copyWith(color: AppColors.dark),
+          border: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+        ),
       ),
     );
   }
