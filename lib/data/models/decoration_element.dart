@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class DecorationElement {
   final String downloadLink;
   final String title;
@@ -10,8 +12,8 @@ class DecorationElement {
     this.localPath = '',
     required this.height,
     required this.width,
-    required this.x,
-    required this.y,
+    this.x = 0,
+    this.y = 0,
   });
 
   factory DecorationElement.fromMap(Map<String, dynamic> data) => DecorationElement(
@@ -19,8 +21,6 @@ class DecorationElement {
         title: data['title'],
         height: data['height'],
         width: data['width'],
-        x: data['x'],
-        y: data['y'],
       );
 
   bool get isCached => localPath.isNotEmpty;
@@ -29,9 +29,31 @@ class DecorationElement {
         'download_link': this.downloadLink,
         'height': this.height,
         'width': this.width,
-        'x': this.x,
-        'y': this.y,
         'title': this.title,
-        'local_path': this.localPath,
       };
+}
+
+class TextDecorationElement extends DecorationElement {
+  final File font;
+  final double fontSize;
+
+  TextDecorationElement({
+    required String downloadLink,
+    required String title,
+    required double height,
+    required double width,
+    required this.font,
+    required this.fontSize,
+    double x = 0,
+    double y = 0,
+    String localPath = '',
+  }) : super(downloadLink: downloadLink, title: title, height: height, width: width, localPath: localPath, x: x, y: y);
+}
+
+class DecorationElementTypes {
+  DecorationElementTypes._();
+
+  static const STICKER = 'sticker';
+  static const ANIMATION = 'animation';
+  static const FONT = 'font';
 }

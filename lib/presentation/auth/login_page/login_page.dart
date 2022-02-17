@@ -14,6 +14,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<LoginPageCubit>();
     return Scaffold(
+      backgroundColor: AppColors.white,
       body: BlocConsumer<LoginPageCubit, LoginPageState>(
         bloc: cubit,
         builder: (context, state) {

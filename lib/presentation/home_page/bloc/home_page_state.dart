@@ -1,16 +1,25 @@
-import 'package:photo_album/data/models/album_template.dart';
+class HomePageState {
+  final int pageIndex;
 
-abstract class HomePageState {}
+  HomePageState({required this.pageIndex});
 
-class HomePageInitial extends HomePageState {}
-class HomePageLoading extends HomePageState {}
-class HomePageSuccess extends HomePageState {
-  final List<Album> albums;
-
-  HomePageSuccess({required this.albums});
+  HomePageState copyWith({int? index}) => HomePageState(pageIndex: index ?? this.pageIndex);
 }
+
+class HomePageInitial extends HomePageState {
+  HomePageInitial() : super(pageIndex: 0);
+}
+
+class HomePageLoading extends HomePageState {
+  HomePageLoading({required int pageIndex}) : super(pageIndex: pageIndex);
+}
+
+class HomePageSuccess extends HomePageState {
+  HomePageSuccess({required int pageIndex}) : super(pageIndex: pageIndex);
+}
+
 class HomePageError extends HomePageState {
   final String error;
 
-  HomePageError({required this.error});
+  HomePageError({required this.error, required int pageIndex}) : super(pageIndex: pageIndex);
 }

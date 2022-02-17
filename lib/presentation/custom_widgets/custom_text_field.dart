@@ -7,12 +7,20 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool? obscureText;
   final TextInputType? keyboardType;
+  final Color? fillColor;
+  final Color? labelColor;
+  final String? Function(String?)? validator;
+  final Color? inputTextColor;
 
   const CustomTextField({
     Key? key,
     required this.labelText,
     required this.controller,
     this.obscureText,
+    this.inputTextColor,
+    this.validator,
+    this.fillColor,
+    this.labelColor,
     this.keyboardType,
   }) : super(key: key);
 
@@ -20,15 +28,17 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(6),
-      child: TextField(
+      child: TextFormField(
+        validator: validator,
         controller: controller,
         obscureText: obscureText ?? false,
         keyboardType: keyboardType,
+        style: AppTextStyles.bodyTextStyle.copyWith(color: inputTextColor),
         decoration: InputDecoration(
-          fillColor: AppColors.grey,
+          fillColor: fillColor ?? AppColors.grey,
           filled: true,
           labelText: labelText,
-          labelStyle: AppTextStyles.smallPinkText.copyWith(color: AppColors.dark),
+          labelStyle: AppTextStyles.smallPinkText.copyWith(color: labelColor ?? AppColors.dark),
           border: InputBorder.none,
           disabledBorder: InputBorder.none,
           enabledBorder: InputBorder.none,
