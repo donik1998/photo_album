@@ -59,11 +59,14 @@ class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
   void changeCreatingElementType(value) {}
 
   Future<void> saveData() async {
+    if (selectedFile == null) {
+      emit(HomePageError(error: 'Вы не выбрали файл', pageIndex: state.pageIndex));
+    }
     if ((createContentFormKey.currentState?.validate() ?? false) && selectedFile != null) {
       emit(HomePageLoading(pageIndex: state.pageIndex));
       try {
         TaskSnapshot uploadTask = await FirebaseStorage.instance
-            .ref('$createDecorationElementChosenType/${selectedFile!.name}.${selectedFile!.extension}')
+            .ref('$createDecorationElementChosenType/${selectedFile!.name.replaceAll('.', '-')}.${selectedFile!.extension}')
             .putData(selectedFile!.bytes!);
         String downloadLink = await uploadTask.ref.getDownloadURL();
         await FirebaseFirestore.instance.collection('decorations').add(
@@ -72,9 +75,14 @@ class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
                 title: contentTitleController.text,
                 height: double.tryParse(contentHeightController.text) ?? 0,
                 width: double.tryParse(contentWidthController.text) ?? 0,
+                type: createDecorationElementChosenType,
               ).toMap,
             );
-        emit(HomePageSuccess(pageIndex: state.pageIndex));
+        contentTitleController.clear();
+        contentHeightController.clear();
+        contentWidthController.clear();
+        createDecorationElementChosenType = DecorationElementTypes.STICKER;
+        emit(HomePageSuccess(pageIndex: state.pageIndex, successMessage: 'Контент успешно загружен'));
       } catch (e) {
         print(e.toString());
         emit(HomePageError(error: e.toString(), pageIndex: state.pageIndex));
@@ -85,4 +93,6 @@ class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
   void changeSelectedFile(PlatformFile file) {
     selectedFile = file;
   }
+
+  showMessage(String message) => emit(HomePageSuccess(pageIndex: state.pageIndex, successMessage: message));
 }

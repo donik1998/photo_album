@@ -23,6 +23,10 @@ class HomePage extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error, style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white))),
             );
+          if (state is HomePageSuccess && state.successMessage.isNotEmpty)
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.successMessage, style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white))),
+            );
         },
       ),
     );

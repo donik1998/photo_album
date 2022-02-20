@@ -55,6 +55,8 @@ class HomePageAddContentBody extends StatelessWidget {
                   validator: (value) {
                     if (value?.isEmpty ?? false)
                       return 'Это обязательное поле';
+                    else if (double.tryParse(value ?? '') == null)
+                      return 'Это поле может принимать только числовые значения';
                     else
                       return null;
                   },
@@ -72,6 +74,8 @@ class HomePageAddContentBody extends StatelessWidget {
                   validator: (value) {
                     if (value?.isEmpty ?? false)
                       return 'Это обязательное поле';
+                    else if (double.tryParse(value ?? '') == null)
+                      return 'Это поле может принимать только числовые значения';
                     else
                       return null;
                   },

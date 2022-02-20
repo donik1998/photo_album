@@ -2,15 +2,19 @@ import 'dart:io';
 
 class DecorationElement {
   final String downloadLink;
+  final String docId;
+  final String type;
   final String title;
   final String localPath;
   final double height, width, x, y;
 
   DecorationElement({
     required this.downloadLink,
+    required this.type,
     required this.title,
     this.localPath = '',
     required this.height,
+    this.docId = '',
     required this.width,
     this.x = 0,
     this.y = 0,
@@ -21,6 +25,8 @@ class DecorationElement {
         title: data['title'],
         height: data['height'],
         width: data['width'],
+        type: data['type'],
+        docId: data['id'],
       );
 
   bool get isCached => localPath.isNotEmpty;
@@ -30,7 +36,24 @@ class DecorationElement {
         'height': this.height,
         'width': this.width,
         'title': this.title,
+        'type': this.type,
       };
+
+  DecorationElement copyWith({
+    String? downloadLink,
+    String? type,
+    String? title,
+    double? width,
+    double? height,
+  }) =>
+      DecorationElement(
+        docId: this.docId,
+        downloadLink: downloadLink ?? this.downloadLink,
+        type: type ?? this.type,
+        title: title ?? this.title,
+        height: height ?? this.height,
+        width: width ?? this.width,
+      );
 }
 
 class TextDecorationElement extends DecorationElement {
@@ -40,6 +63,7 @@ class TextDecorationElement extends DecorationElement {
   TextDecorationElement({
     required String downloadLink,
     required String title,
+    required String docId,
     required double height,
     required double width,
     required this.font,
@@ -47,7 +71,17 @@ class TextDecorationElement extends DecorationElement {
     double x = 0,
     double y = 0,
     String localPath = '',
-  }) : super(downloadLink: downloadLink, title: title, height: height, width: width, localPath: localPath, x: x, y: y);
+  }) : super(
+          docId: docId,
+          downloadLink: downloadLink,
+          title: title,
+          height: height,
+          width: width,
+          localPath: localPath,
+          x: x,
+          y: y,
+          type: DecorationElementTypes.FONT,
+        );
 }
 
 class DecorationElementTypes {

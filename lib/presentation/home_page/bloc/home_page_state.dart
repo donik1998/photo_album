@@ -15,7 +15,8 @@ class HomePageLoading extends HomePageState {
 }
 
 class HomePageSuccess extends HomePageState {
-  HomePageSuccess({required int pageIndex}) : super(pageIndex: pageIndex);
+  final String successMessage;
+  HomePageSuccess({required int pageIndex, this.successMessage = ''}) : super(pageIndex: pageIndex);
 }
 
 class HomePageError extends HomePageState {
