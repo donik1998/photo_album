@@ -7,21 +7,24 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool? obscureText;
   final TextInputType? keyboardType;
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     Key? key,
     required this.labelText,
     required this.controller,
     this.obscureText,
+    this.validator,
     this.keyboardType,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       obscureText: obscureText ?? false,
       keyboardType: keyboardType,
+      validator: validator,
       decoration: InputDecoration(
         fillColor: AppColors.grey,
         filled: true,

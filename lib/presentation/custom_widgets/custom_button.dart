@@ -5,15 +5,20 @@ import 'package:photo_album/presentation/theme/app_text_styles.dart';
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
-  final Color color;
+  final Color color, shadowColor;
   final TextStyle textStyle;
   final Widget child;
+  final double height;
+  final double elevation;
 
   const CustomButton({
     Key? key,
     this.text = '',
     required this.onTap,
+    this.height = 48,
     required this.color,
+    this.elevation = 0.5,
+    this.shadowColor = AppColors.grey,
     this.child = const SizedBox(),
     this.textStyle = const TextStyle(),
   }) : super(key: key);
@@ -22,12 +27,18 @@ class CustomButton extends StatelessWidget {
     required String text,
     required VoidCallback onTap,
     required Color color,
+    Color? shadowColor,
     TextStyle? textStyle,
+    double? height,
+    double? elevation,
   }) =>
       CustomButton(
         onTap: onTap,
         color: color,
         text: text,
+        height: height ?? 48,
+        elevation: elevation ?? 0.5,
+        shadowColor: shadowColor ?? AppColors.grey,
         textStyle: textStyle ?? AppTextStyles.bodyTextStyle.copyWith(color: AppColors.white, fontWeight: FontWeight.w700),
       );
 
@@ -35,12 +46,18 @@ class CustomButton extends StatelessWidget {
     required VoidCallback onTap,
     required Color color,
     required Widget child,
+    Color? shadowColor,
     TextStyle? textStyle,
+    double? elevation,
+    double? height,
   }) =>
       CustomButton(
         onTap: onTap,
         color: color,
+        elevation: elevation ?? 0.5,
+        shadowColor: shadowColor ?? AppColors.grey,
         child: child,
+        height: height ?? 48,
         textStyle: textStyle ?? AppTextStyles.bodyTextStyle,
       );
 

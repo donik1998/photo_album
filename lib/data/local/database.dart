@@ -15,7 +15,9 @@ class Albums extends Table{
 }
 @UseMoor(tables: [Albums])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(FlutterQueryExecutor.inDatabaseFolder(
+  static AppDatabase get instance => AppDatabase._();
+
+  AppDatabase._() : super(FlutterQueryExecutor.inDatabaseFolder(
   path: "album.sqlite", logStatements: true));
   int get schemaVersion => 1;
 

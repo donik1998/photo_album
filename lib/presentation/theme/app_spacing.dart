@@ -4,6 +4,7 @@ class AppSpacing {
   AppSpacing._();
 
   static const horizontalSpace20 = const SizedBox(width: 20);
+  static const horizontalSpace12 = const SizedBox(width: 12);
   static const horizontalSpace16 = const SizedBox(width: 16);
 
   static const verticalSpace4 = const SizedBox(height: 4);

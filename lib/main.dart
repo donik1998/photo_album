@@ -1,8 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:photo_album/presentation/auth/login_page/bloc/login_page_cubit.dart';
 import 'package:photo_album/presentation/root/root_page.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
@@ -14,14 +12,14 @@ void main() async {
     SystemUiOverlay.bottom,
     SystemUiOverlay.top,
   ]);
-
+  //
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarBrightness: Brightness.dark,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.transparent,
-    systemNavigationBarDividerColor: Colors.transparent,
-    systemNavigationBarIconBrightness: Brightness.dark,
+    statusBarColor: Colors.white,
+    statusBarBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.light,
+    systemNavigationBarColor: Colors.white,
+    systemNavigationBarDividerColor: Colors.white,
+    systemNavigationBarIconBrightness: Brightness.light,
   ));
   runApp(const MyApp());
 }
@@ -36,6 +34,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: AppColors.white,
         appBarTheme: AppBarTheme(
           backgroundColor: AppColors.white,
           titleTextStyle: AppTextStyles.ttxt1,
@@ -44,17 +43,7 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.black),
         ),
       ),
-      home: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-        ),
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (context) => LoginPageCubit(), lazy: true),
-          ],
-          child: RootPage(),
-        ),
-      ),
+      home: RootPage(),
     );
   }
 }
