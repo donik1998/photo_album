@@ -62,6 +62,22 @@ class AlbumModel {
         cover: jsonEncode(cover.toMap),
         pages: jsonEncode(pages.map((e) => e.toMap).toList()),
       );
+
+  factory AlbumModel.fromLocalAlbum(Album localAlbum) {
+    final cover = AlbumCover.fromMap(jsonDecode(localAlbum.cover));
+    final pages = jsonDecode(localAlbum.pages).map((entry) => AlbumPage.fromMap(entry)).toList();
+    return AlbumModel(
+      pages: pages,
+      cover: cover,
+      title: localAlbum.title,
+      thumbnailPath: localAlbum.thumbnailPath,
+      type: localAlbum.type,
+      widthCm: localAlbum.widthCm,
+      heightCm: localAlbum.heightCm,
+      widthInch: localAlbum.widthInch,
+      heightInch: localAlbum.heightInch,
+    );
+  }
 }
 
 class AlbumPage {

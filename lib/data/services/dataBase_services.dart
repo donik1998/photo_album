@@ -7,4 +7,9 @@ class DataBaseService {
   Future<void> saveAlbumToDB(AlbumModel albumModel) async {
     await appDataBase.insertAlbum(albumModel.databaseModel);
   }
+
+  Future<List<AlbumModel>> getAlbumFromDB() async {
+    final localAlbums = await appDataBase.getAllAlbums();
+    return localAlbums.map<AlbumModel>((e) => AlbumModel.fromLocalAlbum(e)).toList();
+  }
 }
