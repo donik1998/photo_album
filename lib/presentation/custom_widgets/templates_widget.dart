@@ -30,9 +30,11 @@ class TemplatesWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title, style: AppTextStyles.ttxt1, textAlign: TextAlign.left),
-            IconButton(onPressed: () {
-Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailPage(title: title, content: dataList)));
-            }, icon: SvgPicture.asset('assets/svgs/arrow_right.svg'))
+            IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(title: title, content: dataList)));
+                },
+                icon: SvgPicture.asset('assets/svgs/arrow_right.svg'))
           ],
         ),
         AppSpacing.verticalSpace24,
@@ -40,7 +42,7 @@ Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailPage(title:
           scrollDirection: Axis.horizontal,
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children:  [for(int i=0;i<4;i++)AlbumCard(album: dataList[i])],
+            children: [for (int i = 0; i < 4; i++) AlbumCard(album: dataList[i])],
           ),
         ),
         // ListView.builder(
