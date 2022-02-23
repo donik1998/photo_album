@@ -58,6 +58,11 @@ class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
 
   void changeCreatingElementType(value) {}
 
+  Future<void> loadCategories() async {
+    emit(HomePageLoading(pageIndex: state.pageIndex));
+    final categories = await FirebaseFirestore.instance.collection('categories').get();
+  }
+
   Future<void> saveData() async {
     if (selectedFile == null) {
       emit(HomePageError(error: 'Вы не выбрали файл', pageIndex: state.pageIndex));
