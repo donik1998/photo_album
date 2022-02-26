@@ -1,7 +1,13 @@
+import 'package:photo_album/data/models/content_category.dart';
+
 class HomePageState {
   final int pageIndex;
+  final List<ContentCategory> categoriesList;
 
-  HomePageState({required this.pageIndex});
+  HomePageState({
+    required this.pageIndex,
+    this.categoriesList = const [],
+  });
 
   HomePageState copyWith({int? index}) => HomePageState(pageIndex: index ?? this.pageIndex);
 }
@@ -16,7 +22,12 @@ class HomePageLoading extends HomePageState {
 
 class HomePageSuccess extends HomePageState {
   final String successMessage;
-  HomePageSuccess({required int pageIndex, this.successMessage = ''}) : super(pageIndex: pageIndex);
+
+  HomePageSuccess({
+    required int pageIndex,
+    this.successMessage = '',
+    required List<ContentCategory> categoriesList,
+  }) : super(pageIndex: pageIndex, categoriesList: categoriesList);
 }
 
 class HomePageError extends HomePageState {

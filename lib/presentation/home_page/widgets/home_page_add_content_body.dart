@@ -20,9 +20,6 @@ class HomePageAddContentBody extends StatelessWidget {
       key: cubit.createContentFormKey,
       child: ListView(
         padding: AppInsets.horizontalInsets36,
-        // mainAxisSize: MainAxisSize.max,
-        // mainAxisAlignment: MainAxisAlignment.start,
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppSpacing.verticalSpace32,
           Text('Добавить контент', style: AppTextStyles.title.copyWith(color: AppColors.white)),
@@ -84,93 +81,48 @@ class HomePageAddContentBody extends StatelessWidget {
             ],
           ),
           AppSpacing.verticalSpace32,
+          Wrap(
+            children: [],
+            runSpacing: 16,
+            spacing: 16,
+          ),
           Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Категория элемента', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                    DropdownButton<String>(
-                      underline: SizedBox(),
-                      value: cubit.createDecorationElementChosenType,
-                      borderRadius: BorderRadius.circular(16),
-                      dropdownColor: AppColors.darkBlue,
-                      elevation: 0,
-                      focusColor: AppColors.darkBlue,
-                      itemHeight: 48,
-                      items: [
-                        DropdownMenuItem<String>(
-                          child: Padding(
-                            padding: AppInsets.horizontalInsets16,
-                            child: Text('Стикер', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                          ),
-                          value: DecorationElementTypes.STICKER,
-                        ),
-                        DropdownMenuItem<String>(
-                          child: Padding(
-                            padding: AppInsets.horizontalInsets16,
-                            child: Text('Анимация', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                          ),
-                          value: DecorationElementTypes.ANIMATION,
-                        ),
-                        DropdownMenuItem<String>(
-                          child: Padding(
-                            padding: AppInsets.horizontalInsets16,
-                            child: Text('Шрифт', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                          ),
-                          value: DecorationElementTypes.FONT,
-                        ),
-                      ],
-                      onChanged: (value) => cubit.changeCreatingElementType(value),
+              Text('Тип элемента', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
+              DropdownButton<String>(
+                underline: SizedBox(),
+                value: cubit.createDecorationElementChosenType,
+                borderRadius: BorderRadius.circular(16),
+                dropdownColor: AppColors.darkBlue,
+                elevation: 0,
+                focusColor: AppColors.darkBlue,
+                itemHeight: 48,
+                items: [
+                  DropdownMenuItem<String>(
+                    child: Padding(
+                      padding: AppInsets.horizontalInsets16,
+                      child: Text('Стикер', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
                     ),
-                  ],
-                ),
-              ),
-              AppSpacing.horizontalSpace20,
-              AppSpacing.horizontalSpace20,
-              Expanded(
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Тип элемента', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                    DropdownButton<String>(
-                      underline: SizedBox(),
-                      value: cubit.createDecorationElementChosenType,
-                      borderRadius: BorderRadius.circular(16),
-                      dropdownColor: AppColors.darkBlue,
-                      elevation: 0,
-                      focusColor: AppColors.darkBlue,
-                      itemHeight: 48,
-                      items: [
-                        DropdownMenuItem<String>(
-                          child: Padding(
-                            padding: AppInsets.horizontalInsets16,
-                            child: Text('Стикер', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                          ),
-                          value: DecorationElementTypes.STICKER,
-                        ),
-                        DropdownMenuItem<String>(
-                          child: Padding(
-                            padding: AppInsets.horizontalInsets16,
-                            child: Text('Анимация', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                          ),
-                          value: DecorationElementTypes.ANIMATION,
-                        ),
-                        DropdownMenuItem<String>(
-                          child: Padding(
-                            padding: AppInsets.horizontalInsets16,
-                            child: Text('Шрифт', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                          ),
-                          value: DecorationElementTypes.FONT,
-                        ),
-                      ],
-                      onChanged: (value) => cubit.changeCreatingElementType(value),
+                    value: DecorationElementTypes.STICKER,
+                  ),
+                  DropdownMenuItem<String>(
+                    child: Padding(
+                      padding: AppInsets.horizontalInsets16,
+                      child: Text('Анимация', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
                     ),
-                  ],
-                ),
+                    value: DecorationElementTypes.ANIMATION,
+                  ),
+                  DropdownMenuItem<String>(
+                    child: Padding(
+                      padding: AppInsets.horizontalInsets16,
+                      child: Text('Шрифт', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
+                    ),
+                    value: DecorationElementTypes.FONT,
+                  ),
+                ],
+                onChanged: (value) => cubit.changeCreatingElementType(value ?? DecorationElementTypes.STICKER),
               ),
             ],
           ),

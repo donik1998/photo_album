@@ -44,14 +44,32 @@ class _SideBarState extends State<SideBar> {
               setState(() => activePageIndex = 1);
               widget.onPageChanged(1);
             },
-            title: 'Элементы украшения',
+            title: 'Шаблоны альбомных страниц',
           ),
           SidebarAction(
-            icon: Icons.add,
+            icon: Icons.menu,
             isSelected: activePageIndex == 2,
             onTap: () {
               setState(() => activePageIndex = 2);
               widget.onPageChanged(2);
+            },
+            title: 'Элементы украшения',
+          ),
+          SidebarAction(
+            icon: Icons.add,
+            isSelected: activePageIndex == 3,
+            onTap: () {
+              setState(() => activePageIndex = 3);
+              widget.onPageChanged(3);
+            },
+            title: 'Добавить шаблоны альбомных страниц',
+          ),
+          SidebarAction(
+            icon: Icons.add,
+            isSelected: activePageIndex == 4,
+            onTap: () {
+              setState(() => activePageIndex = 4);
+              widget.onPageChanged(4);
             },
             title: 'Добавить элементы украшения',
           ),
