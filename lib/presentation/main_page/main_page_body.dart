@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:photo_album/data/models/album_template.dart';
+import 'package:photo_album/data/models/album_page_template_category.dart';
+import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/presentation/custom_widgets/custom_textfield.dart';
+import 'package:photo_album/presentation/custom_widgets/loader.dart';
 import 'package:photo_album/presentation/custom_widgets/resolution_template.dart';
 import 'package:photo_album/presentation/custom_widgets/templates_widget.dart';
 import 'package:photo_album/presentation/home_page/bloc/home_page_cubit.dart';
@@ -18,44 +21,22 @@ class MainPageBody extends StatefulWidget {
 }
 
 class _MainPageBodyState extends State<MainPageBody> {
-  List<Album> art = List.generate(
-    6,
-    (index) => Album(
-      type: 'Бесплатный',
-      title: 'free',
-      thumbnailLink: 'assets/templatesImages/art${++index}.jpeg',
-      widthCm: 110,
-      heightCm: 110,
-      widthInch: 10,
-      heightInch: 10,
-    ),
-  );
-  List<Album> love = List.generate(
-    6,
-    (index) => Album(
-      type: 'Бесплатный',
-      title: 'free',
-      thumbnailLink: 'assets/templatesImages/l${++index}.jpeg',
-      widthCm: 110,
-      heightCm: 110,
-      widthInch: 10,
-      heightInch: 10,
-    ),
-  );
-  List<Album> travel = List.generate(
-    6,
-    (index) => Album(
-      type: 'Бесплатный',
-      title: 'free',
-      thumbnailLink: 'assets/templatesImages/t${++index}.jpeg',
-      widthCm: 110,
-      heightCm: 110,
-      widthInch: 10,
-      heightInch: 10,
-    ),
-  );
+  List<AlbumPageTemplateCategory> templatePageCategories = List.empty(growable: true);
   TextEditingController _textController = TextEditingController();
   bool _searchBarEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
+      final categoriesDocs = await FirebaseFirestore.instance.collection('album_template_page_types').get();
+      setState(() {
+        templatePageCategories = List.from(
+          categoriesDocs.docs.map((e) => AlbumPageTemplateCategory.fromJson(e.data())),
+        );
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,12 +81,27 @@ class _MainPageBodyState extends State<MainPageBody> {
               AppSpacing.verticalSpace24,
               ResolutionTemplate(sizes: ['20x20', '23x23', '25x25']),
               AppSpacing.verticalSpace24,
-              TemplatesWidget(dataList: travel, title: 'Путешествие', type: 'Бесплатный'),
-              AppSpacing.verticalSpace24,
-              TemplatesWidget(dataList: love, title: 'Любовь', type: 'Бесплатный'),
-              AppSpacing.verticalSpace24,
-              TemplatesWidget(dataList: art, title: 'Искусство', type: 'Бесплатный'),
-              AppSpacing.verticalSpace24,
+              for (final templateCategory in templatePageCategories)
+                FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  future: FirebaseFirestore.instance
+                      .collection('album_page_templates')
+                      .where(
+                        'type',
+                        isEqualTo: templateCategory.value,
+                      )
+                      .get(),
+                  builder: (context, templatesSnapshot) {
+                    if (templatesSnapshot.connectionState == ConnectionState.waiting)
+                      return Loader();
+                    else
+                      return TemplatesRowWidget(
+                        templates: templatesSnapshot.data!.docs.map((e) => AlbumPageTemplate.fromJson(e.data())).toList(),
+                        showTopSpacing: true,
+                        title: templateCategory.masks['ru'],
+                        type: templateCategory.value,
+                      );
+                  },
+                ),
             ],
           ),
         );

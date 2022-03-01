@@ -31,16 +31,14 @@ class ProfilePage extends StatelessWidget {
               SizedBox(
                 height: 48,
                 child: ListTile(
-                  leading: Container(
+                  leading: CachedNetworkImage(
                     width: 48,
                     height: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.black, width: 1.0),
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: FirebaseAuth.instance.currentUser?.photoURL ?? '',
-                      errorWidget: (context, url, error) => const Center(child: Icon(Icons.error_outline)),
+                    imageUrl: FirebaseAuth.instance.currentUser?.photoURL ?? '',
+                    errorWidget: (context, url, error) => const Center(child: Icon(Icons.error_outline)),
+                    imageBuilder: (context, image) => ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image(image: image),
                     ),
                   ),
                   title: Text(FirebaseAuth.instance.currentUser?.displayName ?? 'Имя не указано', style: AppTextStyles.smallTitleBold),

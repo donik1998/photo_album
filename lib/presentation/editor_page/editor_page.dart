@@ -7,7 +7,9 @@ import '../theme/app_icons.dart';
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class RedactorPage extends StatefulWidget {
-  RedactorPage({Key? key}) : super(key: key);
+  final Widget? backImage;
+
+  RedactorPage({Key? key, this.backImage}) : super(key: key);
 
   @override
   State<RedactorPage> createState() => _RedactorPageState();
@@ -33,8 +35,7 @@ class _RedactorPageState extends State<RedactorPage> {
         bottomSheetController!.close();
       }
       setState(() {
-        fabIsVisible = scrollController2.position.userScrollDirection ==
-            ScrollDirection.forward;
+        fabIsVisible = scrollController2.position.userScrollDirection == ScrollDirection.forward;
       });
     });
   }
@@ -44,31 +45,24 @@ class _RedactorPageState extends State<RedactorPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            MyFlutterApp.left,
-            color: Color(0xFF2E2E2E),
-          ),
-          onPressed: () {},
-        ),
         backgroundColor: Colors.white,
-        title: IconButton(
-          icon: Icon(
-            MyFlutterApp.dot_2,
-            color: Color(0xFF2E2E2E),
-            size: 24,
-          ),
-          onPressed: () {},
-        ),
-        centerTitle: true,
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: Icon(
-                MyFlutterApp.cloud_download,
-                color: Color(0xFF2E2E2E),
-                size: 24,
-              )),
+            icon: Icon(
+              MyFlutterApp.dot_2,
+              color: Color(0xFF2E2E2E),
+              size: 24,
+            ),
+            onPressed: () {},
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              MyFlutterApp.cloud_download,
+              color: Color(0xFF2E2E2E),
+              size: 24,
+            ),
+          ),
           IconButton(
             icon: Icon(
               MyFlutterApp.upload,
@@ -78,18 +72,18 @@ class _RedactorPageState extends State<RedactorPage> {
             onPressed: () {},
           ),
           IconButton(
-              onPressed: () {},
-              icon: Icon(
-                MyFlutterApp.popup,
-                color: Color(0xFF2E2E2E),
-                size: 24,
-              )),
+            onPressed: () {},
+            icon: Icon(
+              MyFlutterApp.popup,
+              color: Color(0xFF2E2E2E),
+              size: 24,
+            ),
+          ),
         ],
       ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: Column(mainAxisSize: MainAxisSize.max, children: [
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
           Padding(
             padding: const EdgeInsets.only(left: 352),
             child: IconButton(
@@ -103,14 +97,11 @@ class _RedactorPageState extends State<RedactorPage> {
               margin: const EdgeInsets.symmetric(horizontal: 12),
               width: 366,
               height: 570,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/templatesImages/art6.jpeg'),
-                    fit: BoxFit.fill),
-              ),
+              decoration: BoxDecoration(),
+              child: widget.backImage,
             ),
           ),
-        ]),
+        ],
       ),
       floatingActionButton: AnimatedOpacity(
         duration: Duration(milliseconds: 100),
@@ -131,8 +122,6 @@ class _RedactorPageState extends State<RedactorPage> {
     );
   }
 
-
-
   Widget _gridview(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
@@ -141,8 +130,7 @@ class _RedactorPageState extends State<RedactorPage> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(18), topRight: Radius.circular(18)),
         ),
         child: GridView.builder(
             controller: scrollController,
@@ -179,8 +167,7 @@ class _RedactorPageState extends State<RedactorPage> {
     );
   }
 
-
-  modalBottomSheetMenu(BuildContext context){
+  modalBottomSheetMenu(BuildContext context) {
     return _scaffoldKey.currentState?.showBottomSheet((context) => _gridview(context));
   }
 
@@ -188,24 +175,19 @@ class _RedactorPageState extends State<RedactorPage> {
   //   return _scaffoldKey.currentState?.showBottomSheet((context) => AllStuffWindow());
   // }
 
-
-  
 }
-
 
 class AllStuffWindow extends StatefulWidget {
   final int pageIndex;
 
+  AllStuffWindow(Key? key, this.pageIndex) : super(key: key);
 
-    AllStuffWindow(Key? key, this.pageIndex) : super(key: key);
-    
-  
-    @override
-    State<AllStuffWindow> createState() => _AllStuffWindowState();
-  }
-  
-  class _AllStuffWindowState extends State<AllStuffWindow> {
-    Widget? _currentPage;
+  @override
+  State<AllStuffWindow> createState() => _AllStuffWindowState();
+}
+
+class _AllStuffWindowState extends State<AllStuffWindow> {
+  Widget? _currentPage;
 
   //    @override
   // void initState() {
@@ -213,13 +195,8 @@ class AllStuffWindow extends StatefulWidget {
   //   _currentPage = IconButtons.widgets.elementAt(widget.pageIndex);
   // }
 
-
-
-    @override
-    Widget build(BuildContext context) {
-      return Container();
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
-
-
-
+}

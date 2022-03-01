@@ -47,7 +47,7 @@ class ResolutionTemplate extends StatelessWidget {
                     AppSpacing.verticalSpace7,
                     Text(
                       e,
-                      style: AppTextStyles.txt13.copyWith(color: Colors.white),
+                      style: AppTextStyles.txt13.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

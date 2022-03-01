@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_album/presentation/editor_page/editor_page.dart';
+import 'package:photo_album/presentation/home_page/bloc/home_page_cubit.dart';
 import 'package:photo_album/presentation/main_page/main_page_body.dart';
 import 'package:photo_album/presentation/my_albums_page/my_albums_page_body.dart';
+import 'package:photo_album/presentation/profile/bloc/profile_page_cubit.dart';
 import 'package:photo_album/presentation/profile/profile_page.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
@@ -28,7 +31,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _tabs.elementAt(_pageIndex),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => HomePageCubit()),
+            BlocProvider(create: (context) => ProfilePageCubit()),
+          ],
+          child: _tabs.elementAt(_pageIndex),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.pinkLight,
