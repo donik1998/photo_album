@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
 import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/presentation/custom_widgets/custom_textfield.dart';
-import 'package:photo_album/presentation/custom_widgets/loader.dart';
 import 'package:photo_album/presentation/custom_widgets/resolution_template.dart';
 import 'package:photo_album/presentation/custom_widgets/templates_widget.dart';
 import 'package:photo_album/presentation/home_page/bloc/home_page_cubit.dart';
@@ -24,6 +23,7 @@ class _MainPageBodyState extends State<MainPageBody> {
   List<AlbumPageTemplateCategory> templatePageCategories = List.empty(growable: true);
   TextEditingController _textController = TextEditingController();
   bool _searchBarEnabled = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -34,6 +34,7 @@ class _MainPageBodyState extends State<MainPageBody> {
         templatePageCategories = List.from(
           categoriesDocs.docs.map((e) => AlbumPageTemplateCategory.fromJson(e.data())),
         );
+        _isLoading = false;
       });
     });
   }
@@ -81,27 +82,29 @@ class _MainPageBodyState extends State<MainPageBody> {
               AppSpacing.verticalSpace24,
               ResolutionTemplate(sizes: ['20x20', '23x23', '25x25']),
               AppSpacing.verticalSpace24,
-              for (final templateCategory in templatePageCategories)
-                FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  future: FirebaseFirestore.instance
-                      .collection('album_page_templates')
-                      .where(
-                        'type',
-                        isEqualTo: templateCategory.value,
-                      )
-                      .get(),
-                  builder: (context, templatesSnapshot) {
-                    if (templatesSnapshot.connectionState == ConnectionState.waiting)
-                      return Loader();
-                    else
-                      return TemplatesRowWidget(
-                        templates: templatesSnapshot.data!.docs.map((e) => AlbumPageTemplate.fromJson(e.data())).toList(),
-                        showTopSpacing: true,
-                        title: templateCategory.masks['ru'],
-                        type: templateCategory.value,
-                      );
-                  },
-                ),
+              if (_isLoading) Center(child: CircularProgressIndicator()),
+              if (!_isLoading)
+                for (final templateCategory in templatePageCategories)
+                  FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                    future: FirebaseFirestore.instance
+                        .collection('album_page_templates')
+                        .where(
+                          'type',
+                          isEqualTo: templateCategory.value,
+                        )
+                        .get(),
+                    builder: (context, templatesSnapshot) {
+                      if (templatesSnapshot.connectionState == ConnectionState.waiting)
+                        return Container();
+                      else
+                        return TemplatesRowWidget(
+                          templates: templatesSnapshot.data!.docs.map((e) => AlbumPageTemplate.fromJson(e.data())).toList(),
+                          showTopSpacing: true,
+                          title: templateCategory.masks['ru'],
+                          type: templateCategory.value,
+                        );
+                    },
+                  ),
             ],
           ),
         );
