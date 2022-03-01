@@ -55,7 +55,6 @@ class LoginPage extends StatelessWidget {
                     Expanded(child: SizedBox()),
                     CustomButton.child(
                       onTap: () async {
-                        print('starting signin');
                         final signedIn = await AuthService.instance.signInWithGoogle();
                         if (signedIn)
                           Navigator.pushAndRemoveUntil(
@@ -71,22 +70,6 @@ class LoginPage extends StatelessWidget {
                           SvgPicture.asset('assets/svgs/google.svg'),
                           AppSpacing.horizontalSpace20,
                           Text('Войти через Google', style: AppTextStyles.bodyTextStyle)
-                        ],
-                      ),
-                    ),
-                    AppSpacing.verticalSpace16,
-                    CustomButton.child(
-                      onTap: () {},
-                      color: AppColors.grey,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          SvgPicture.asset('assets/svgs/facebook.svg'),
-                          AppSpacing.horizontalSpace20,
-                          Text(
-                            'Войти через Facebook',
-                            style: AppTextStyles.bodyTextStyle,
-                          )
                         ],
                       ),
                     ),
