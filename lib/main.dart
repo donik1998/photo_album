@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Screenfile',
       debugShowCheckedModeBanner: false,
+      locale: Locale('ru', 'RU'),
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: AppColors.lightBlue,
