@@ -17,6 +17,22 @@ class IconButtons {
     Icon(MyFlutterApp.popup),
   ];
 
+  // static List widgets = [
+  //   TemplatesPages(),
+  //   Downloads(), // no firebase
+  //   Photos(), // no firebase
+  //   Elements(), // have firebase
+  //   Texts(), // have firebase
+  //   Audios(), // yes firebase
+  //   Video(), // no firebase
+  //   Gallery(), // xz
+  //   Background(), // has firebase
+  //   Directories(), // no firebase
+  //   More(), // hz
+  // ];
+
+
+
   static List icons2 = [
     Text(
       'Шаблоны',

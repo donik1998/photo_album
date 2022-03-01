@@ -5,7 +5,7 @@ abstract class HomePageState {}
 class HomePageInitial extends HomePageState {}
 class HomePageLoading extends HomePageState {}
 class HomePageSuccess extends HomePageState {
-  final List<Album> albums;
+  final List<AlbumModel> albums;
 
   HomePageSuccess({required this.albums});
 }

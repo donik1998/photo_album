@@ -5,26 +5,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_album/presentation/custom_widgets/loader.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
+import 'package:photo_album/presentation/theme/app_instets.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
-
-import 'bloc/profile_page_cubit.dart';
-import 'bloc/profile_page_state.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<ProfilePageCubit>();
-    return BlocConsumer<ProfilePageCubit, ProfilePageState>(
-      bloc: cubit,
-      builder: (context, state) {
-        if (state is ProfileLoading)
-          return Loader();
-        else
-          return Column(
+    final cubit = context.read<HomePageCubit>();
+    return Padding(
+      padding: AppInsets.horizontalInsets16,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
             mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Меню', style: AppTextStyles.ttxt1),
               AppSpacing.verticalSpace32,

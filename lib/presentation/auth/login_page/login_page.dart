@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:photo_album/data/services/auth_service.dart';
 import 'package:photo_album/presentation/auth/login_page/bloc/login_page_cubit.dart';
 import 'package:photo_album/presentation/auth/login_page/bloc/login_page_state.dart';
 import 'package:photo_album/presentation/custom_widgets/custom_button.dart';
 import 'package:photo_album/presentation/custom_widgets/loader.dart';
 import 'package:photo_album/presentation/custom_widgets/text_divider.dart';
+import 'package:photo_album/presentation/root/root_page.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
@@ -52,7 +54,15 @@ class LoginPage extends StatelessWidget {
                     ),
                     Expanded(child: SizedBox()),
                     CustomButton.child(
-                      onTap: () {},
+                      onTap: () async {
+                        final signedIn = await AuthService.instance.signInWithGoogle();
+                        if (signedIn)
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => RootPage()),
+                            (route) => false,
+                          );
+                      },
                       color: AppColors.grey,
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
@@ -60,22 +70,6 @@ class LoginPage extends StatelessWidget {
                           SvgPicture.asset('assets/svgs/google.svg'),
                           AppSpacing.horizontalSpace20,
                           Text('Войти через Google', style: AppTextStyles.bodyTextStyle)
-                        ],
-                      ),
-                    ),
-                    AppSpacing.verticalSpace16,
-                    CustomButton.child(
-                      onTap: () {},
-                      color: AppColors.grey,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          SvgPicture.asset('assets/svgs/facebook.svg'),
-                          AppSpacing.horizontalSpace20,
-                          Text(
-                            'Войти через Facebook',
-                            style: AppTextStyles.bodyTextStyle,
-                          )
                         ],
                       ),
                     ),
