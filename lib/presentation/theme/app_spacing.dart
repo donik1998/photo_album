@@ -9,6 +9,7 @@ class AppSpacing {
 
   static const verticalSpace4 = const SizedBox(height: 4);
   static const verticalSpace7 = const SizedBox(height: 7);
+  static const verticalSpace10 = const SizedBox(height: 10);
   static const verticalSpace16 = const SizedBox(height: 16);
   static const verticalSpace20 = const SizedBox(height: 20);
   static const verticalSpace24 = const SizedBox(height: 24);

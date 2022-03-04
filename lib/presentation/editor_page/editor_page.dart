@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:photo_album/presentation/editor_page/widgets/elements_sheet.dart';
+import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/different_icons.dart';
-
-import '../theme/app_icons.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -15,29 +14,22 @@ class RedactorPage extends StatefulWidget {
   State<RedactorPage> createState() => _RedactorPageState();
 }
 
-ScrollController scrollController2 = ScrollController();
-
 class _RedactorPageState extends State<RedactorPage> {
   ScrollController scrollController = ScrollController();
-  PersistentBottomSheetController? bottomSheetController;
-  PersistentBottomSheetController? bottomSheetController2;
+
   bool fabIsVisible = true;
   @override
   void initState() {
     super.initState();
     scrollController.addListener(() {
-      if (scrollController.offset < -100) {
-        bottomSheetController!.close();
-      }
+      // if (scrollController.offset < -100) ;
     });
-    scrollController2.addListener(() {
-      if (scrollController2.offset < -100) {
-        bottomSheetController!.close();
-      }
-      setState(() {
-        fabIsVisible = scrollController2.position.userScrollDirection == ScrollDirection.forward;
-      });
-    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -103,100 +95,30 @@ class _RedactorPageState extends State<RedactorPage> {
           ),
         ],
       ),
-      floatingActionButton: AnimatedOpacity(
-        duration: Duration(milliseconds: 100),
-        opacity: fabIsVisible ? 1 : 0,
+      floatingActionButton: Visibility(
+        visible: fabIsVisible,
         child: FloatingActionButton(
-          backgroundColor: Color(0xFFE11577),
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
+          backgroundColor: AppColors.pinkLight,
+          child: Icon(Icons.add, color: Colors.white),
           onPressed: () {
             setState(() {
-              bottomSheetController = modalBottomSheetMenu(context);
+              fabIsVisible = false;
             });
+            showModalBottomSheet(
+              context: context,
+              elevation: 10,
+              isScrollControlled: true,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              builder: (context) => SizedBox(
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: ElementsSheet(controller: scrollController),
+              ),
+            ).then((value) => setState(() => fabIsVisible = true));
           },
         ),
       ),
     );
-  }
-
-  Widget _gridview(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.5,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(18), topRight: Radius.circular(18)),
-        ),
-        child: GridView.builder(
-            controller: scrollController,
-            physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.all(0),
-            scrollDirection: Axis.vertical,
-            itemCount: 11,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 0,
-              crossAxisCount: 3,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              return Column(
-                children: [
-                  IconButton(
-                      icon: IconButtons.icons.elementAt(index),
-                      onPressed: () {
-                        // setState(() {
-                        //   bottomSheetController2 = modalBottomSheetMenu2(context, index);
-                        // });
-                      }),
-                  Text(
-                    IconButtons.labels.elementAt(index),
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Color(0xFF2E2E2E),
-                    ),
-                  ),
-                ],
-              );
-            }),
-      ),
-    );
-  }
-
-  modalBottomSheetMenu(BuildContext context) {
-    return _scaffoldKey.currentState?.showBottomSheet((context) => _gridview(context));
-  }
-
-  // modalBottomSheetMenu2(BuildContext context,int index){
-  //   return _scaffoldKey.currentState?.showBottomSheet((context) => AllStuffWindow());
-  // }
-
-}
-
-class AllStuffWindow extends StatefulWidget {
-  final int pageIndex;
-
-  AllStuffWindow(Key? key, this.pageIndex) : super(key: key);
-
-  @override
-  State<AllStuffWindow> createState() => _AllStuffWindowState();
-}
-
-class _AllStuffWindowState extends State<AllStuffWindow> {
-  Widget? _currentPage;
-
-  //    @override
-  // void initState() {
-  //   super.initState();
-  //   _currentPage = IconButtons.widgets.elementAt(widget.pageIndex);
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }

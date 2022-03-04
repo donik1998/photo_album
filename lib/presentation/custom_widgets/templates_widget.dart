@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/presentation/all_templates_page/all_templates_page.dart';
+import 'package:photo_album/presentation/custom_widgets/element_card.dart';
 import 'package:photo_album/presentation/editor_page/editor_page.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
@@ -54,34 +55,23 @@ class TemplatesRowWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: templates
                 .getRange(0, min<int>(4, templates.length))
-                .map<Widget>(
-                  (template) => GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RedactorPage(backImage: Image.network(template.downloadLink)),
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: template.downloadLink,
-                          width: 110,
-                          height: 110,
-                          imageBuilder: (context, image) => ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image(image: image),
+                .map<Widget>((template) => ElementCard(
+                      title: template.title,
+                      imageLink: template.downloadLink,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RedactorPage(
+                            backImage: CachedNetworkImage(
+                              imageUrl: template.downloadLink,
+                              progressIndicatorBuilder: (context, child, progress) => Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
                           ),
-                          errorWidget: (context, url, trace) => Center(child: Icon(Icons.error_outline)),
                         ),
-                        AppSpacing.verticalSpace7,
-                        Text(template.title, style: AppTextStyles.txt13),
-                      ],
-                    ),
-                  ),
-                )
+                      ),
+                    ))
                 .toList(),
           ),
         ),
