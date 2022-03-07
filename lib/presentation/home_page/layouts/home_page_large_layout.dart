@@ -21,7 +21,7 @@ class HomePageLargeLayout extends StatefulWidget {
 
 class _HomePageLargeLayoutState extends State<HomePageLargeLayout> {
   List<AlbumPageTemplateCategory> templateCategories = List.empty(growable: true);
-  List<DecorationCategory> categories = List.empty();
+  List<DecorationCategory> decorationCategories = List.empty();
   List<Widget> homePageBodies = List.empty();
 
   @override
@@ -34,15 +34,15 @@ class _HomePageLargeLayoutState extends State<HomePageLargeLayout> {
         templateCategories = List<AlbumPageTemplateCategory>.from(
           templateCategoryDocs.docs.map((e) => AlbumPageTemplateCategory.fromJson(e.data())),
         );
-        categories = List.from(
+        decorationCategories = List.from(
           categoryDocs.docs.map((e) => DecorationCategory.fromJson(e.data())),
         );
         homePageBodies = [
           HomePageOrdersBody(),
           AlbumPageTemplatesBody(templateCategories: templateCategories),
-          HomePageDecorationElementsBody(),
-          HomePageAddAlbumPageTemplatesBody(),
-          HomePageAddContentBody(categories: categories),
+          HomePageDecorationElementsBody(categories: decorationCategories),
+          HomePageAddAlbumPageTemplatesBody(albumPageTemplateCategories: templateCategories),
+          HomePageAddContentBody(categories: decorationCategories),
         ];
       });
     });

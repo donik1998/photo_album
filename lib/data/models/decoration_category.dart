@@ -16,4 +16,9 @@ class DecorationCategory {
         'type': type,
         'type_masks': typeMasks,
       };
+
+  DecorationCategory copyWith({String? type, Map<String, dynamic>? typeMasks}) => DecorationCategory(
+        type: type ?? this.type,
+        typeMasks: typeMasks ?? this.typeMasks,
+      );
 }

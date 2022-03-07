@@ -184,6 +184,12 @@ class _HomePageAddContentBodyState extends State<HomePageAddContentBody> {
             Text('Выберите файл', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
             AppSpacing.verticalSpace16,
             FilePickerWidget(
+              initialWidget: Center(
+                child: Text(
+                  'Нажмите здесь чтобы выбрать файл',
+                  style: AppTextStyles.title.copyWith(color: AppColors.white),
+                ),
+              ),
               onFileSelected: (files) {
                 if (files.isNotEmpty) cubit.changeSelectedFile(files.first);
               },
@@ -191,7 +197,7 @@ class _HomePageAddContentBodyState extends State<HomePageAddContentBody> {
             AppSpacing.verticalSpace16,
             CustomButton.text(
               text: 'Сохранить',
-              onTap: () => cubit.saveData(),
+              onTap: () => cubit.saveData(selectedCategory),
               color: AppColors.darkBlue,
               textStyle: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white),
             ),

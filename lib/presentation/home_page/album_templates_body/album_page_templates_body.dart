@@ -5,6 +5,7 @@ import 'package:photo_album/data/models/template_page_model.dart';
 import 'package:photo_album/presentation/custom_widgets/empty_list_widget.dart';
 import 'package:photo_album/presentation/custom_widgets/loader.dart';
 import 'package:photo_album/presentation/home_page/album_templates_body/widgets/album_page_template_card.dart';
+import 'package:photo_album/presentation/home_page/album_templates_body/widgets/edit_album_template_page.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 
@@ -24,7 +25,7 @@ class _AlbumPageTemplatesBodyState extends State<AlbumPageTemplatesBody> {
   @override
   void initState() {
     super.initState();
-    _currentAlbumPageTemplateType = widget.templateCategories.first;
+    if (widget.templateCategories.isNotEmpty) _currentAlbumPageTemplateType = widget.templateCategories.first;
   }
 
   @override
@@ -96,7 +97,13 @@ class _AlbumPageTemplatesBodyState extends State<AlbumPageTemplatesBody> {
                         ),
                         itemBuilder: (context, index) {
                           final template = AlbumPageTemplate.fromJson(templatesSnapshot.data!.docs.elementAt(index).data());
-                          return AlbumPageTemplateCard(template: template);
+                          return AlbumPageTemplateCard(
+                            template: template,
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => EditAlbumTemplatePage(template: template),
+                            ),
+                          );
                         },
                       );
                   },

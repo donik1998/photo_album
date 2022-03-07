@@ -22,10 +22,6 @@ class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
 
   PlatformFile? selectedFile;
 
-  String createDecorationElementChosenType = DecorationElementTypes.STICKER;
-
-  DecorationCategory? selectedCategory;
-
   void changeCurrentIndex(int newIndex) {
     currentPageIndex = newIndex;
     emit(this.state.copyWith(index: newIndex));
@@ -50,18 +46,15 @@ class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
     return super.close();
   }
 
-  void changeCreatingElementType(String value) => createDecorationElementChosenType = value;
-
-  Future<void> saveData() async {
+  Future<void> saveData(DecorationCategory? selectedCategory) async {
     if (selectedFile == null) {
       emit(HomePageError(error: 'Вы не выбрали файл', pageIndex: state.pageIndex));
     }
-    if ((createContentFormKey.currentState?.validate() ?? false) && selectedFile != null) {
+    if ((createContentFormKey.currentState?.validate() ?? false) && selectedFile != null && selectedCategory != null) {
       emit(HomePageLoading(pageIndex: state.pageIndex));
       try {
-        TaskSnapshot uploadTask = await FirebaseStorage.instance
-            .ref('$createDecorationElementChosenType/${selectedFile!.name.replaceAll('.', '-')}.${selectedFile!.extension}')
-            .putData(selectedFile!.bytes!);
+        TaskSnapshot uploadTask =
+            await FirebaseStorage.instance.ref('${selectedCategory.type}/${selectedFile!.name}').putData(selectedFile!.bytes!);
         String downloadLink = await uploadTask.ref.getDownloadURL();
         await FirebaseFirestore.instance.collection('decorations').add(
               DecorationElement(
@@ -69,13 +62,12 @@ class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
                 title: contentTitleController.text,
                 height: double.tryParse(contentHeightController.text) ?? 0,
                 width: double.tryParse(contentWidthController.text) ?? 0,
-                type: createDecorationElementChosenType,
+                type: selectedCategory.type,
               ).toMap,
             );
         contentTitleController.clear();
         contentHeightController.clear();
         contentWidthController.clear();
-        createDecorationElementChosenType = DecorationElementTypes.STICKER;
         emit(HomePageSuccess(
           pageIndex: state.pageIndex,
           successMessage: 'Контент успешно загружен',

@@ -1,20 +1,22 @@
 import 'dart:typed_data';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
-import 'package:photo_album/presentation/theme/app_text_styles.dart';
 
 class FilePickerWidget extends StatefulWidget {
   final ValueChanged<List<PlatformFile>> onFileSelected;
-  final String? initialFileLink;
   final double? height;
+  final double? width;
+  final Widget initialWidget;
+  final bool allowMultipleChoice;
 
   const FilePickerWidget({
     Key? key,
     required this.onFileSelected,
-    this.initialFileLink,
+    this.allowMultipleChoice = false,
+    required this.initialWidget,
+    this.width = double.infinity,
     this.height,
   }) : super(key: key);
 
@@ -32,7 +34,7 @@ class _FilePickerWidgetState extends State<FilePickerWidget> {
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () async {
-          final pickedFiles = await FilePicker.platform.pickFiles();
+          final pickedFiles = await FilePicker.platform.pickFiles(allowMultiple: widget.allowMultipleChoice);
           if (pickedFiles?.files.isNotEmpty ?? false) {
             setState(() => _selectedFile = pickedFiles!.files.first);
             widget.onFileSelected(pickedFiles!.files);
@@ -40,25 +42,16 @@ class _FilePickerWidgetState extends State<FilePickerWidget> {
         },
         borderRadius: BorderRadius.circular(16),
         child: Ink(
-          width: double.infinity,
+          width: widget.width,
           height: widget.height ?? 343,
           decoration: BoxDecoration(
             color: AppColors.darkBlue,
             border: Border.all(width: 1.0, color: AppColors.grey),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: (widget.initialFileLink?.isNotEmpty ?? false) && _selectedFile == null
-              ? CachedNetworkImage(imageUrl: widget.initialFileLink ?? '')
-              : Image.memory(
-                  _selectedFile?.bytes ?? Uint8List(10),
-                  fit: BoxFit.fitHeight,
-                  errorBuilder: (context, error, stackTrace) => Center(
-                    child: Text(
-                      'Нажмите здесь чтобы выбрать файл',
-                      style: AppTextStyles.title.copyWith(color: AppColors.white),
-                    ),
-                  ),
-                ),
+          child: _selectedFile == null
+              ? widget.initialWidget
+              : Image.memory(_selectedFile?.bytes ?? Uint8List(10), fit: BoxFit.fitHeight),
         ),
       ),
     );

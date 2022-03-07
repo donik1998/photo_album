@@ -1,10 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_album/data/models/decoration_category.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
 import 'package:photo_album/presentation/custom_widgets/custom_button.dart';
 import 'package:photo_album/presentation/custom_widgets/custom_text_field.dart';
+import 'package:photo_album/presentation/home_page/add_decoration_elements_body/widgets/decoration_category_card.dart';
 import 'package:photo_album/presentation/home_page/widgets/file_picker.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
@@ -13,8 +16,9 @@ import 'package:photo_album/presentation/theme/app_text_styles.dart';
 
 class DecorationElementEditorDialog extends StatefulWidget {
   final DecorationElement element;
+  final List<DecorationCategory> categories;
 
-  const DecorationElementEditorDialog({Key? key, required this.element}) : super(key: key);
+  const DecorationElementEditorDialog({Key? key, required this.element, required this.categories}) : super(key: key);
 
   @override
   State<DecorationElementEditorDialog> createState() => _DecorationElementEditorDialogState();
@@ -25,9 +29,15 @@ class _DecorationElementEditorDialogState extends State<DecorationElementEditorD
   late TextEditingController _widthController = TextEditingController(text: widget.element.width.toInt().toString());
   late TextEditingController _heightController = TextEditingController(text: widget.element.height.toInt().toString());
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late String _chosenElementType = widget.element.type;
+  DecorationCategory? _chosenElementType;
   PlatformFile? _selectedFile;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _chosenElementType = widget.categories.first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,45 +116,19 @@ class _DecorationElementEditorDialogState extends State<DecorationElementEditorD
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Тип элемента', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                  DropdownButton<String>(
-                    underline: SizedBox(),
-                    value: _chosenElementType,
-                    borderRadius: BorderRadius.circular(16),
-                    dropdownColor: AppColors.darkBlue,
-                    elevation: 0,
-                    focusColor: AppColors.darkBlue,
-                    itemHeight: 48,
-                    items: [
-                      DropdownMenuItem<String>(
-                        child: Padding(
-                          padding: AppInsets.horizontalInsets16,
-                          child: Text('Стикер', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                        ),
-                        value: DecorationElementTypes.STICKER,
-                      ),
-                      DropdownMenuItem<String>(
-                        child: Padding(
-                          padding: AppInsets.horizontalInsets16,
-                          child: Text('Анимация', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                        ),
-                        value: DecorationElementTypes.ANIMATION,
-                      ),
-                      DropdownMenuItem<String>(
-                        child: Padding(
-                          padding: AppInsets.horizontalInsets16,
-                          child: Text('Шрифт', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-                        ),
-                        value: DecorationElementTypes.FONT,
-                      ),
-                    ],
-                    onChanged: (value) => setState(() => _chosenElementType = value!),
-                  ),
+                  AppSpacing.horizontalSpace20,
+                  for (final category in widget.categories)
+                    DecorationCategoryCard(
+                      category: category,
+                      onTap: () => setState(() => _chosenElementType = category),
+                      isSelected: _chosenElementType == category,
+                    ),
                 ],
               ),
               AppSpacing.verticalSpace16,
               FilePickerWidget(
                 height: 196,
-                initialFileLink: widget.element.downloadLink,
+                initialWidget: CachedNetworkImage(imageUrl: widget.element.downloadLink),
                 onFileSelected: (file) {},
               ),
               AppSpacing.verticalSpace16,
