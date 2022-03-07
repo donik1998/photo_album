@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool? obscureText;
   final TextInputType? keyboardType;
+  final VoidCallback? onComplete;
   final Color? fillColor;
   final Color? labelColor;
   final String? Function(String?)? validator;
@@ -16,6 +17,7 @@ class CustomTextField extends StatelessWidget {
     Key? key,
     required this.labelText,
     required this.controller,
+    this.onComplete,
     this.obscureText,
     this.inputTextColor,
     this.validator,
@@ -33,6 +35,7 @@ class CustomTextField extends StatelessWidget {
         controller: controller,
         obscureText: obscureText ?? false,
         keyboardType: keyboardType,
+        onEditingComplete: onComplete,
         style: AppTextStyles.bodyTextStyle.copyWith(color: inputTextColor),
         decoration: InputDecoration(
           fillColor: fillColor ?? AppColors.grey,

@@ -1,8 +1,8 @@
-import 'package:photo_album/data/models/content_category.dart';
+import 'package:photo_album/data/models/decoration_category.dart';
 
 class HomePageState {
   final int pageIndex;
-  final List<ContentCategory> categoriesList;
+  final List<DecorationCategory> categoriesList;
 
   HomePageState({
     required this.pageIndex,
@@ -26,7 +26,7 @@ class HomePageSuccess extends HomePageState {
   HomePageSuccess({
     required int pageIndex,
     this.successMessage = '',
-    required List<ContentCategory> categoriesList,
+    required List<DecorationCategory> categoriesList,
   }) : super(pageIndex: pageIndex, categoriesList: categoriesList);
 }
 

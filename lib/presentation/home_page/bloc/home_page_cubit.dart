@@ -3,22 +3,15 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:photo_album/data/models/content_category.dart';
+import 'package:photo_album/data/models/decoration_category.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
-import 'package:photo_album/presentation/home_page/add_album_page_templates_body/home_page_add_album_page_template_body.dart';
-import 'package:photo_album/presentation/home_page/album_templates_body/album_page_templates_body.dart';
 import 'package:photo_album/presentation/home_page/bloc/home_page_state.dart';
 import 'package:photo_album/presentation/home_page/layouts/home_page_large_layout.dart';
 import 'package:photo_album/presentation/home_page/layouts/home_page_mobile_layout.dart';
-import 'package:photo_album/presentation/home_page/widgets/home_page_add_content_body.dart';
-import 'package:photo_album/presentation/home_page/widgets/home_page_decoration_elements_body.dart';
-import 'package:photo_album/presentation/home_page/widgets/home_page_orders_body.dart';
 import 'package:photo_album/presentation/theme/layout_decider.dart';
 
 class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
-  HomePageCubit() : super(HomePageInitial()) {
-    loadCategories();
-  }
+  HomePageCubit() : super(HomePageInitial());
 
   GlobalKey<FormState> createContentFormKey = GlobalKey<FormState>();
   TextEditingController contentTitleController = TextEditingController();
@@ -31,13 +24,7 @@ class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
 
   String createDecorationElementChosenType = DecorationElementTypes.STICKER;
 
-  final List<Widget> homePageBodies = [
-    HomePageOrdersBody(),
-    AlbumPageTemplatesBody(),
-    HomePageDecorationElementsBody(),
-    HomePageAddAlbumPageTemplatesBody(),
-    HomePageAddContentBody(),
-  ];
+  DecorationCategory? selectedCategory;
 
   void changeCurrentIndex(int newIndex) {
     currentPageIndex = newIndex;
@@ -64,13 +51,6 @@ class HomePageCubit extends Cubit<HomePageState> with LayoutDecider {
   }
 
   void changeCreatingElementType(String value) => createDecorationElementChosenType = value;
-
-  Future<void> loadCategories() async {
-    emit(HomePageLoading(pageIndex: state.pageIndex));
-    final categoryDocs = await FirebaseFirestore.instance.collection('categories').get();
-    final contentCategories = categoryDocs.docs.map((categoryDoc) => ContentCategory.fromJson(categoryDoc.data())).toList();
-    emit(HomePageSuccess(pageIndex: state.pageIndex, categoriesList: contentCategories));
-  }
 
   Future<void> saveData() async {
     if (selectedFile == null) {

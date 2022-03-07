@@ -3,8 +3,9 @@ import 'package:flutter/cupertino.dart';
 class AppSpacing {
   AppSpacing._();
 
-  static const horizontalSpace20 = const SizedBox(width: 20);
+  static const horizontalSpace8 = const SizedBox(width: 8);
   static const horizontalSpace16 = const SizedBox(width: 16);
+  static const horizontalSpace20 = const SizedBox(width: 20);
 
   static const verticalSpace4 = const SizedBox(height: 4);
   static const verticalSpace7 = const SizedBox(height: 7);

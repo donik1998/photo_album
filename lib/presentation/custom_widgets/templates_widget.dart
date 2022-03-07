@@ -41,14 +41,6 @@ class TemplatesWidget extends StatelessWidget {
             children: dataList.map<Widget>((e) => AlbumCard(album: e)).toList(),
           ),
         ),
-        // ListView.builder(
-        //   itemBuilder: (context, index) {
-        //     final album = dataList.elementAt(index);
-        //     return AlbumCard(album: album);
-        //   },
-        //   scrollDirection: Axis.horizontal,
-        //   itemCount: dataList.length,
-        // ),
       ],
     );
   }
