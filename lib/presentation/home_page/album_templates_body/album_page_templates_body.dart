@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
 import 'package:photo_album/data/models/template_page_model.dart';
 import 'package:photo_album/presentation/custom_widgets/empty_list_widget.dart';
 import 'package:photo_album/presentation/custom_widgets/loader.dart';
 import 'package:photo_album/presentation/home_page/album_templates_body/widgets/album_page_template_card.dart';
 import 'package:photo_album/presentation/home_page/album_templates_body/widgets/edit_album_template_page.dart';
+import 'package:photo_album/presentation/home_page/bloc/home_page_cubit.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 
@@ -85,26 +87,27 @@ class _AlbumPageTemplatesBodyState extends State<AlbumPageTemplatesBody> {
                   builder: (context, templatesSnapshot) {
                     if (templatesSnapshot.connectionState == ConnectionState.waiting)
                       return Loader();
-                    else if (templatesSnapshot.data?.docs.isEmpty ?? false)
+                    else if (templatesSnapshot.data?.docs.isEmpty ?? false || !templatesSnapshot.hasData)
                       return EmptyListWidget();
                     else
-                      return GridView.builder(
-                        itemCount: templatesSnapshot.data!.docs.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                        ),
-                        itemBuilder: (context, index) {
-                          final template = AlbumPageTemplate.fromJson(templatesSnapshot.data!.docs.elementAt(index).data());
-                          return AlbumPageTemplateCard(
-                            template: template,
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (context) => EditAlbumTemplatePage(template: template),
+                      return Wrap(
+                        spacing: 16,
+                        runSpacing: 16,
+                        children: [
+                          for (final doc in templatesSnapshot.data!.docs)
+                            AlbumPageTemplateCard(
+                              template: AlbumPageTemplate.fromJson(doc.data()..addAll({'id': doc.id})),
+                              onTap: () => showDialog<String>(
+                                context: context,
+                                builder: (context) => EditAlbumTemplatePage(
+                                  template: AlbumPageTemplate.fromJson(doc.data()..addAll({'id': doc.id})),
+                                  categories: widget.templateCategories,
+                                ),
+                              ).then((value) {
+                                if (value != null) context.read<HomePageCubit>().showMessage(value);
+                              }),
                             ),
-                          );
-                        },
+                        ],
                       );
                   },
                 ),

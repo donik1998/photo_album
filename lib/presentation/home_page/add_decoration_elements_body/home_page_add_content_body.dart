@@ -140,46 +140,6 @@ class _HomePageAddContentBodyState extends State<HomePageAddContentBody> {
                 runSpacing: 16,
                 spacing: 16,
               ),
-            // Row(
-            //   mainAxisSize: MainAxisSize.max,
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Text('Тип элемента', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-            //     DropdownButton<String>(
-            //       underline: SizedBox(),
-            //       value: cubit.createDecorationElementChosenType,
-            //       borderRadius: BorderRadius.circular(16),
-            //       dropdownColor: AppColors.darkBlue,
-            //       elevation: 0,
-            //       focusColor: AppColors.darkBlue,
-            //       itemHeight: 48,
-            //       items: [
-            //         DropdownMenuItem<String>(
-            //           child: Padding(
-            //             padding: AppInsets.horizontalInsets16,
-            //             child: Text('Стикер', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-            //           ),
-            //           value: DecorationElementTypes.STICKER,
-            //         ),
-            //         DropdownMenuItem<String>(
-            //           child: Padding(
-            //             padding: AppInsets.horizontalInsets16,
-            //             child: Text('Анимация', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-            //           ),
-            //           value: DecorationElementTypes.ANIMATION,
-            //         ),
-            //         DropdownMenuItem<String>(
-            //           child: Padding(
-            //             padding: AppInsets.horizontalInsets16,
-            //             child: Text('Шрифт', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
-            //           ),
-            //           value: DecorationElementTypes.FONT,
-            //         ),
-            //       ],
-            //       onChanged: (value) => cubit.changeCreatingElementType(value ?? DecorationElementTypes.STICKER),
-            //     ),
-            //   ],
-            // ),
             AppSpacing.verticalSpace16,
             Text('Выберите файл', style: AppTextStyles.smallTitleBold.copyWith(color: AppColors.white)),
             AppSpacing.verticalSpace16,
