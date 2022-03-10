@@ -4,7 +4,7 @@ import 'package:photo_album/data/models/album_template.dart';
 class DataBaseService {
   DataBaseService._();
 
-  static DataBaseService get instance => DataBaseService._();
+  static DataBaseService instance = DataBaseService._();
 
   Future<void> saveAlbumToDB(AlbumModel albumModel) async {
     await AppDatabase.instance.insertAlbum(albumModel.databaseModel);

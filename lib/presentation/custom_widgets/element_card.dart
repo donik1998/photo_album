@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_album/presentation/theme/app_instets.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 
@@ -17,32 +18,41 @@ class ElementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      elevation: 0,
-      borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        onTap: onTap,
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CachedNetworkImage(
-                imageUrl: imageLink,
-                width: 110,
-                height: 110,
-                imageBuilder: (context, image) => ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image(image: image, fit: BoxFit.fitWidth),
+    return Container(
+      width: 110,
+      padding: EdgeInsets.only(right: 16),
+      child: Material(
+        elevation: 0,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+            ),
+            padding: AppInsets.horizontalInsets8,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CachedNetworkImage(
+                  imageUrl: imageLink,
+                  imageBuilder: (context, image) => ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image(image: image),
+                    ),
+                  ),
+                  errorWidget: (context, url, trace) => Center(child: Icon(Icons.error_outline)),
                 ),
-                errorWidget: (context, url, trace) => Center(child: Icon(Icons.error_outline)),
-              ),
-              AppSpacing.verticalSpace7,
-              Text(title, style: AppTextStyles.txt13),
-            ],
+                AppSpacing.verticalSpace7,
+                Text(title, style: AppTextStyles.txt13),
+              ],
+            ),
           ),
         ),
       ),

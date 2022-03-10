@@ -1,17 +1,17 @@
 class AlbumPageTemplate {
   final String title;
   final String type;
-  final String downloadLink;
+  final List<String> downloadLinks;
 
   AlbumPageTemplate({
     required this.title,
     required this.type,
-    required this.downloadLink,
+    required this.downloadLinks,
   });
 
   factory AlbumPageTemplate.fromJson(Map<String, dynamic> data) => AlbumPageTemplate(
         title: data['title'],
         type: data['type'],
-        downloadLink: data['link'],
+        downloadLinks: data['links'].map<String>((link) => link.toString()).toList(),
       );
 }

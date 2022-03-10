@@ -8,7 +8,7 @@ class AlbumPageTemplateCategory {
   });
 
   factory AlbumPageTemplateCategory.fromJson(Map<String, dynamic> data) => AlbumPageTemplateCategory(
-        masks: data['type_mask'],
+        masks: data['type_masks'],
         value: data['type'],
       );
 }
