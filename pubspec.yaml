@@ -26,6 +26,10 @@ dependencies:
   build_runner: ^2.1.7
   google_sign_in: ^5.2.4
   provider: ^6.0.2
+  file_picker: ^4.5.0
+  permission_handler: ^9.2.0
+  zoom_widget: ^0.2.1
+  matrix4_transform: ^2.0.1
 
 dev_dependencies:
   flutter_test:

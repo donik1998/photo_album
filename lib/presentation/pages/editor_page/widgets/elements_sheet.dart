@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
@@ -53,13 +54,6 @@ class _ElementsSheetState extends State<ElementsSheet> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                // CustomButton.text(
-                //   text: 'Шаблоны',
-                //   onTap: () => setState(() => _selectedCategory = category),
-                //   textStyle: AppTextStyles.smallTitleBold
-                //       .copyWith(color: _selectedCategory == category ? AppColors.white : AppColors.black),
-                //   color: _selectedCategory == category ? AppColors.pinkLight : AppColors.white,
-                // ),
                 for (final category in widget.decorationCategories)
                   Padding(
                     padding: const EdgeInsets.only(right: 16),
@@ -106,22 +100,34 @@ class _ElementsSheetState extends State<ElementsSheet> {
             ),
           if (_selectedCategory?.title == 'Фотографии')
             Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomButton.text(
-                    text: 'Выбрать фото с устройства',
-                    onTap: () {},
-                    color: AppColors.pinkLight,
-                  ),
-                  AppSpacing.verticalSpace16,
-                  CustomButton.text(
-                    text: 'Сделать фото',
-                    onTap: () {},
-                    color: AppColors.pinkLight,
-                  ),
-                ],
+              child: Center(
+                child: CustomButton.text(
+                  text: 'Выбрать фото с устройства',
+                  onTap: () async {
+                    print('picking stuff');
+                    final file = await FilePicker.platform.pickFiles(
+                      allowMultiple: false,
+                      type: FileType.image,
+                    );
+                    print('picking stuff ends ');
+                    if (file is FilePickerResult) {
+                      print('returning stuff');
+                      Navigator.pop(
+                        context,
+                        DecorationElement.local(
+                          downloadLink: '',
+                          title: file.files.first.name,
+                          localPath: file.files.first.path!,
+                          height: 150,
+                          width: 150,
+                          x: MediaQuery.of(context).size.width / 2,
+                          y: MediaQuery.of(context).size.height / 2,
+                        ),
+                      );
+                    }
+                  },
+                  color: AppColors.pinkLight,
+                ),
               ),
             ),
           Expanded(

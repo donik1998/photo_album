@@ -24,20 +24,31 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<!-- Put me in the [my_project]/ios/Runner/Info.plist file -->
-    <!-- Google Sign-in Section -->
-    <key>CFBundleURLTypes</key>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need to access media library so that you can add your photos to album</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We might need microphone to record sound for your album</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We will need camera so that you can add real time photos for ypur album</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.176483108320-nahh7ecaibk3dr3tb38r3jkq4c3l9cip</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIBackgroundModes</key>
     <array>
-    	<dict>
-    		<key>CFBundleTypeRole</key>
-    		<string>Editor</string>
-    		<key>CFBundleURLSchemes</key>
-    		<array>
-                <string>com.googleusercontent.apps.176483108320-nahh7ecaibk3dr3tb38r3jkq4c3l9cip</string>
-    		</array>
-    	</dict>
+       <string>fetch</string>
+       <string>remote-notification</string>
     </array>
-    <!-- End of the Google Sign-in Section -->
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

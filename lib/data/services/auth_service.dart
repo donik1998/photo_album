@@ -32,17 +32,10 @@ class AuthService {
 
   Future<bool> signInWithGoogle() async {
     try {
-      print('1');
-      final isLoggedIn = await _googleSignInPlugin.isSignedIn();
-      print('is in: $isLoggedIn');
       final googleUser = await _googleSignInPlugin.signIn();
-      print('2');
       final googleUserAuth = await googleUser?.authentication;
-      print('3');
       final credential = GoogleAuthProvider.credential(idToken: googleUserAuth?.idToken, accessToken: googleUserAuth?.accessToken);
-      print('4');
       await FirebaseAuth.instance.signInWithCredential(credential);
-      print('5');
       return true;
     } catch (e) {
       print(e.toString());
