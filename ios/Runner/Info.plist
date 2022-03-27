@@ -29,7 +29,16 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We might need microphone to record sound for your album</string>
 	<key>NSCameraUsageDescription</key>
-	<string>We will need camera so that you can add real time photos for ypur album</string>
+	<string>We will need camera so that you can add real time photos for your album</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>We need access to documents directory to store albums created by user</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -42,13 +51,12 @@
 		</dict>
 	</array>
 	<key>UIBackgroundModes</key>
-    <array>
-       <string>fetch</string>
-       <string>remote-notification</string>
-    </array>
-    <key>LSSupportsOpeningDocumentsInPlace</key>
-    <true/>
-
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

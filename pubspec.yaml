@@ -30,11 +30,43 @@ dependencies:
   permission_handler: ^9.2.0
   zoom_widget: ^0.2.1
   matrix4_transform: ^2.0.1
+  screenshot: ^1.2.3
+  path_provider: ^2.0.9
+  photo_gallery: ^1.1.1
+  image_picker: ^0.8.4+11
+  intl: ^0.17.0
+ #BASIC
+  nb_utils: ^4.4.10
+
+
+    #ADMOB
+    #  google_mobile_ads: ^1.0.1
+
+    #STATE MANAGEMENT
+#  mobx: any
+  flutter_mobx: any
+#
+  device_info_plus: any
+  image: any
+  google_fonts: any
+  url_launcher: any
+  share: any
+  package_info: any
+  http: any
+  glass_kit: any
+  photo_view: any
+  flutter_image_compress: any
+  image_cropper: any
+  video_trimmer: any
+  font_awesome_flutter: any
+  flutter_vector_icons: any
+  flutter_native_image: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   moor_generator: any
+  mobx_codegen: any
 
 
 flutter_native_splash:

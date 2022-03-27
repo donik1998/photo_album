@@ -38,14 +38,9 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance?.addPostFrameCallback(
       (timeStamp) async {
         final decorationCategories = await DecorationService.instance.getDecorationCategories();
-        decorationCategories.insert(
-          0,
-          DecorationCategory(title: 'Фотографии', titleMasks: {'ru': 'Фотографии'}),
-        );
-        decorationCategories.insert(
-          0,
-          DecorationCategory(title: 'Шаблоны', titleMasks: {'ru': 'Шаблоны'}),
-        );
+        decorationCategories.insert(0, DecorationCategory(title: 'Фотографии', titleMasks: {'ru': 'Фотографии'}));
+        decorationCategories.insert(0, DecorationCategory(title: 'Шаблоны', titleMasks: {'ru': 'Шаблоны'}));
+        decorationCategories.add(DecorationCategory(title: 'Текст', titleMasks: {'ru': 'Текст'}));
         final albumPageTemplateCategories = await TemplatesService.instance.getAlbumCategories();
         final localAlbums = await DataBaseService.instance.getAlbumFromDB();
         _decorationCategories = decorationCategories;
