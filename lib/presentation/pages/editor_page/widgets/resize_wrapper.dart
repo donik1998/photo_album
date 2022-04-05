@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ResizeWrapper extends StatefulWidget {
   final Widget child;
   final Size childSize;
-  final void Function(double, double) onDragEnd;
+  final void Function(double width, double height) onDragEnd;
 
   const ResizeWrapper({
     Key? key,
@@ -38,14 +38,13 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: width,
+    return SizedBox.fromSize(
+      size: widget.childSize,
       child: Stack(
         children: <Widget>[
           Positioned(
-            top: top,
-            left: left,
+            top: 0,
+            left: 0,
             child: Container(height: height, width: width, child: widget.child),
           ),
           // top left
@@ -67,21 +66,7 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
               },
             ),
           ),
-          // top middle
-          Positioned(
-            top: top - ballDiameter / 2,
-            left: left + width / 2 - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var newHeight = height - dy;
-                setState(() {
-                  height = newHeight > 0 ? newHeight : 0;
-                  top = top + dy;
-                });
-                widget.onDragEnd(width, height);
-              },
-            ),
-          ),
+
           // top right
           Positioned(
             top: top - ballDiameter / 2,
@@ -98,20 +83,6 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
                   width = newWidth > 0 ? newWidth : 0;
                   top = top - mid;
                   left = left - mid;
-                });
-                widget.onDragEnd(width, height);
-              },
-            ),
-          ),
-          // center right
-          Positioned(
-            top: top + height / 2 - ballDiameter / 2,
-            left: left + width - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var newWidth = width + dx;
-                setState(() {
-                  width = newWidth > 0 ? newWidth : 0;
                 });
                 widget.onDragEnd(width, height);
               },
@@ -138,21 +109,6 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
               },
             ),
           ),
-          // bottom center
-          Positioned(
-            top: top + height - ballDiameter / 2,
-            left: left + width / 2 - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var newHeight = height + dy;
-
-                setState(() {
-                  height = newHeight > 0 ? newHeight : 0;
-                });
-                widget.onDragEnd(width, height);
-              },
-            ),
-          ),
           // bottom left
           Positioned(
             top: top + height - ballDiameter / 2,
@@ -169,22 +125,6 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
                   width = newWidth > 0 ? newWidth : 0;
                   top = top - mid;
                   left = left - mid;
-                });
-                widget.onDragEnd(width, height);
-              },
-            ),
-          ),
-          //left center
-          Positioned(
-            top: top + height / 2 - ballDiameter / 2,
-            left: left - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var newWidth = width - dx;
-
-                setState(() {
-                  width = newWidth > 0 ? newWidth : 0;
-                  left = left + dx;
                 });
                 widget.onDragEnd(width, height);
               },

@@ -1,9 +1,5 @@
-import 'dart:io';
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
@@ -39,6 +35,7 @@ class _ElementsSheetState extends State<ElementsSheet> {
   DecorationCategory? _selectedCategory;
   CrossFadeState _sheetFadeState = CrossFadeState.showFirst;
   AlbumPageTemplate? _selectedTemplate;
+  List<String> fonts = ['Oswald', 'Roboto', 'Sans serif'];
 
   @override
   void initState() {
@@ -125,21 +122,27 @@ class _ElementsSheetState extends State<ElementsSheet> {
                   onTap: () async {
                     final file = await ImagePicker().pickImage(source: ImageSource.camera);
                     if (file is XFile) {
-                      final image = Image.file(File(file.path));
-                      double suitableHeight = (image.height ?? 0) > MediaQuery.of(context).size.height / 2
-                          ? MediaQuery.of(context).size.height / 2
-                          : image.height ?? 150;
-                      double suitableWidth = (image.width ?? 0) > MediaQuery.of(context).size.width / 2
-                          ? MediaQuery.of(context).size.width / 2
-                          : image.width ?? 150;
+                      final image = await decodeImageFromList(await file.readAsBytes());
+                      double suitableWidth = 0;
+                      double suitableHeight = 0;
+                      if (image.height * 0.25 > MediaQuery.of(context).size.height) {
+                        suitableHeight = image.height * 0.125;
+                      } else {
+                        suitableHeight = image.height * 0.25;
+                      }
+                      if (image.width * 0.25 > MediaQuery.of(context).size.width) {
+                        suitableWidth = image.width * 0.125;
+                      } else {
+                        suitableWidth = image.width * 0.25;
+                      }
                       Navigator.pop(
                         context,
                         DecorationElement.local(
                           downloadLink: '',
                           title: file.name,
                           localPath: file.path,
-                          height: suitableHeight,
                           width: suitableWidth,
+                          height: suitableHeight,
                           x: MediaQuery.of(context).size.width / 2,
                           y: MediaQuery.of(context).size.height / 2,
                         ),
@@ -155,18 +158,28 @@ class _ElementsSheetState extends State<ElementsSheet> {
                     final file = await ImagePicker().pickImage(source: ImageSource.gallery);
                     if (file is XFile) {
                       final image = await decodeImageFromList(await file.readAsBytes());
-                      final suitableHeight = min(image.height, MediaQuery.of(context).size.height / 2);
-                      final suitableWidth = min(image.width, MediaQuery.of(context).size.width);
+                      double suitableWidth = 0;
+                      double suitableHeight = 0;
+                      if (image.height * 0.25 > MediaQuery.of(context).size.height) {
+                        suitableHeight = image.height * 0.125;
+                      } else {
+                        suitableHeight = image.height * 0.25;
+                      }
+                      if (image.width * 0.25 > MediaQuery.of(context).size.width) {
+                        suitableWidth = image.width * 0.125;
+                      } else {
+                        suitableWidth = image.width * 0.25;
+                      }
                       Navigator.pop(
                         context,
                         DecorationElement.local(
                           downloadLink: '',
                           title: file.name,
                           localPath: file.path,
-                          height: suitableHeight.toDouble(),
-                          width: suitableWidth.toDouble(),
-                          x: (MediaQuery.of(context).size.width / 2) - (suitableWidth / 2),
-                          y: (MediaQuery.of(context).size.height / 2) - (suitableHeight / 2),
+                          width: suitableWidth,
+                          height: suitableHeight,
+                          x: 0,
+                          y: 0,
                         ),
                       );
                     }
@@ -175,21 +188,30 @@ class _ElementsSheetState extends State<ElementsSheet> {
                 ),
               ],
               if (_selectedCategory?.title == 'Текст') ...[
-                FutureBuilder<>(
-                  future: ,
-                  builder: (context, fontsSnapshot) {
-                    return GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
-                        childAspectRatio: 56 / 56,
-                      ),
-                      itemBuilder: (context, index) {
-                        return Container();
-                      },
-                    );
-                  },
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 110 / 110,
+                    ),
+                    itemCount: fonts.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Sample',
+                            style: TextStyle(fontFamily: fonts.elementAt(index), fontSize: 14),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
               if (_onlineContentNeeded)
@@ -292,11 +314,6 @@ class _ElementsSheetState extends State<ElementsSheet> {
         ),
       ),
     );
-  }
-
-  Future<List<String>> _getFontFamilies() async {
-    // todo load fonts here
-    return List.empty();
   }
 
   bool get _onlineContentNeeded =>

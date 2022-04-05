@@ -3,7 +3,7 @@ import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
 
 class CustomIconButton extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final VoidCallback onTap;
 
   const CustomIconButton({
@@ -29,7 +29,7 @@ class CustomIconButton extends StatelessWidget {
             shape: BoxShape.circle,
             color: AppColors.pinkLight,
           ),
-          child: Center(child: Icon(icon, color: AppColors.white, size: 18)),
+          child: Center(child: icon),
         ),
       ),
     );

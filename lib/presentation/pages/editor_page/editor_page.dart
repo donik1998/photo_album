@@ -9,6 +9,7 @@ import 'package:photo_album/presentation/pages/editor_page/widgets/elements_shee
 import 'package:photo_album/presentation/pages/editor_page/widgets/redactor_page_element.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
+import 'package:photo_album/presentation/theme/app_text_styles.dart';
 import 'package:photo_album/presentation/theme/different_icons.dart';
 import 'package:photo_album/presentation/utils/routes.dart';
 import 'package:screenshot/screenshot.dart';
@@ -24,12 +25,14 @@ class RedactorPage extends StatefulWidget {
 
 class _RedactorPageState extends State<RedactorPage> {
   ScrollController scrollController = ScrollController();
-  List<DecorationElement> elements = List.empty(growable: true);
+  List<EditorPage> _pages = [];
+  late EditorPage selectedPage;
   DecorationElement? _selectedElement;
   ScreenshotController screenshotController = ScreenshotController();
-  Widget? _backImage;
+
   bool fabIsVisible = true;
   bool _resizeEnabled = false;
+  bool _screenshotInProgress = false;
 
   @override
   void initState() {
@@ -37,7 +40,10 @@ class _RedactorPageState extends State<RedactorPage> {
     scrollController.addListener(() {});
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       final args = ModalRoute.of(context)!.settings.arguments as RedactorPageArgs;
-      setState(() => _backImage = args.backImage);
+      setState(() {
+        _pages.add(EditorPage(elements: [], backImage: args.backImage));
+        selectedPage = _pages.first;
+      });
       if (args.openElementsSheetFirst)
         _showBottomSheet(
           context: context,
@@ -67,15 +73,18 @@ class _RedactorPageState extends State<RedactorPage> {
           ),
           IconButton(
             onPressed: () async {
+              // todo generate pdf
               Directory? dir;
               if (Platform.isAndroid) {
                 dir = await getExternalStorageDirectory();
               } else if (Platform.isIOS) {
                 dir = await getApplicationDocumentsDirectory();
               }
-              final image = await screenshotController.capture(delay: Duration.zero);
+              setState(() => _screenshotInProgress = true);
+              final image = await screenshotController.capture(delay: Duration(milliseconds: 100));
+              setState(() => _screenshotInProgress = false);
               if (image != null) {
-                final imagePath = await File('${dir?.path}/${DateFormat('dd_MM_yyyy_HH_mm_ss')}.png').create();
+                final imagePath = await File('${dir?.path}/${DateFormat('dd_MM_yyyy_HH_mm_ss').format(DateTime.now())}.png').create();
                 await imagePath.writeAsBytes(image);
               }
             },
@@ -89,8 +98,8 @@ class _RedactorPageState extends State<RedactorPage> {
             onPressed: () {
               if (_selectedElement != null)
                 setState(() {
-                  elements.removeWhere((element) => element.title == _selectedElement!.title);
-                  elements.add(_selectedElement!);
+                  selectedPage.elements.removeWhere((element) => element.title == _selectedElement!.title);
+                  selectedPage.elements.add(_selectedElement!);
                 });
             },
             icon: Icon(MyFlutterApp.popup, color: Color(0xFF2E2E2E), size: 24),
@@ -102,41 +111,38 @@ class _RedactorPageState extends State<RedactorPage> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (_backImage != null)
+            if (selectedPage.backImage != null)
               Container(
                 margin: AppInsets.horizontalInsets16,
                 width: MediaQuery.of(context).size.width,
-                child: _backImage,
+                child: selectedPage.backImage,
               ),
-            for (final element in elements)
+            for (final element in selectedPage.elements)
               Positioned(
                 top: element.y,
                 left: element.x,
                 child: RedactorPageElement(
+                  hideControls: _screenshotInProgress,
                   child: element,
-                  hasResizeControls: _resizeEnabled,
-                  onCropped: (newFile) => setState(() {
-                    final index = elements.indexOf(element);
-                    elements.removeAt(index);
-                    elements.insert(index, element.copyWith(localPath: newFile.path));
+                  onCropped: (newFileData) => setState(() {
+                    final index = selectedPage.elements.indexOf(element);
+                    if (index.isNegative) return;
+                    selectedPage.elements[index] = element.copyWith(
+                      localPath: newFileData.file.path,
+                      width: newFileData.dimensions.width,
+                      height: newFileData.dimensions.height,
+                    );
                   }),
-                  onScaleDown: () => setState(() {
-                    final index = elements.indexOf(element);
-                    elements.removeAt(index);
-                    elements.insert(index, element.copyWith(width: element.width - 25, height: element.height - 25));
+                  onResized: (newSize) => setState(() {
+                    final index = selectedPage.elements.indexOf(element);
+                    if (index.isNegative) return;
+                    selectedPage.elements[index] = element.copyWith(width: newSize.width, height: newSize.height);
                   }),
-                  onScaleUp: () => setState(() {
-                    final index = elements.indexOf(element);
-                    elements.removeAt(index);
-                    elements.insert(index, element.copyWith(width: element.width + 25, height: element.height + 25));
-                  }),
-                  onDeleted: () => setState(() => elements.remove(element)),
+                  onDeleted: () => setState(() => selectedPage.elements.remove(element)),
                   onDragged: (newOffset) => setState(() {
-                    final renderBox = context.findRenderObject() as RenderBox;
-                    Offset off = renderBox.localToGlobal(newOffset);
-                    final elementIndex = elements.indexOf(element);
-                    elements.removeAt(elementIndex);
-                    elements.insert(elementIndex, element.copyWith(x: off.dx, y: off.dy - 80));
+                    final elementIndex = selectedPage.elements.indexOf(element);
+                    if (elementIndex.isNegative) return;
+                    selectedPage.elements[elementIndex] = element.copyWith(x: element.x + newOffset.dx, y: element.y + newOffset.dy);
                     _selectedElement = element;
                   }),
                 ),
@@ -159,6 +165,29 @@ class _RedactorPageState extends State<RedactorPage> {
           },
         ),
       ),
+      bottomNavigationBar: SizedBox(
+        height: 56,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: List.from(
+            _pages.map(
+              (e) => GestureDetector(
+                onTap: () => setState(() => selectedPage = e),
+                child: Container(
+                  margin: AppInsets.horizontalInsets16,
+                  height: 48,
+                  width: 64,
+                  decoration: BoxDecoration(
+                    color: e == selectedPage ? AppColors.white : AppColors.pinkLight.withOpacity(0.5),
+                    border: Border.all(color: AppColors.pinkLight, width: 1),
+                  ),
+                  child: Center(child: Text('${_pages.indexOf(e) + 1}', style: AppTextStyles.smallTitleBold)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -179,8 +208,75 @@ class _RedactorPageState extends State<RedactorPage> {
           ),
         ),
       ).then((value) {
-        if (value is String) setState(() => _backImage = CachedNetworkImage(imageUrl: value, fit: BoxFit.fitWidth));
-        if (value is DecorationElement) elements.add(value);
+        if (value is String) {
+          if (selectedPage.backImage == null)
+            setState(() => selectedPage.backImage = CachedNetworkImage(imageUrl: value, fit: BoxFit.fitWidth));
+          else
+            showDialog(
+              context: context,
+              builder: (context) => BackImageSubstitutionConfirmationDialog(
+                onCancel: () {
+                  setState(() {
+                    final newPage = EditorPage(elements: [], backImage: CachedNetworkImage(imageUrl: value, fit: BoxFit.fitWidth));
+                    _pages.add(newPage);
+                    selectedPage = newPage;
+                  });
+                },
+                onConfirm: () => setState(() {
+                  selectedPage.backImage = CachedNetworkImage(imageUrl: value, fit: BoxFit.fitWidth);
+                }),
+              ),
+            );
+        }
+        if (value is DecorationElement) {
+          setState(() {
+            selectedPage.elements.add(value);
+            _selectedElement = value;
+          });
+        }
         setState(() => fabIsVisible = true);
       });
+}
+
+class BackImageSubstitutionConfirmationDialog extends StatelessWidget {
+  final VoidCallback onCancel, onConfirm;
+
+  const BackImageSubstitutionConfirmationDialog({
+    Key? key,
+    required this.onCancel,
+    required this.onConfirm,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: Text('Похоже что у вас уже есть фоновая картинка. Хотите ее заменить?'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            onCancel();
+            Navigator.pop(context);
+          },
+          child: Text('Нет, создать отдельную страницу'),
+        ),
+        TextButton(
+          onPressed: () {
+            onConfirm();
+            Navigator.pop(context);
+          },
+          child: Text('Да, заменить фон'),
+        ),
+      ],
+    );
+  }
+}
+
+class EditorPage {
+  final List<DecorationElement> elements;
+  Widget? backImage;
+
+  EditorPage({
+    required this.elements,
+    this.backImage,
+  });
 }

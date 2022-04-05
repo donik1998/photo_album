@@ -5,80 +5,119 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
 import 'package:photo_album/presentation/custom_widgets/custom_icon_button.dart';
+import 'package:photo_album/presentation/pages/editor_page/widgets/resize_wrapper.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 
-class RedactorPageElement extends StatelessWidget {
+class RedactorPageElement extends StatefulWidget {
   final DecorationElement child;
-  final ValueChanged<File> onCropped;
+  final ValueChanged<CropData> onCropped;
   final ValueChanged<Offset> onDragged;
-  final VoidCallback onDeleted, onScaleDown, onScaleUp;
-  final bool hasResizeControls;
+  final ValueChanged<Size> onResized;
+  final VoidCallback onDeleted;
+  final bool hideControls;
 
   const RedactorPageElement({
     Key? key,
     required this.child,
-    required this.hasResizeControls,
+    required this.hideControls,
     required this.onDragged,
-    required this.onScaleDown,
-    required this.onScaleUp,
+    required this.onResized,
     required this.onCropped,
     required this.onDeleted,
   }) : super(key: key);
 
+  @override
+  State<RedactorPageElement> createState() => _RedactorPageElementState();
+}
+
+class _RedactorPageElementState extends State<RedactorPageElement> {
+  double scale = 1;
+  bool hasResizeControls = false;
+  bool hasTranslateControls = true;
+  ImageCropper cropper = ImageCropper();
+
+  late Size childSize = Size(widget.child.width * scale, widget.child.height * scale);
+  late Widget childWidget =
+      widget.child.isLocal ? Image.file(File(widget.child.localPath)) : CachedNetworkImage(imageUrl: widget.child.downloadLink);
+  @override
+  initState() {
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
-    Size childSize = Size(child.width, child.height);
-    final childWidget = child.isLocal ? Image.file(File(child.localPath)) : CachedNetworkImage(imageUrl: child.downloadLink);
-    return SizedBox.fromSize(
-      size: childSize,
-      child: Column(
-        children: [
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!widget.hideControls)
           Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(),
               CustomIconButton(
-                icon: Icons.delete,
-                onTap: onDeleted,
+                icon: Icon(Icons.zoom_out_map, color: Colors.white, size: 18),
+                onTap: () => setState(() => hasResizeControls = true),
               ),
+              AppSpacing.horizontalSpace16,
               CustomIconButton(
-                icon: Icons.crop,
-                onTap: () => ImageCropper()
-                    .cropImage(sourcePath: child.localPath, androidUiSettings: AndroidUiSettings(toolbarTitle: 'Обрезать картинку'))
-                    .then((value) {
-                  if (value != null) {
-                    onCropped(value);
+                icon: Icon(Icons.crop, color: Colors.white, size: 18),
+                onTap: () => cropper.cropImage(sourcePath: File(widget.child.localPath).path).then((value) async {
+                  if (value is File) {
+                    final image = await decodeImageFromList(value.readAsBytesSync());
+                    double suitableWidth = 0;
+                    double suitableHeight = 0;
+                    if (image.height * 0.25 > MediaQuery.of(context).size.height)
+                      suitableHeight = image.height * 0.125;
+                    else
+                      suitableHeight = image.height * 0.25;
+
+                    if (image.width * 0.25 > MediaQuery.of(context).size.width)
+                      suitableWidth = image.width * 0.125;
+                    else
+                      suitableWidth = image.width * 0.25;
+                    widget.onCropped(CropData(file: value, dimensions: Size(suitableWidth, suitableHeight)));
+                    setState(() {
+                      childWidget = Image.file(value);
+                      childSize = Size(suitableWidth, suitableHeight);
+                    });
                   }
                 }),
               ),
+              AppSpacing.horizontalSpace16,
               CustomIconButton(
-                icon: Icons.zoom_in,
-                onTap: onScaleUp,
+                icon: Icon(Icons.delete, color: Colors.white, size: 18),
+                onTap: () => widget.onDeleted(),
               ),
-              CustomIconButton(
-                icon: Icons.zoom_out,
-                onTap: onScaleDown,
-              ),
-              CustomIconButton(
-                icon: Icons.camera,
-                onTap: () {},
-              ),
-              SizedBox(),
             ],
           ),
-          AppSpacing.verticalSpace16,
-          Draggable<DecorationElement>(
-            data: child,
-            onDragEnd: (details) => onDragged(Offset(details.offset.dx, details.offset.dy - 50)),
-            feedback: Opacity(
-              opacity: 0.75,
-              child: SizedBox.fromSize(size: childSize, child: childWidget),
-            ),
-            childWhenDragging: Container(),
-            child: SizedBox.fromSize(size: childSize, child: childWidget),
-          ),
-        ],
-      ),
+        AppSpacing.verticalSpace16,
+        GestureDetector(
+          onPanUpdate: (details) {
+            setState(() {
+              hasResizeControls = false;
+            });
+            widget.onDragged(details.delta);
+          },
+          child: hasResizeControls
+              ? ResizeWrapper(
+                  child: childWidget,
+                  childSize: childSize,
+                  onDragEnd: (width, height) => setState(() => childSize = Size(width, height)),
+                )
+              : SizedBox.fromSize(
+                  size: childSize,
+                  child: childWidget,
+                ),
+        ),
+      ],
     );
   }
+}
+
+class CropData {
+  final File file;
+  final Size dimensions;
+
+  CropData({
+    required this.file,
+    required this.dimensions,
+  });
 }
