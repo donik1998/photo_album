@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class ResizeWrapper extends StatefulWidget {
@@ -30,8 +32,8 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
     var newWidth = width + dx;
 
     setState(() {
-      height = newHeight > 0 ? newHeight : 0;
-      width = newWidth > 0 ? newWidth : 0;
+      height = max(0, newHeight);
+      width = max(0, newWidth);
     });
     widget.onDragEnd(width, height);
   }

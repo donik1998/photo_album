@@ -14,4 +14,7 @@ class DataBaseService {
     final localAlbums = await AppDatabase.instance.getAllAlbums();
     return localAlbums.map<AlbumModel>((e) => AlbumModel.fromLocalAlbum(e)).toList();
   }
+
+  Stream<List<AlbumModel>> get localAlbumsStream => AppDatabase.instance.localAlbumStream
+      .map<List<AlbumModel>>((event) => List<AlbumModel>.from(event.map<AlbumModel>((e) => AlbumModel.fromLocalAlbum(e))));
 }

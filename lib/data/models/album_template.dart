@@ -65,7 +65,7 @@ class AlbumModel {
 
   factory AlbumModel.fromLocalAlbum(Album localAlbum) {
     final cover = AlbumCover.fromMap(jsonDecode(localAlbum.cover));
-    final pages = jsonDecode(localAlbum.pages).map((entry) => AlbumPage.fromMap(entry)).toList();
+    final pages = jsonDecode(localAlbum.pages).map<AlbumPage>((entry) => AlbumPage.fromMap(entry)).toList();
     return AlbumModel(
       pages: pages,
       cover: cover,
@@ -78,6 +78,29 @@ class AlbumModel {
       heightInch: localAlbum.heightInch,
     );
   }
+
+  AlbumModel copyWith({
+    String? title,
+    String? type,
+    String? thumbnailPath,
+    double? widthCm,
+    double? heightCm,
+    double? widthInch,
+    double? heightInch,
+    List<AlbumPage>? pages,
+    AlbumCover? cover,
+  }) =>
+      AlbumModel(
+        pages: pages ?? this.pages,
+        cover: cover ?? this.cover,
+        title: title ?? this.title,
+        thumbnailPath: thumbnailPath ?? this.thumbnailPath,
+        type: type ?? this.type,
+        widthCm: widthCm ?? this.widthCm,
+        heightCm: heightCm ?? this.heightCm,
+        widthInch: widthInch ?? this.widthInch,
+        heightInch: heightInch ?? this.heightInch,
+      );
 }
 
 class AlbumPage {

@@ -37,8 +37,14 @@ class _RedactorPageElementState extends State<RedactorPageElement> {
   ImageCropper cropper = ImageCropper();
 
   late Size childSize = Size(widget.child.width * scale, widget.child.height * scale);
-  late Widget childWidget =
-      widget.child.isLocal ? Image.file(File(widget.child.localPath)) : CachedNetworkImage(imageUrl: widget.child.downloadLink);
+  late Widget childWidget = widget.child.isLocal
+      ? Image.file(File(widget.child.localPath))
+      : widget.child.isText
+          ? Text(
+              widget.child.title,
+              style: TextStyle(fontFamily: widget.child.fontFamily),
+            )
+          : CachedNetworkImage(imageUrl: widget.child.downloadLink);
   @override
   initState() {
     super.initState();

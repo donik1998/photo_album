@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
+import 'package:photo_album/data/models/album_template.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
 import 'package:photo_album/data/models/pages_template_model.dart';
@@ -198,15 +199,30 @@ class _ElementsSheetState extends State<ElementsSheet> {
                     ),
                     itemCount: fonts.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Sample',
-                            style: TextStyle(fontFamily: fonts.elementAt(index), fontSize: 14),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.pop(
+                            context,
+                            DecorationElement.text(
+                              title: fonts.elementAt(index),
+                              family: fonts.elementAt(index),
+                              height: 32,
+                              width: MediaQuery.of(context).size.width - 4,
+                              x: 0,
+                              y: 0,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Center(
+                            child: Text(
+                              fonts.elementAt(index),
+                              style: TextStyle(fontFamily: fonts.elementAt(index), fontSize: 14),
+                            ),
                           ),
                         ),
                       );
@@ -240,7 +256,20 @@ class _ElementsSheetState extends State<ElementsSheet> {
                                 itemBuilder: (context, index) {
                                   final decoration = DecorationElement.fromMap(decorationsSnapshot.data!.docs.elementAt(index).data());
                                   return GestureDetector(
-                                    onTap: () => Navigator.pop(context, decoration),
+                                    onTap: () {
+                                      if (_selectedCategory?.title == 'Фоны альбомов') {
+                                        Navigator.pop(
+                                          context,
+                                          AlbumCover(
+                                            title: decoration.title,
+                                            downloadLink: decoration.downloadLink,
+                                            localPath: '',
+                                          ),
+                                        );
+                                      } else {
+                                        Navigator.pop(context, decoration);
+                                      }
+                                    },
                                     child: Container(
                                       padding: EdgeInsets.all(16),
                                       decoration: BoxDecoration(

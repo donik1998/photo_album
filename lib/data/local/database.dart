@@ -24,4 +24,5 @@ class AppDatabase extends _$AppDatabase {
   Future<List<Album>> getAllAlbums() => select(albums).get();
   Future insertAlbum(Album album) => into(albums).insert(album);
   Future deleteAlbum(Album album) => delete(albums).delete(album);
+  Stream<List<Album>> get localAlbumStream => select(albums).watch();
 }

@@ -51,6 +51,7 @@ class _HomePageState extends State<HomePage> {
               create: (_) => MainPageBodyState(
                 templateCategories: albumPageTemplateCategories,
                 decorationCategories: decorationCategories,
+                localAlbums: localAlbums,
               ),
               child: MainPageBody(),
             ),

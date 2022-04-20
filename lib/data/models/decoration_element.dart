@@ -1,13 +1,17 @@
 class DecorationElement {
   final String downloadLink;
   final String title;
+  final String fontFamily;
   final String localPath;
   final double height, width, x, y;
   final bool isLocal;
+  final bool isText;
 
   DecorationElement({
     required this.downloadLink,
     this.isLocal = false,
+    this.isText = false,
+    this.fontFamily = '',
     required this.title,
     this.localPath = '',
     required this.height,
@@ -34,6 +38,27 @@ class DecorationElement {
         x: x,
         y: y,
         isLocal: true,
+      );
+
+  factory DecorationElement.text({
+    required String title,
+    required String family,
+    required double height,
+    required double width,
+    required double x,
+    required double y,
+  }) =>
+      DecorationElement(
+        downloadLink: '',
+        title: title,
+        localPath: '',
+        height: height,
+        width: width,
+        x: x,
+        y: y,
+        isLocal: false,
+        fontFamily: family,
+        isText: true,
       );
 
   factory DecorationElement.fromMap(Map<String, dynamic> data) => DecorationElement(
