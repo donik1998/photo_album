@@ -7,7 +7,6 @@ import 'package:photo_album/data/models/decoration_element.dart';
 class AlbumModel {
   final String title;
   final String type;
-  final String thumbnailPath;
   final double widthCm;
   final double heightCm;
   final double widthInch;
@@ -19,7 +18,6 @@ class AlbumModel {
     required this.pages,
     required this.cover,
     required this.title,
-    required this.thumbnailPath,
     required this.type,
     required this.widthCm,
     required this.heightCm,
@@ -30,7 +28,6 @@ class AlbumModel {
   factory AlbumModel.fromDoc(QueryDocumentSnapshot<Map<String, dynamic>> data) => AlbumModel(
         title: data['title'],
         type: data['type'],
-        thumbnailPath: data['thumbnail_link'],
         widthCm: data['width_cm'],
         heightCm: data['height_cm'],
         widthInch: data['width_inch'],
@@ -42,7 +39,6 @@ class AlbumModel {
   Map<String, dynamic> get toMap => {
         'title': this.title,
         'type': this.type,
-        'thumbnail_link': this.thumbnailPath,
         'width_cm': this.widthCm,
         'height_cm': this.heightCm,
         'width_inch': this.widthInch,
@@ -54,7 +50,6 @@ class AlbumModel {
   Album get databaseModel => Album(
         title: title,
         type: type,
-        thumbnailPath: thumbnailPath,
         widthCm: widthCm,
         heightCm: heightCm,
         widthInch: widthInch,
@@ -70,7 +65,6 @@ class AlbumModel {
       pages: pages,
       cover: cover,
       title: localAlbum.title,
-      thumbnailPath: localAlbum.thumbnailPath,
       type: localAlbum.type,
       widthCm: localAlbum.widthCm,
       heightCm: localAlbum.heightCm,
@@ -82,7 +76,6 @@ class AlbumModel {
   AlbumModel copyWith({
     String? title,
     String? type,
-    String? thumbnailPath,
     double? widthCm,
     double? heightCm,
     double? widthInch,
@@ -94,7 +87,6 @@ class AlbumModel {
         pages: pages ?? this.pages,
         cover: cover ?? this.cover,
         title: title ?? this.title,
-        thumbnailPath: thumbnailPath ?? this.thumbnailPath,
         type: type ?? this.type,
         widthCm: widthCm ?? this.widthCm,
         heightCm: heightCm ?? this.heightCm,
@@ -104,7 +96,7 @@ class AlbumModel {
 }
 
 class AlbumPage {
-  final List<DecorationElement> decorations;
+  final List<AlbumDecoration> decorations;
   final List<AlbumPhoto> photos;
   final AlbumPageBackground background;
   final AlbumPageLayout layout;
@@ -116,7 +108,7 @@ class AlbumPage {
     required this.layout,
   });
   factory AlbumPage.fromMap(Map<String, dynamic> data) => AlbumPage(
-        decorations: data['decorations'].map((entry) => DecorationElement.fromMap(entry)).toList(),
+        decorations: data['decorations'].map((entry) => AlbumDecoration.fromMap(entry)).toList(),
         photos: data['photos'].map((entry) => AlbumPhoto.fromMap(entry)).toList(),
         background: AlbumPageBackground.fromMap(data['background']),
         layout: AlbumPageLayout.fromMap(data['layout']),

@@ -9,7 +9,7 @@ import 'package:photo_album/presentation/pages/editor_page/widgets/resize_wrappe
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 
 class RedactorPageElement extends StatefulWidget {
-  final DecorationElement child;
+  final AlbumDecoration child;
   final ValueChanged<CropData> onCropped;
   final ValueChanged<Offset> onDragged;
   final ValueChanged<Size> onResized;

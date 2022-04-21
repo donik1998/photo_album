@@ -7,6 +7,7 @@ import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
+import 'package:photo_album/presentation/utils/app_runtime_notifier.dart';
 import 'package:photo_album/presentation/utils/routes.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +47,7 @@ class LoginPage extends StatelessWidget {
                     if (signInSuccess)
                       Navigator.pushNamedAndRemoveUntil(context, AppRoutes.ROOT_PAGE, (route) => false);
                     else
-                      state.showErrorSnack(context: context, message: 'Не получилось войти через Google');
+                      AppRuntimeNotifier.instance.showErrorSnack(context: context, message: 'Не получилось войти через Google');
                   }),
                   color: AppColors.grey,
                   child: Row(

@@ -38,6 +38,7 @@ class MyAlbumsPageBody extends StatelessWidget {
               return AlbumCard(
                 album: snapshot.data!.elementAt(index),
                 showText: false,
+                onTap: () {},
               );
             },
           );

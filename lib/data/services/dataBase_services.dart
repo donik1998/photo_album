@@ -17,4 +17,10 @@ class DataBaseService {
 
   Stream<List<AlbumModel>> get localAlbumsStream => AppDatabase.instance.localAlbumStream
       .map<List<AlbumModel>>((event) => List<AlbumModel>.from(event.map<AlbumModel>((e) => AlbumModel.fromLocalAlbum(e))));
+
+  Future<void> saveDecorationElement(DecorationElement element) async {}
+
+  // Future<bool> isSaved(String downloadLink) async {
+  //   return await AppDatabase.instance.hasDecorationElementWithLink(downloadLink);
+  // }
 }

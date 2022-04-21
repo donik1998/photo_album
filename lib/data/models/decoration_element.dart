@@ -1,13 +1,13 @@
-class DecorationElement {
+class AlbumDecoration {
   final String downloadLink;
   final String title;
-  final String fontFamily;
   final String localPath;
+  final String fontFamily;
   final double height, width, x, y;
   final bool isLocal;
   final bool isText;
 
-  DecorationElement({
+  AlbumDecoration({
     required this.downloadLink,
     this.isLocal = false,
     this.isText = false,
@@ -20,7 +20,7 @@ class DecorationElement {
     required this.y,
   });
 
-  factory DecorationElement.local({
+  factory AlbumDecoration.local({
     required String downloadLink,
     required String title,
     required String localPath,
@@ -29,7 +29,7 @@ class DecorationElement {
     required double x,
     required double y,
   }) =>
-      DecorationElement(
+      AlbumDecoration(
         downloadLink: downloadLink,
         title: title,
         localPath: localPath,
@@ -40,7 +40,7 @@ class DecorationElement {
         isLocal: true,
       );
 
-  factory DecorationElement.text({
+  factory AlbumDecoration.text({
     required String title,
     required String family,
     required double height,
@@ -48,7 +48,7 @@ class DecorationElement {
     required double x,
     required double y,
   }) =>
-      DecorationElement(
+      AlbumDecoration(
         downloadLink: '',
         title: title,
         localPath: '',
@@ -61,7 +61,7 @@ class DecorationElement {
         isText: true,
       );
 
-  factory DecorationElement.fromMap(Map<String, dynamic> data) => DecorationElement(
+  factory AlbumDecoration.fromMap(Map<String, dynamic> data) => AlbumDecoration(
         downloadLink: data['download_link'],
         title: data['title'],
         height: data['height'].toDouble(),
@@ -82,7 +82,7 @@ class DecorationElement {
         'local_path': this.localPath,
       };
 
-  DecorationElement copyWith({
+  AlbumDecoration copyWith({
     String? downloadLink,
     String? title,
     String? localPath,
@@ -92,7 +92,7 @@ class DecorationElement {
     double? y,
     bool? isLocal,
   }) =>
-      DecorationElement(
+      AlbumDecoration(
         downloadLink: downloadLink ?? this.downloadLink,
         title: title ?? this.title,
         localPath: localPath ?? this.localPath,

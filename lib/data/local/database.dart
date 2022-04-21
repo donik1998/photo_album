@@ -5,7 +5,6 @@ part 'database.g.dart';
 class Albums extends Table {
   TextColumn get title => text()();
   TextColumn get type => text()();
-  TextColumn get thumbnailPath => text()();
   RealColumn get widthCm => real()();
   RealColumn get heightCm => real()();
   RealColumn get widthInch => real()();
@@ -14,7 +13,15 @@ class Albums extends Table {
   TextColumn get pages => text()();
 }
 
-@UseMoor(tables: [Albums])
+class DecorationElements extends Table {
+  TextColumn get downloadLink => text()();
+  TextColumn get title => text()();
+  TextColumn get localPath => text()();
+  RealColumn get height => real()();
+  RealColumn get width => real()();
+}
+
+@UseMoor(tables: [Albums, DecorationElements])
 class AppDatabase extends _$AppDatabase {
   static AppDatabase instance = AppDatabase._();
 
@@ -25,4 +32,8 @@ class AppDatabase extends _$AppDatabase {
   Future insertAlbum(Album album) => into(albums).insert(album);
   Future deleteAlbum(Album album) => delete(albums).delete(album);
   Stream<List<Album>> get localAlbumStream => select(albums).watch();
+
+  // Future<List<DecorationElement>> hasDecorationElementWithLink(String link) => select(decorationElements)
+  //   ..where((tbl) => tbl.downloadLink.equals(link))
+  //   ..get();
 }

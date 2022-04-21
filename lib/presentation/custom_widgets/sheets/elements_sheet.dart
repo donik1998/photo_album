@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
-import 'package:photo_album/data/models/album_template.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
 import 'package:photo_album/data/models/pages_template_model.dart';
@@ -138,7 +137,7 @@ class _ElementsSheetState extends State<ElementsSheet> {
                       }
                       Navigator.pop(
                         context,
-                        DecorationElement.local(
+                        AlbumDecoration.local(
                           downloadLink: '',
                           title: file.name,
                           localPath: file.path,
@@ -173,7 +172,7 @@ class _ElementsSheetState extends State<ElementsSheet> {
                       }
                       Navigator.pop(
                         context,
-                        DecorationElement.local(
+                        AlbumDecoration.local(
                           downloadLink: '',
                           title: file.name,
                           localPath: file.path,
@@ -203,7 +202,7 @@ class _ElementsSheetState extends State<ElementsSheet> {
                         onTap: () {
                           Navigator.pop(
                             context,
-                            DecorationElement.text(
+                            AlbumDecoration.text(
                               title: fonts.elementAt(index),
                               family: fonts.elementAt(index),
                               height: 32,
@@ -254,22 +253,9 @@ class _ElementsSheetState extends State<ElementsSheet> {
                                 itemCount: decorationsSnapshot.data!.docs.length,
                                 addAutomaticKeepAlives: true,
                                 itemBuilder: (context, index) {
-                                  final decoration = DecorationElement.fromMap(decorationsSnapshot.data!.docs.elementAt(index).data());
+                                  final decoration = AlbumDecoration.fromMap(decorationsSnapshot.data!.docs.elementAt(index).data());
                                   return GestureDetector(
-                                    onTap: () {
-                                      if (_selectedCategory?.title == 'Фоны альбомов') {
-                                        Navigator.pop(
-                                          context,
-                                          AlbumCover(
-                                            title: decoration.title,
-                                            downloadLink: decoration.downloadLink,
-                                            localPath: '',
-                                          ),
-                                        );
-                                      } else {
-                                        Navigator.pop(context, decoration);
-                                      }
-                                    },
+                                    onTap: () => Navigator.pop(context, decoration),
                                     child: Container(
                                       padding: EdgeInsets.all(16),
                                       decoration: BoxDecoration(

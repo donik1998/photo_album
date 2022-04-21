@@ -100,7 +100,4 @@ flutter:
     - family: TabBarIcons
       fonts:
         - asset: assets/fonts/BottomNavigation.ttf
-    - family:  MyFlutterApp
-      fonts:
-        - asset: assets/fonts/MyFlutterApp.ttf   
 

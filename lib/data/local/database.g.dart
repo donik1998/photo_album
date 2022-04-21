@@ -10,7 +10,6 @@ part of 'database.dart';
 class Album extends DataClass implements Insertable<Album> {
   final String title;
   final String type;
-  final String thumbnailPath;
   final double widthCm;
   final double heightCm;
   final double widthInch;
@@ -20,7 +19,6 @@ class Album extends DataClass implements Insertable<Album> {
   Album(
       {required this.title,
       required this.type,
-      required this.thumbnailPath,
       required this.widthCm,
       required this.heightCm,
       required this.widthInch,
@@ -35,8 +33,6 @@ class Album extends DataClass implements Insertable<Album> {
           .mapFromDatabaseResponse(data['${effectivePrefix}title'])!,
       type: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
-      thumbnailPath: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}thumbnail_path'])!,
       widthCm: const RealType()
           .mapFromDatabaseResponse(data['${effectivePrefix}width_cm'])!,
       heightCm: const RealType()
@@ -56,7 +52,6 @@ class Album extends DataClass implements Insertable<Album> {
     final map = <String, Expression>{};
     map['title'] = Variable<String>(title);
     map['type'] = Variable<String>(type);
-    map['thumbnail_path'] = Variable<String>(thumbnailPath);
     map['width_cm'] = Variable<double>(widthCm);
     map['height_cm'] = Variable<double>(heightCm);
     map['width_inch'] = Variable<double>(widthInch);
@@ -70,7 +65,6 @@ class Album extends DataClass implements Insertable<Album> {
     return AlbumsCompanion(
       title: Value(title),
       type: Value(type),
-      thumbnailPath: Value(thumbnailPath),
       widthCm: Value(widthCm),
       heightCm: Value(heightCm),
       widthInch: Value(widthInch),
@@ -86,7 +80,6 @@ class Album extends DataClass implements Insertable<Album> {
     return Album(
       title: serializer.fromJson<String>(json['title']),
       type: serializer.fromJson<String>(json['type']),
-      thumbnailPath: serializer.fromJson<String>(json['thumbnailPath']),
       widthCm: serializer.fromJson<double>(json['widthCm']),
       heightCm: serializer.fromJson<double>(json['heightCm']),
       widthInch: serializer.fromJson<double>(json['widthInch']),
@@ -101,7 +94,6 @@ class Album extends DataClass implements Insertable<Album> {
     return <String, dynamic>{
       'title': serializer.toJson<String>(title),
       'type': serializer.toJson<String>(type),
-      'thumbnailPath': serializer.toJson<String>(thumbnailPath),
       'widthCm': serializer.toJson<double>(widthCm),
       'heightCm': serializer.toJson<double>(heightCm),
       'widthInch': serializer.toJson<double>(widthInch),
@@ -114,7 +106,6 @@ class Album extends DataClass implements Insertable<Album> {
   Album copyWith(
           {String? title,
           String? type,
-          String? thumbnailPath,
           double? widthCm,
           double? heightCm,
           double? widthInch,
@@ -124,7 +115,6 @@ class Album extends DataClass implements Insertable<Album> {
       Album(
         title: title ?? this.title,
         type: type ?? this.type,
-        thumbnailPath: thumbnailPath ?? this.thumbnailPath,
         widthCm: widthCm ?? this.widthCm,
         heightCm: heightCm ?? this.heightCm,
         widthInch: widthInch ?? this.widthInch,
@@ -137,7 +127,6 @@ class Album extends DataClass implements Insertable<Album> {
     return (StringBuffer('Album(')
           ..write('title: $title, ')
           ..write('type: $type, ')
-          ..write('thumbnailPath: $thumbnailPath, ')
           ..write('widthCm: $widthCm, ')
           ..write('heightCm: $heightCm, ')
           ..write('widthInch: $widthInch, ')
@@ -149,15 +138,14 @@ class Album extends DataClass implements Insertable<Album> {
   }
 
   @override
-  int get hashCode => Object.hash(title, type, thumbnailPath, widthCm, heightCm,
-      widthInch, heightInch, cover, pages);
+  int get hashCode => Object.hash(
+      title, type, widthCm, heightCm, widthInch, heightInch, cover, pages);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Album &&
           other.title == this.title &&
           other.type == this.type &&
-          other.thumbnailPath == this.thumbnailPath &&
           other.widthCm == this.widthCm &&
           other.heightCm == this.heightCm &&
           other.widthInch == this.widthInch &&
@@ -169,7 +157,6 @@ class Album extends DataClass implements Insertable<Album> {
 class AlbumsCompanion extends UpdateCompanion<Album> {
   final Value<String> title;
   final Value<String> type;
-  final Value<String> thumbnailPath;
   final Value<double> widthCm;
   final Value<double> heightCm;
   final Value<double> widthInch;
@@ -179,7 +166,6 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
   const AlbumsCompanion({
     this.title = const Value.absent(),
     this.type = const Value.absent(),
-    this.thumbnailPath = const Value.absent(),
     this.widthCm = const Value.absent(),
     this.heightCm = const Value.absent(),
     this.widthInch = const Value.absent(),
@@ -190,7 +176,6 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
   AlbumsCompanion.insert({
     required String title,
     required String type,
-    required String thumbnailPath,
     required double widthCm,
     required double heightCm,
     required double widthInch,
@@ -199,7 +184,6 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     required String pages,
   })  : title = Value(title),
         type = Value(type),
-        thumbnailPath = Value(thumbnailPath),
         widthCm = Value(widthCm),
         heightCm = Value(heightCm),
         widthInch = Value(widthInch),
@@ -209,7 +193,6 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
   static Insertable<Album> custom({
     Expression<String>? title,
     Expression<String>? type,
-    Expression<String>? thumbnailPath,
     Expression<double>? widthCm,
     Expression<double>? heightCm,
     Expression<double>? widthInch,
@@ -220,7 +203,6 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     return RawValuesInsertable({
       if (title != null) 'title': title,
       if (type != null) 'type': type,
-      if (thumbnailPath != null) 'thumbnail_path': thumbnailPath,
       if (widthCm != null) 'width_cm': widthCm,
       if (heightCm != null) 'height_cm': heightCm,
       if (widthInch != null) 'width_inch': widthInch,
@@ -233,7 +215,6 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
   AlbumsCompanion copyWith(
       {Value<String>? title,
       Value<String>? type,
-      Value<String>? thumbnailPath,
       Value<double>? widthCm,
       Value<double>? heightCm,
       Value<double>? widthInch,
@@ -243,7 +224,6 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     return AlbumsCompanion(
       title: title ?? this.title,
       type: type ?? this.type,
-      thumbnailPath: thumbnailPath ?? this.thumbnailPath,
       widthCm: widthCm ?? this.widthCm,
       heightCm: heightCm ?? this.heightCm,
       widthInch: widthInch ?? this.widthInch,
@@ -261,9 +241,6 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     }
     if (type.present) {
       map['type'] = Variable<String>(type.value);
-    }
-    if (thumbnailPath.present) {
-      map['thumbnail_path'] = Variable<String>(thumbnailPath.value);
     }
     if (widthCm.present) {
       map['width_cm'] = Variable<double>(widthCm.value);
@@ -291,7 +268,6 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     return (StringBuffer('AlbumsCompanion(')
           ..write('title: $title, ')
           ..write('type: $type, ')
-          ..write('thumbnailPath: $thumbnailPath, ')
           ..write('widthCm: $widthCm, ')
           ..write('heightCm: $heightCm, ')
           ..write('widthInch: $widthInch, ')
@@ -317,12 +293,6 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
   @override
   late final GeneratedColumn<String?> type = GeneratedColumn<String?>(
       'type', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _thumbnailPathMeta =
-      const VerificationMeta('thumbnailPath');
-  @override
-  late final GeneratedColumn<String?> thumbnailPath = GeneratedColumn<String?>(
-      'thumbnail_path', aliasedName, false,
       type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _widthCmMeta = const VerificationMeta('widthCm');
   @override
@@ -355,17 +325,8 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
       'pages', aliasedName, false,
       type: const StringType(), requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [
-        title,
-        type,
-        thumbnailPath,
-        widthCm,
-        heightCm,
-        widthInch,
-        heightInch,
-        cover,
-        pages
-      ];
+  List<GeneratedColumn> get $columns =>
+      [title, type, widthCm, heightCm, widthInch, heightInch, cover, pages];
   @override
   String get aliasedName => _alias ?? 'albums';
   @override
@@ -386,14 +347,6 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
           _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
     } else if (isInserting) {
       context.missing(_typeMeta);
-    }
-    if (data.containsKey('thumbnail_path')) {
-      context.handle(
-          _thumbnailPathMeta,
-          thumbnailPath.isAcceptableOrUnknown(
-              data['thumbnail_path']!, _thumbnailPathMeta));
-    } else if (isInserting) {
-      context.missing(_thumbnailPathMeta);
     }
     if (data.containsKey('width_cm')) {
       context.handle(_widthCmMeta,
@@ -450,11 +403,309 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
   }
 }
 
+class DecorationElement extends DataClass
+    implements Insertable<DecorationElement> {
+  final String downloadLink;
+  final String title;
+  final String localPath;
+  final double height;
+  final double width;
+  DecorationElement(
+      {required this.downloadLink,
+      required this.title,
+      required this.localPath,
+      required this.height,
+      required this.width});
+  factory DecorationElement.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return DecorationElement(
+      downloadLink: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}download_link'])!,
+      title: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}title'])!,
+      localPath: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}local_path'])!,
+      height: const RealType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}height'])!,
+      width: const RealType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}width'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['download_link'] = Variable<String>(downloadLink);
+    map['title'] = Variable<String>(title);
+    map['local_path'] = Variable<String>(localPath);
+    map['height'] = Variable<double>(height);
+    map['width'] = Variable<double>(width);
+    return map;
+  }
+
+  DecorationElementsCompanion toCompanion(bool nullToAbsent) {
+    return DecorationElementsCompanion(
+      downloadLink: Value(downloadLink),
+      title: Value(title),
+      localPath: Value(localPath),
+      height: Value(height),
+      width: Value(width),
+    );
+  }
+
+  factory DecorationElement.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return DecorationElement(
+      downloadLink: serializer.fromJson<String>(json['downloadLink']),
+      title: serializer.fromJson<String>(json['title']),
+      localPath: serializer.fromJson<String>(json['localPath']),
+      height: serializer.fromJson<double>(json['height']),
+      width: serializer.fromJson<double>(json['width']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'downloadLink': serializer.toJson<String>(downloadLink),
+      'title': serializer.toJson<String>(title),
+      'localPath': serializer.toJson<String>(localPath),
+      'height': serializer.toJson<double>(height),
+      'width': serializer.toJson<double>(width),
+    };
+  }
+
+  DecorationElement copyWith(
+          {String? downloadLink,
+          String? title,
+          String? localPath,
+          double? height,
+          double? width}) =>
+      DecorationElement(
+        downloadLink: downloadLink ?? this.downloadLink,
+        title: title ?? this.title,
+        localPath: localPath ?? this.localPath,
+        height: height ?? this.height,
+        width: width ?? this.width,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('DecorationElement(')
+          ..write('downloadLink: $downloadLink, ')
+          ..write('title: $title, ')
+          ..write('localPath: $localPath, ')
+          ..write('height: $height, ')
+          ..write('width: $width')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(downloadLink, title, localPath, height, width);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DecorationElement &&
+          other.downloadLink == this.downloadLink &&
+          other.title == this.title &&
+          other.localPath == this.localPath &&
+          other.height == this.height &&
+          other.width == this.width);
+}
+
+class DecorationElementsCompanion extends UpdateCompanion<DecorationElement> {
+  final Value<String> downloadLink;
+  final Value<String> title;
+  final Value<String> localPath;
+  final Value<double> height;
+  final Value<double> width;
+  const DecorationElementsCompanion({
+    this.downloadLink = const Value.absent(),
+    this.title = const Value.absent(),
+    this.localPath = const Value.absent(),
+    this.height = const Value.absent(),
+    this.width = const Value.absent(),
+  });
+  DecorationElementsCompanion.insert({
+    required String downloadLink,
+    required String title,
+    required String localPath,
+    required double height,
+    required double width,
+  })  : downloadLink = Value(downloadLink),
+        title = Value(title),
+        localPath = Value(localPath),
+        height = Value(height),
+        width = Value(width);
+  static Insertable<DecorationElement> custom({
+    Expression<String>? downloadLink,
+    Expression<String>? title,
+    Expression<String>? localPath,
+    Expression<double>? height,
+    Expression<double>? width,
+  }) {
+    return RawValuesInsertable({
+      if (downloadLink != null) 'download_link': downloadLink,
+      if (title != null) 'title': title,
+      if (localPath != null) 'local_path': localPath,
+      if (height != null) 'height': height,
+      if (width != null) 'width': width,
+    });
+  }
+
+  DecorationElementsCompanion copyWith(
+      {Value<String>? downloadLink,
+      Value<String>? title,
+      Value<String>? localPath,
+      Value<double>? height,
+      Value<double>? width}) {
+    return DecorationElementsCompanion(
+      downloadLink: downloadLink ?? this.downloadLink,
+      title: title ?? this.title,
+      localPath: localPath ?? this.localPath,
+      height: height ?? this.height,
+      width: width ?? this.width,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (downloadLink.present) {
+      map['download_link'] = Variable<String>(downloadLink.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (localPath.present) {
+      map['local_path'] = Variable<String>(localPath.value);
+    }
+    if (height.present) {
+      map['height'] = Variable<double>(height.value);
+    }
+    if (width.present) {
+      map['width'] = Variable<double>(width.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DecorationElementsCompanion(')
+          ..write('downloadLink: $downloadLink, ')
+          ..write('title: $title, ')
+          ..write('localPath: $localPath, ')
+          ..write('height: $height, ')
+          ..write('width: $width')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DecorationElementsTable extends DecorationElements
+    with TableInfo<$DecorationElementsTable, DecorationElement> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DecorationElementsTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _downloadLinkMeta =
+      const VerificationMeta('downloadLink');
+  @override
+  late final GeneratedColumn<String?> downloadLink = GeneratedColumn<String?>(
+      'download_link', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String?> title = GeneratedColumn<String?>(
+      'title', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _localPathMeta = const VerificationMeta('localPath');
+  @override
+  late final GeneratedColumn<String?> localPath = GeneratedColumn<String?>(
+      'local_path', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _heightMeta = const VerificationMeta('height');
+  @override
+  late final GeneratedColumn<double?> height = GeneratedColumn<double?>(
+      'height', aliasedName, false,
+      type: const RealType(), requiredDuringInsert: true);
+  final VerificationMeta _widthMeta = const VerificationMeta('width');
+  @override
+  late final GeneratedColumn<double?> width = GeneratedColumn<double?>(
+      'width', aliasedName, false,
+      type: const RealType(), requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [downloadLink, title, localPath, height, width];
+  @override
+  String get aliasedName => _alias ?? 'decoration_elements';
+  @override
+  String get actualTableName => 'decoration_elements';
+  @override
+  VerificationContext validateIntegrity(Insertable<DecorationElement> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('download_link')) {
+      context.handle(
+          _downloadLinkMeta,
+          downloadLink.isAcceptableOrUnknown(
+              data['download_link']!, _downloadLinkMeta));
+    } else if (isInserting) {
+      context.missing(_downloadLinkMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('local_path')) {
+      context.handle(_localPathMeta,
+          localPath.isAcceptableOrUnknown(data['local_path']!, _localPathMeta));
+    } else if (isInserting) {
+      context.missing(_localPathMeta);
+    }
+    if (data.containsKey('height')) {
+      context.handle(_heightMeta,
+          height.isAcceptableOrUnknown(data['height']!, _heightMeta));
+    } else if (isInserting) {
+      context.missing(_heightMeta);
+    }
+    if (data.containsKey('width')) {
+      context.handle(
+          _widthMeta, width.isAcceptableOrUnknown(data['width']!, _widthMeta));
+    } else if (isInserting) {
+      context.missing(_widthMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  @override
+  DecorationElement map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return DecorationElement.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $DecorationElementsTable createAlias(String alias) {
+    return $DecorationElementsTable(attachedDatabase, alias);
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $AlbumsTable albums = $AlbumsTable(this);
+  late final $DecorationElementsTable decorationElements =
+      $DecorationElementsTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [albums];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [albums, decorationElements];
 }
