@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
@@ -87,7 +88,11 @@ class _HomePageDecorationElementsBodyState extends State<HomePageDecorationEleme
                         final element = DecorationElement.fromMap(dataMap);
                         return DecorationElementCard(
                           element: element,
-                          onTap: () => showDialog(
+                          onDelete: () => deleteDecorationItem(
+                            reference: elementsSnapshot.data!.docs.elementAt(index).reference,
+                            url: element.downloadLink,
+                          ),
+                          onEdit: () => showDialog(
                             context: context,
                             builder: (context) => DecorationElementEditorDialog(element: element, categories: widget.categories),
                           ),
@@ -100,5 +105,13 @@ class _HomePageDecorationElementsBodyState extends State<HomePageDecorationEleme
         ],
       ),
     );
+  }
+
+  Future<void> deleteDecorationItem({required DocumentReference reference, required String url}) async {
+    showDialog(context: context, builder: (context) => Center(child: CircularProgressIndicator()));
+    final storageRef = await FirebaseStorage.instance.refFromURL(url);
+    await storageRef.delete();
+    await reference.delete();
+    Navigator.pop(context);
   }
 }

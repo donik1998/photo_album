@@ -129,7 +129,9 @@ class _DecorationElementEditorDialogState extends State<DecorationElementEditorD
               FilePickerWidget(
                 height: 196,
                 initialWidget: CachedNetworkImage(imageUrl: widget.element.downloadLink),
-                onFileSelected: (file) {},
+                onFileSelected: (file) => setState(() {
+                  _selectedFile = file.first;
+                }),
               ),
               AppSpacing.verticalSpace16,
               AppSpacing.verticalSpace16,
