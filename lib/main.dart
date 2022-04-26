@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:photo_album/presentation/pages/all_templates_page/all_templates_page.dart';
 import 'package:photo_album/presentation/pages/auth/login_page/login_page.dart';
 import 'package:photo_album/presentation/pages/auth/login_with_email_page/login_with_email_page.dart';
@@ -22,6 +23,7 @@ void main() async {
     SystemUiOverlay.bottom,
     SystemUiOverlay.top,
   ]);
+  await initialize();
   //
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.white,

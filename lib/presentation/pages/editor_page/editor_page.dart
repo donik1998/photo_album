@@ -192,6 +192,11 @@ class _RedactorPageState extends State<RedactorPage> {
                   child: RedactorPageElement(
                     hideControls: _screenshotInProgress,
                     child: element,
+                    onEdited: (newPath) => setState(() {
+                      final index = selectedPage.elements.indexOf(element);
+                      if (index.isNegative) return;
+                      selectedPage.elements[index] = element.copyWith(localPath: newPath);
+                    }),
                     onCropped: (newFileData) => setState(() {
                       final index = selectedPage.elements.indexOf(element);
                       if (index.isNegative) return;

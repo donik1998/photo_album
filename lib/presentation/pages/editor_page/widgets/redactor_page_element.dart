@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
 import 'package:photo_album/presentation/custom_widgets/custom_icon_button.dart';
+import 'package:photo_album/presentation/pages/editor_page/photo_editor_page.dart';
 import 'package:photo_album/presentation/pages/editor_page/widgets/resize_wrapper.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 
@@ -13,6 +14,7 @@ class RedactorPageElement extends StatefulWidget {
   final ValueChanged<CropData> onCropped;
   final ValueChanged<Offset> onDragged;
   final ValueChanged<Size> onResized;
+  final ValueChanged<String> onEdited;
   final VoidCallback onDeleted;
   final bool hideControls;
 
@@ -20,6 +22,7 @@ class RedactorPageElement extends StatefulWidget {
     Key? key,
     required this.child,
     required this.hideControls,
+    required this.onEdited,
     required this.onDragged,
     required this.onResized,
     required this.onCropped,
@@ -91,6 +94,23 @@ class _RedactorPageElementState extends State<RedactorPageElement> {
               CustomIconButton(
                 icon: Icon(Icons.delete, color: Colors.white, size: 18),
                 onTap: () => widget.onDeleted(),
+              ),
+              AppSpacing.horizontalSpace16,
+              CustomIconButton(
+                icon: Icon(Icons.filter, color: Colors.white, size: 18),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PhotoEditScreen(
+                      file: File(widget.child.localPath),
+                    ),
+                  ),
+                ).then((value) {
+                  setState(() {
+                    childWidget = Image.file(File(value));
+                  });
+                  widget.onEdited(value);
+                }),
               ),
             ],
           ),
