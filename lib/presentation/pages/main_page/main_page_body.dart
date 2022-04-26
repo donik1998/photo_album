@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_album/data/models/pages_template_model.dart';
+import 'package:photo_album/data/services/auth_service.dart';
 import 'package:photo_album/presentation/custom_widgets/custom_textfield.dart';
 import 'package:photo_album/presentation/custom_widgets/resolution_template.dart';
 import 'package:photo_album/presentation/custom_widgets/templates_widget.dart';
@@ -26,10 +27,25 @@ class MainPageBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AppSpacing.verticalSpace4,
-            CustomTextField(
-              onTap: () => state.toggleSearchBarAvailability(),
-              controller: state.textController,
-              enabled: state.searchBarEnabled,
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 36,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      onTap: () => state.toggleSearchBarAvailability(),
+                      controller: state.textController,
+                      enabled: state.searchBarEnabled,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => AuthService.instance.signOut(),
+                    child: Image.asset('assets/images/app_logo.png'),
+                  ),
+                ],
+              ),
             ),
             AppSpacing.verticalSpace16,
             Stack(
@@ -74,6 +90,7 @@ class MainPageBody extends StatelessWidget {
                         AppRoutes.EDITOR_PAGE,
                         arguments: RedactorPageArgs(
                           decorationCategories: context.read<MainPageBodyState>().decorationCategories,
+                          albumBacks: context.read<MainPageBodyState>().albumBacks,
                           albumPageTemplateCategories: context.read<MainPageBodyState>().templateCategories,
                           backImage: CachedNetworkImage(imageUrl: template.downloadLinks.first),
                         ),

@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
+import 'package:photo_album/data/models/decoration_element.dart';
 import 'package:photo_album/data/services/dataBase_services.dart';
 import 'package:photo_album/data/services/decorations_service.dart';
 import 'package:photo_album/data/services/templates_service.dart';
@@ -31,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> _tabs = List.empty(growable: true);
   List<DecorationCategory> _decorationCategories = List.empty();
   List<AlbumPageTemplateCategory> _albumPageTemplateCategory = List.empty();
+  List<AlbumDecoration> _albumBacks = List.empty();
 
   @override
   void initState() {
@@ -38,6 +41,11 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance?.addPostFrameCallback(
       (timeStamp) async {
         final decorationCategories = await DecorationService.instance.getDecorationCategories();
+        final albumBackImages =
+            await FirebaseFirestore.instance.collection('decorations').where('type', isEqualTo: 'Фоны альбомов').get();
+        _albumBacks = List<AlbumDecoration>.from(
+          albumBackImages.docs.map<AlbumDecoration>((e) => AlbumDecoration.fromMap(e.data())),
+        );
         decorationCategories.insert(0, DecorationCategory(title: 'Фотографии', titleMasks: {'ru': 'Фотографии'}));
         decorationCategories.insert(0, DecorationCategory(title: 'Шаблоны', titleMasks: {'ru': 'Шаблоны'}));
         decorationCategories.add(DecorationCategory(title: 'Текст', titleMasks: {'ru': 'Текст'}));
@@ -52,6 +60,7 @@ class _HomePageState extends State<HomePage> {
                 templateCategories: albumPageTemplateCategories,
                 decorationCategories: decorationCategories,
                 localAlbums: localAlbums,
+                albumBacks: _albumBacks,
               ),
               child: MainPageBody(),
             ),
@@ -81,6 +90,7 @@ class _HomePageState extends State<HomePage> {
           context,
           AppRoutes.EDITOR_PAGE,
           arguments: RedactorPageArgs(
+            albumBacks: _albumBacks,
             albumPageTemplateCategories: _albumPageTemplateCategory,
             decorationCategories: _decorationCategories,
           ),

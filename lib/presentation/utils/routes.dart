@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
+import 'package:photo_album/data/models/decoration_element.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -24,23 +25,27 @@ class RedactorPageArgs {
   final List<AlbumPageTemplateCategory> albumPageTemplateCategories;
   final List<DecorationCategory> decorationCategories;
   final bool openElementsSheetFirst;
+  final List<AlbumDecoration> albumBacks;
 
   RedactorPageArgs({
     this.backImage,
     this.openElementsSheetFirst = false,
     required this.albumPageTemplateCategories,
     required this.decorationCategories,
+    required this.albumBacks,
   });
 
   RedactorPageArgs copyWith({
     Widget? backImage,
     List<AlbumPageTemplateCategory>? albumPageTemplateCategories,
     List<DecorationCategory>? decorationCategories,
+    List<AlbumDecoration>? albumBacks,
   }) =>
       RedactorPageArgs(
         backImage: backImage ?? this.backImage,
         albumPageTemplateCategories: albumPageTemplateCategories ?? this.albumPageTemplateCategories,
         decorationCategories: decorationCategories ?? this.decorationCategories,
+        albumBacks: albumBacks ?? this.albumBacks,
       );
 }
 

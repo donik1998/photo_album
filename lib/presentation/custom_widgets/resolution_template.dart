@@ -29,6 +29,7 @@ class ResolutionTemplate extends StatelessWidget {
                   arguments: RedactorPageArgs(
                     albumPageTemplateCategories: context.read<MainPageBodyState>().templateCategories,
                     decorationCategories: context.read<MainPageBodyState>().decorationCategories,
+                    albumBacks: context.read<MainPageBodyState>().albumBacks,
                     openElementsSheetFirst: true,
                   ),
                 ),

@@ -141,7 +141,7 @@ class _RedactorPageState extends State<RedactorPage> {
               AppRuntimeNotifier.instance.showCustomBottomSheet(
                 context: context,
                 sheet: AlbumBackSheet(
-                  backImages: [],
+                  backImages: args.albumBacks,
                   onSelected: (back) {},
                 ),
               );
