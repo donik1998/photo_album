@@ -167,13 +167,13 @@ class AlbumPageLayout extends DownloadableContent {
 
 class AlbumPageBackground extends DownloadableContent {
   AlbumPageBackground({
-    required String backgroundName,
+    required String title,
     required String downloadLink,
     required String localPath,
-  }) : super(title: backgroundName, downloadLink: downloadLink, localPath: localPath);
+  }) : super(title: title, downloadLink: downloadLink, localPath: localPath);
 
   factory AlbumPageBackground.fromMap(Map<String, dynamic> data) => AlbumPageBackground(
-        backgroundName: data['title'],
+        title: data['title'],
         localPath: '',
         downloadLink: data['download_link'],
       );
@@ -205,6 +205,17 @@ class DownloadableContent {
   });
 
   bool get isCached => localPath.isNotEmpty;
+
+  as<T extends DownloadableContent>() {
+    if (T is AlbumCover)
+      return AlbumCover(title: title, downloadLink: downloadLink, localPath: localPath);
+    else if (T is AlbumPageLayout)
+      return AlbumPageLayout(title: title, downloadLink: downloadLink, localPath: localPath);
+    else if (T is AlbumPageBackground) return AlbumPageBackground(title: title, downloadLink: downloadLink, localPath: localPath);
+  }
+
+  @override
+  String toString() => this.toMap.toString();
 
   DownloadableContent copyWith({String? coverName, String? localPath, String? downloadLink}) => DownloadableContent(
         title: coverName ?? this.title,

@@ -142,7 +142,12 @@ class _RedactorPageState extends State<RedactorPage> {
                 context: context,
                 sheet: AlbumBackSheet(
                   backImages: args.albumBacks,
-                  onSelected: (back) {},
+                  onSelected: (back) {
+                    Navigator.pop(context);
+                    setState(() {
+                      albumModel = albumModel.copyWith(cover: AlbumCover.fromMap(back.toMap));
+                    });
+                  },
                 ),
               );
               // if (_selectedElement != null)
@@ -167,7 +172,7 @@ class _RedactorPageState extends State<RedactorPage> {
                   height: MediaQuery.of(context).size.height,
                   child: Image.file(
                     File(albumModel.cover.localPath),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
               if (albumModel.cover.downloadLink.isNotEmpty)
@@ -176,7 +181,7 @@ class _RedactorPageState extends State<RedactorPage> {
                   height: MediaQuery.of(context).size.height,
                   child: CachedNetworkImage(
                     imageUrl: albumModel.cover.downloadLink,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
               if (selectedPage.backImage != null)
