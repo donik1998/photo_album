@@ -15,6 +15,7 @@ import 'package:photo_album/presentation/custom_widgets/sheets/elements_sheet.da
 import 'package:photo_album/presentation/pages/editor_page/widgets/redactor_page_element.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
+import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 import 'package:photo_album/presentation/utils/app_runtime_notifier.dart';
 import 'package:photo_album/presentation/utils/routes.dart';
@@ -236,27 +237,68 @@ class _RedactorPageState extends State<RedactorPage> {
       ),
       bottomNavigationBar: SafeArea(
         minimum: AppInsets.insetsAll16,
+        bottom: true,
         child: SizedBox(
-          height: 56,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: List.from(
-              _pages.map(
-                (e) => GestureDetector(
-                  onTap: () => setState(() => selectedPage = e),
-                  child: Container(
-                    margin: AppInsets.horizontalInsets16,
-                    height: 48,
-                    width: 64,
-                    decoration: BoxDecoration(
-                      color: e == selectedPage ? AppColors.white : AppColors.pinkLight.withOpacity(0.5),
-                      border: Border.all(color: AppColors.pinkLight, width: 1),
+          height: 79,
+          child: Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: List.from(
+                  _pages.map(
+                    (e) => GestureDetector(
+                      onTap: () => setState(() => selectedPage = e),
+                      child: Container(
+                        margin: AppInsets.horizontalInsets16,
+                        height: 48,
+                        width: 64,
+                        decoration: BoxDecoration(
+                          color: e == selectedPage ? AppColors.white : AppColors.pinkLight.withOpacity(0.5),
+                          border: Border.all(color: AppColors.pinkLight, width: 1),
+                        ),
+                        child: Center(child: Text('${_pages.indexOf(e) + 1}', style: AppTextStyles.smallTitleBold)),
+                      ),
                     ),
-                    child: Center(child: Text('${_pages.indexOf(e) + 1}', style: AppTextStyles.smallTitleBold)),
                   ),
                 ),
               ),
-            ),
+              AppSpacing.verticalSpace10,
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(onTap: (){},
+                          child: SvgPicture.asset('assets/svgs/Copy.svg',width: 22,height: 22,)),
+                        AppSpacing.horizontalSpace24,
+                        GestureDetector(
+                          onTap: (){},
+                          child: SvgPicture.asset('assets/svgs/Delete.svg',width: 22,height: 22,),
+                        ),
+                        AppSpacing.horizontalSpace32,
+                      GestureDetector(
+                        onTap: (){},
+                          child: Text('Эффекты',style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),)),
+                      AppSpacing.horizontalSpace48,
+                      GestureDetector(
+                        onTap: (){},
+                          child: Text('Фильтры',style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),)),
+                      AppSpacing.horizontalSpace48,
+                      GestureDetector(
+                          onTap: (){},
+                          child: Text('Настроить',style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

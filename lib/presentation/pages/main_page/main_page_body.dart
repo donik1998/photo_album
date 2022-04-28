@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/data/services/auth_service.dart';
-import 'package:photo_album/presentation/custom_widgets/custom_textfield.dart';
 import 'package:photo_album/presentation/custom_widgets/resolution_template.dart';
 import 'package:photo_album/presentation/custom_widgets/templates_widget.dart';
+import 'package:photo_album/presentation/pages/editor_page/widgets/search.dart';
 import 'package:photo_album/presentation/state/main_page/main_page_body_state.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
@@ -14,8 +14,6 @@ import 'package:photo_album/presentation/utils/routes.dart';
 import 'package:provider/provider.dart';
 
 class MainPageBody extends StatelessWidget {
-  const MainPageBody({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Consumer<MainPageBodyState>(
@@ -33,13 +31,36 @@ class MainPageBody extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Expanded(
-                    child: CustomTextField(
-                      onTap: () => state.toggleSearchBarAvailability(),
-                      controller: state.textController,
-                      enabled: state.searchBarEnabled,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return SearchPage(
+                          decorationCategories: state.decorationCategories,
+                          albumPageTemplateCategory: state.templateCategories,
+                          albumDecorations: state.albumBacks,
+                        );
+                      }));
+                    },
+                    child: Container(
+                      width: 299,
+                      height: 36,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.search),
+                            Text('Поиск'),
+                          ],
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF3F3F3),
+                      ),
                     ),
                   ),
+                  AppSpacing.horizontalSpace16,
                   GestureDetector(
                     onTap: () => AuthService.instance.signOut(),
                     child: Image.asset('assets/images/app_logo.png'),
@@ -56,12 +77,15 @@ class MainPageBody extends StatelessWidget {
                   height: 156,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    image: DecorationImage(image: AssetImage('assets/images/Rectangle 386.png'), fit: BoxFit.cover),
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/Rectangle 386.png'),
+                        fit: BoxFit.cover),
                   ),
                 ),
                 Padding(
                   padding: AppInsets.insetsAll16,
-                  child: Text('Создавайте альбомы со своими истроиями', style: AppTextStyles.ttxt),
+                  child: Text('Создавайте альбомы со своими истроиями',
+                      style: AppTextStyles.ttxt),
                 ),
               ],
             ),
@@ -69,7 +93,8 @@ class MainPageBody extends StatelessWidget {
             Text('Создайте свой альбом', style: AppTextStyles.ttxt1),
             AppSpacing.verticalSpace24,
             ResolutionTemplate(sizes: ['20x20', '23x23', '25x25']),
-            if (state.loading) Expanded(child: Center(child: CircularProgressIndicator())),
+            if (state.loading)
+              Expanded(child: Center(child: CircularProgressIndicator())),
             for (final templateCategory in state.templateCategories)
               FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 future: FirebaseFirestore.instance
@@ -77,11 +102,14 @@ class MainPageBody extends StatelessWidget {
                     .where('type', isEqualTo: templateCategory.value)
                     .get(),
                 builder: (context, templatesSnapshot) {
-                  if (templatesSnapshot.connectionState == ConnectionState.waiting)
+                  if (templatesSnapshot.connectionState ==
+                      ConnectionState.waiting)
                     return Container();
                   else
                     return TemplatesRowWidget(
-                      templates: templatesSnapshot.data!.docs.map((e) => AlbumPageTemplate.fromJson(e.data())).toList(),
+                      templates: templatesSnapshot.data!.docs
+                          .map((e) => AlbumPageTemplate.fromJson(e.data()))
+                          .toList(),
                       showTopSpacing: true,
                       title: templateCategory.masks['ru'],
                       type: templateCategory.value,
@@ -89,10 +117,16 @@ class MainPageBody extends StatelessWidget {
                         context,
                         AppRoutes.EDITOR_PAGE,
                         arguments: RedactorPageArgs(
-                          decorationCategories: context.read<MainPageBodyState>().decorationCategories,
-                          albumBacks: context.read<MainPageBodyState>().albumBacks,
-                          albumPageTemplateCategories: context.read<MainPageBodyState>().templateCategories,
-                          backImage: CachedNetworkImage(imageUrl: template.downloadLinks.first),
+                          decorationCategories: context
+                              .read<MainPageBodyState>()
+                              .decorationCategories,
+                          albumBacks:
+                              context.read<MainPageBodyState>().albumBacks,
+                          albumPageTemplateCategories: context
+                              .read<MainPageBodyState>()
+                              .templateCategories,
+                          backImage: CachedNetworkImage(
+                              imageUrl: template.downloadLinks.first),
                         ),
                       ),
                     );
