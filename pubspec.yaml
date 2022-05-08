@@ -57,6 +57,7 @@ dependencies:
   share_plus: ^4.0.4
   archive: ^3.3.0
   file_saver: ^0.1.0
+  material_floating_search_bar: ^0.3.7
 
 dev_dependencies:
   flutter_test:
