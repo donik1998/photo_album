@@ -20,6 +20,10 @@ class DataBaseService {
 
   Future<void> saveDecorationElement(DecorationElement element) async {}
 
+  Future<void> editAlbum(AlbumModel album) async {
+    await AppDatabase.instance.editAlbum(album.databaseModel);
+  }
+
   // Future<bool> isSaved(String downloadLink) async {
   //   return await AppDatabase.instance.hasDecorationElementWithLink(downloadLink);
   // }

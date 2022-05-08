@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -33,13 +35,22 @@ class AlbumCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              CachedNetworkImage(
-                imageUrl: album.cover.downloadLink,
-                fit: BoxFit.fitHeight,
-                errorWidget: (context, url, trace) => Expanded(
-                  child: Center(child: SvgPicture.asset('assets/svgs/image.svg', fit: BoxFit.scaleDown)),
+              if (album.cover.localPath.isNotEmpty)
+                Image.file(
+                  File(album.cover.localPath),
+                  height: 110,
+                  width: 110,
                 ),
-              ),
+              if (album.cover.localPath.isEmpty)
+                CachedNetworkImage(
+                  height: 110,
+                  width: 110,
+                  imageUrl: album.cover.downloadLink,
+                  fit: BoxFit.fitHeight,
+                  errorWidget: (context, url, trace) => Expanded(
+                    child: Center(child: SvgPicture.asset('assets/svgs/image.svg', fit: BoxFit.scaleDown)),
+                  ),
+                ),
               if (showText) AppSpacing.verticalSpace7,
               if (showText) Text(album.type, style: AppTextStyles.txt13),
             ],

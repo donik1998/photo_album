@@ -65,7 +65,12 @@ class _HomePageState extends State<HomePage> {
               child: MainPageBody(),
             ),
             ChangeNotifierProvider(
-              create: (_) => MyAlbumsBodyState(localAlbums: localAlbums),
+              create: (_) => MyAlbumsBodyState(
+                localAlbums: localAlbums,
+                albumBacks: _albumBacks,
+                decorationCategories: decorationCategories,
+                templateCategories: albumPageTemplateCategories,
+              ),
               child: MyAlbumsPageBody(),
             ),
             ChangeNotifierProvider(

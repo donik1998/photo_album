@@ -32,6 +32,9 @@ class AppDatabase extends _$AppDatabase {
   Future insertAlbum(Album album) => into(albums).insert(album);
   Future deleteAlbum(Album album) => delete(albums).delete(album);
   Stream<List<Album>> get localAlbumStream => select(albums).watch();
+  editAlbum(Album album) => update(albums)
+    ..where((tbl) => tbl.title.equals(album.title))
+    ..write(album);
 
   // Future<List<DecorationElement>> hasDecorationElementWithLink(String link) => select(decorationElements)
   //   ..where((tbl) => tbl.downloadLink.equals(link))

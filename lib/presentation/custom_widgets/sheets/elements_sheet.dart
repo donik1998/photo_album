@@ -16,13 +16,11 @@ import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 
 class ElementsSheet extends StatefulWidget {
-  final ScrollController controller;
   final List<DecorationCategory> decorationCategories;
   final List<AlbumPageTemplateCategory> albumPageTemplateCategory;
 
   const ElementsSheet({
     Key? key,
-    required this.controller,
     required this.decorationCategories,
     required this.albumPageTemplateCategory,
   }) : super(key: key);

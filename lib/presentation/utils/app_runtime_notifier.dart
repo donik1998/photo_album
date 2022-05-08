@@ -21,7 +21,7 @@ class AppRuntimeNotifier {
         ),
       );
 
-  void showCustomBottomSheet({required BuildContext context, required Widget sheet}) => showModalBottomSheet(
+  Future<dynamic> showCustomBottomSheet({required BuildContext context, required Widget sheet}) async => await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (context) => BottomSheetContainer(child: sheet),

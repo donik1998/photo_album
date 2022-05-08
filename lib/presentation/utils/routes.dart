@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
+import 'package:photo_album/data/models/album_template.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
 
@@ -25,6 +26,7 @@ class RedactorPageArgs {
   final List<AlbumPageTemplateCategory> albumPageTemplateCategories;
   final List<DecorationCategory> decorationCategories;
   final bool openElementsSheetFirst;
+  final AlbumModel? album;
   final List<AlbumDecoration> albumBacks;
 
   RedactorPageArgs({
@@ -32,6 +34,7 @@ class RedactorPageArgs {
     this.openElementsSheetFirst = false,
     required this.albumPageTemplateCategories,
     required this.decorationCategories,
+    this.album,
     required this.albumBacks,
   });
 
