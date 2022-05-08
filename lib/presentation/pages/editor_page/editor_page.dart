@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:photo_album/data/models/album_template.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
+import 'package:photo_album/data/services/dataBase_services.dart';
 import 'package:photo_album/presentation/custom_widgets/sheets/album_back_sheet.dart';
 import 'package:photo_album/presentation/custom_widgets/sheets/elements_sheet.dart';
 import 'package:photo_album/presentation/pages/editor_page/widgets/redactor_page_element.dart';
@@ -61,7 +63,7 @@ class _RedactorPageState extends State<RedactorPage> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
       final backImages = await FirebaseFirestore.instance.collection('decorations').where('type', isEqualTo: 'Фоны альбомов').get();
       _albumBackImages = List<AlbumDecoration>.from(backImages.docs.map((e) => AlbumDecoration.fromMap(e.data())));
-      // await DataBaseService.instance.saveAlbumToDB(albumModel);
+      await DataBaseService.instance.saveAlbumToDB(albumModel);
       final args = ModalRoute.of(context)!.settings.arguments as RedactorPageArgs;
       setState(() {
         _pages.add(EditorPage(elements: [], backImage: args.backImage));
@@ -90,13 +92,37 @@ class _RedactorPageState extends State<RedactorPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: SvgPicture.asset('assets/svgs/hor_double_dots.svg'),
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: SvgPicture.asset('assets/svgs/hor_double_dots.svg'),
+          //   onPressed: () {},
+          // ),
           IconButton(
             icon: SvgPicture.asset('assets/svgs/download.svg'),
-            onPressed: () {},
+            onPressed: () async {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => SizedBox(width: 100, height: 100, child: Center(child: CircularProgressIndicator())),
+              );
+              final pdfDoc = pw.Document();
+              for (final page in _pages) {
+                setState(() {
+                  _screenshotInProgress = true;
+                  selectedPage = page;
+                });
+                final screenshot = await screenshotController.capture(delay: Duration(milliseconds: 10));
+                final pdfImageProvider = await printing.flutterImageProvider(Image.memory(screenshot!).image);
+                setState(() => _screenshotInProgress = false);
+                pdfDoc.addPage(
+                  pw.Page(
+                    pageFormat: PdfPageFormat(PdfPageFormat.cm * 25, PdfPageFormat.cm * 25),
+                    build: (context) => pw.Image(pdfImageProvider, fit: pw.BoxFit.cover),
+                  ),
+                );
+              }
+              final bytes = await pdfDoc.save();
+              await FileSaver.instance.saveFile('${DateFormat('dd_MM_yyyy_HH_mm_ss').format(DateTime.now())}', bytes, 'pdf');
+            },
           ),
           IconButton(
             onPressed: () async {
@@ -150,11 +176,6 @@ class _RedactorPageState extends State<RedactorPage> {
                   },
                 ),
               );
-              // if (_selectedElement != null)
-              //   setState(() {
-              //     selectedPage.elements.removeWhere((element) => element.title == _selectedElement!.title);
-              //     selectedPage.elements.add(_selectedElement!);
-              //   });
             },
             icon: SvgPicture.asset('assets/svgs/switch_back.svg'),
           ),
