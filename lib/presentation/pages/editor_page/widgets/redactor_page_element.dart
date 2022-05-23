@@ -13,6 +13,7 @@ class RedactorPageElement extends StatefulWidget {
   final AlbumDecoration child;
   final ValueChanged<CropData> onCropped;
   final ValueChanged<Offset> onDragged;
+  final VoidCallback dragEnded;
   final ValueChanged<Size> onResized;
   final ValueChanged<String> onEdited;
   final VoidCallback onDeleted;
@@ -21,6 +22,7 @@ class RedactorPageElement extends StatefulWidget {
   const RedactorPageElement({
     Key? key,
     required this.child,
+    required this.dragEnded,
     required this.hideControls,
     required this.onEdited,
     required this.onDragged,
@@ -69,8 +71,8 @@ class _RedactorPageElementState extends State<RedactorPageElement> {
               CustomIconButton(
                 icon: Icon(Icons.crop, color: Colors.white, size: 18),
                 onTap: () => cropper.cropImage(sourcePath: File(widget.child.localPath).path).then((value) async {
-                  if (value is File) {
-                    final image = await decodeImageFromList(value.readAsBytesSync());
+                  if (value != null) {
+                    final image = await decodeImageFromList(await value.readAsBytes());
                     double suitableWidth = 0;
                     double suitableHeight = 0;
                     if (image.height * 0.25 > MediaQuery.of(context).size.height)
@@ -82,9 +84,9 @@ class _RedactorPageElementState extends State<RedactorPageElement> {
                       suitableWidth = image.width * 0.125;
                     else
                       suitableWidth = image.width * 0.25;
-                    widget.onCropped(CropData(file: value, dimensions: Size(suitableWidth, suitableHeight)));
+                    widget.onCropped(CropData(file: File(value.path), dimensions: Size(suitableWidth, suitableHeight)));
                     setState(() {
-                      childWidget = Image.file(value);
+                      childWidget = Image.file(File(value.path));
                       childSize = Size(suitableWidth, suitableHeight);
                     });
                   }
@@ -122,6 +124,7 @@ class _RedactorPageElementState extends State<RedactorPageElement> {
             });
             widget.onDragged(details.delta);
           },
+          onPanEnd: (details) => widget.dragEnded(),
           child: hasResizeControls
               ? ResizeWrapper(
                   child: childWidget,

@@ -34,7 +34,6 @@ class MyAlbumsPageBody extends StatelessWidget {
                 crossAxisCount: 3,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
-                childAspectRatio: 110 / 120,
               ),
               padding: AppInsets.insetsAll16,
               itemCount: snapshot.data!.length,
@@ -42,6 +41,9 @@ class MyAlbumsPageBody extends StatelessWidget {
                 return AlbumCard(
                   album: snapshot.data!.elementAt(index),
                   showText: true,
+                  onAlbumDeleted: () {
+                    DataBaseService.instance.deleteAlbum(snapshot.data!.elementAt(index));
+                  },
                   onTap: () => Navigator.pushNamed(
                     context,
                     AppRoutes.EDITOR_PAGE,

@@ -54,15 +54,6 @@ class _ElementsSheetState extends State<ElementsSheet> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              AppSpacing.verticalSpace4,
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: AppColors.black.withOpacity(0.5),
-                ),
-                width: 96,
-                height: 8,
-              ),
               AppSpacing.verticalSpace10,
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -205,8 +196,8 @@ class _ElementsSheetState extends State<ElementsSheet> {
                               family: fonts.elementAt(index),
                               height: 32,
                               width: MediaQuery.of(context).size.width - 4,
-                              x: 0,
-                              y: 0,
+                              x: MediaQuery.of(context).size.width / 2,
+                              y: MediaQuery.of(context).size.height / 2,
                             ),
                           );
                         },

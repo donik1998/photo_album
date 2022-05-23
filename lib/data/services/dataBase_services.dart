@@ -24,6 +24,10 @@ class DataBaseService {
     await AppDatabase.instance.editAlbum(album.databaseModel);
   }
 
+  Future<void> deleteAlbum(AlbumModel album) async {
+    await AppDatabase.instance.deleteAlbum(album.databaseModel);
+  }
+
   // Future<bool> isSaved(String downloadLink) async {
   //   return await AppDatabase.instance.hasDecorationElementWithLink(downloadLink);
   // }

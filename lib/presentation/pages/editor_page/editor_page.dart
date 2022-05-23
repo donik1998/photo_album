@@ -146,6 +146,7 @@ class _RedactorPageState extends State<RedactorPage> {
                       onResized: (newSize) => state.onPhotoResized(newSize: newSize, currentElement: element),
                       onDeleted: () => state.onPhotoDeleted(currentElement: element),
                       onDragged: (newOffset) => state.onPhotoDragged(currentElement: element, offset: newOffset),
+                      dragEnded: () => state.saveChangesToLocalDB(),
                     ),
                   ),
               ],

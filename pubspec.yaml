@@ -58,12 +58,13 @@ dependencies:
   archive: ^3.3.0
   file_saver: ^0.1.0
   material_floating_search_bar: ^0.3.7
+  keyboard_dismisser: ^2.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   moor_generator: any
-  mobx_codegen: any
+  mobx_codegen: 2.0.6
 
 
 flutter_native_splash:

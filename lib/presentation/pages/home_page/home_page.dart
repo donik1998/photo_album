@@ -86,9 +86,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: _tabs.isEmpty ? Center(child: Loader()) : _tabs.elementAt(_pageIndex),
-      ),
+      body: SafeArea(child: _tabs.isEmpty ? Center(child: Loader()) : _tabs.elementAt(_pageIndex)),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.pinkLight,
         onPressed: () => Navigator.pushNamed(

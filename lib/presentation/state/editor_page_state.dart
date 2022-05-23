@@ -120,6 +120,7 @@ class RedactorPageState extends BaseProvider {
     final index = selectedPage.elements.indexOf(currentElement);
     if (index.isNegative) return;
     selectedPage.elements[index] = currentElement.copyWith(localPath: newPath);
+    DataBaseService.instance.editAlbum(albumModel);
     notifyListeners();
   }
 
@@ -131,6 +132,7 @@ class RedactorPageState extends BaseProvider {
       width: newFileData.dimensions.width,
       height: newFileData.dimensions.height,
     );
+    DataBaseService.instance.editAlbum(albumModel);
     notifyListeners();
   }
 
@@ -138,11 +140,13 @@ class RedactorPageState extends BaseProvider {
     final index = selectedPage.elements.indexOf(currentElement);
     if (index.isNegative) return;
     selectedPage.elements[index] = currentElement.copyWith(width: newSize.width, height: newSize.height);
+    DataBaseService.instance.editAlbum(albumModel);
     notifyListeners();
   }
 
   void onPhotoDeleted({required AlbumDecoration currentElement}) {
     selectedPage.elements.remove(currentElement);
+    DataBaseService.instance.editAlbum(albumModel);
     notifyListeners();
   }
 
@@ -189,6 +193,10 @@ class RedactorPageState extends BaseProvider {
       notifyListeners();
     }
     setFabIsVisible(true);
+    await DataBaseService.instance.editAlbum(albumModel);
+  }
+
+  Future<void> saveChangesToLocalDB() async {
     await DataBaseService.instance.editAlbum(albumModel);
   }
 }

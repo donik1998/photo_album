@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
               child: RedactorPage(),
             ),
       },
-      title: 'Flutter Demo',
+      title: 'Screenlife',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
