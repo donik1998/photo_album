@@ -12,7 +12,8 @@ class DecorationService extends _DecorationService {
 
   @override
   Future<List<DecorationCategory>> getDecorationCategories() async {
-    final decorationElements = await FirebaseFirestore.instance.collection('decoration_categories').get();
+    final decorationElements =
+        await FirebaseFirestore.instance.collection('decoration_categories').where('type', isNotEqualTo: 'Фоны альбомов').get();
     return decorationElements.docs.map<DecorationCategory>((e) => DecorationCategory.fromJson(e.data())).toList();
   }
 }

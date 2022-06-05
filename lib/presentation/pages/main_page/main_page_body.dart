@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_album/data/models/album_template.dart';
 import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/data/services/auth_service.dart';
 import 'package:photo_album/presentation/custom_widgets/resolution_template.dart';
@@ -116,7 +116,11 @@ class MainPageBody extends StatelessWidget {
                           decorationCategories: context.read<MainPageBodyState>().decorationCategories,
                           albumBacks: context.read<MainPageBodyState>().albumBacks,
                           albumPageTemplateCategories: context.read<MainPageBodyState>().templateCategories,
-                          backImage: CachedNetworkImage(imageUrl: template.downloadLinks.first),
+                          backImage: AlbumPageBackground(
+                            title: template.title,
+                            downloadLink: template.downloadLinks.first,
+                            localPath: '',
+                          ),
                         ),
                       ),
                     );

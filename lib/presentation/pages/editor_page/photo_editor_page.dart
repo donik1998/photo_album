@@ -374,6 +374,7 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
                 height: imageHeight,
                 width: imageWidth,
                 child: Stack(
+                  fit: StackFit.loose,
                   children: [
                     /// This widget will be saved as edited Image
                     Screenshot(
@@ -462,7 +463,7 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
               if (mIsFilterViewVisible)
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
-                  height: mIsFilterViewVisible ? 120 : 0,
+                  height: mIsFilterViewVisible ? 60 : 0,
                   width: context.width(),
                   child: FilterSelectionWidget(
                     image: croppedFile,
@@ -501,7 +502,7 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
               if (mIsContrastSliderVisible)
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
-                  height: mIsContrastSliderVisible ? 120 : 0,
+                  height: mIsContrastSliderVisible ? 60 : 0,
                   width: context.width(),
                   child: Container(
                     color: Colors.white38,
@@ -528,7 +529,7 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
               if (mIsSaturationSliderVisible)
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
-                  height: mIsSaturationSliderVisible ? 120 : 0,
+                  height: mIsSaturationSliderVisible ? 60 : 0,
                   width: context.width(),
                   child: Container(
                     color: Colors.white38,
@@ -554,7 +555,7 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
               if (mIsHueSliderVisible)
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
-                  height: mIsHueSliderVisible ? 120 : 0,
+                  height: mIsHueSliderVisible ? 60 : 0,
                   width: context.width(),
                   child: Container(
                     color: Colors.white38,
@@ -580,7 +581,7 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
               if (mIsBlurVisible)
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
-                  height: mIsBlurVisible ? 120 : 0,
+                  height: mIsBlurVisible ? 60 : 0,
                   color: Colors.white38,
                   width: context.width(),
                   child: BlurSelectorBottomSheet(
@@ -594,50 +595,53 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: SizedBox(
-          height: 80,
-          width: MediaQuery.of(context).size.width,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                BottomBarItemWidget(
-                  title: 'Очистить',
-                  icons: Icon(FontAwesomeIcons.eraser).icon,
-                  onTap: () => onEraserClick(),
-                ),
-                BottomBarItemWidget(
-                  title: 'Яркость',
-                  icons: Icon(Icons.brightness_2_outlined).icon,
-                  onTap: () => onBrightnessSliderClick(),
-                ),
-                BottomBarItemWidget(
-                  title: 'Контраст',
-                  icons: Icon(Icons.brightness_4_outlined).icon,
-                  onTap: () => onContrastSliderClick(),
-                ),
-                BottomBarItemWidget(
-                  title: 'Сатурация',
-                  icons: Icon(Icons.brightness_4_sharp).icon,
-                  onTap: () => onSaturationSliderClick(),
-                ),
-                BottomBarItemWidget(
-                  title: 'Оттенок',
-                  icons: Icon(Icons.brightness_medium_sharp).icon,
-                  onTap: () => onHueSliderClick(),
-                ),
-                BottomBarItemWidget(
-                  title: 'Размытие',
-                  icons: Icon(MaterialCommunityIcons.blur).icon,
-                  onTap: () => onBlurClick(),
-                ),
-                BottomBarItemWidget(
-                  title: 'Фильтр',
-                  icons: Icon(Icons.photo).icon,
-                  onTap: () => onFilterClick(),
-                ),
-              ],
+        bottomNavigationBar: SafeArea(
+          minimum: EdgeInsets.only(bottom: 16),
+          child: SizedBox(
+            height: 80,
+            width: MediaQuery.of(context).size.width,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  BottomBarItemWidget(
+                    title: 'Очистить',
+                    icons: Icon(FontAwesomeIcons.eraser).icon,
+                    onTap: () => onEraserClick(),
+                  ),
+                  BottomBarItemWidget(
+                    title: 'Яркость',
+                    icons: Icon(Icons.brightness_2_outlined).icon,
+                    onTap: () => onBrightnessSliderClick(),
+                  ),
+                  BottomBarItemWidget(
+                    title: 'Контраст',
+                    icons: Icon(Icons.brightness_4_outlined).icon,
+                    onTap: () => onContrastSliderClick(),
+                  ),
+                  BottomBarItemWidget(
+                    title: 'Сатурация',
+                    icons: Icon(Icons.brightness_4_sharp).icon,
+                    onTap: () => onSaturationSliderClick(),
+                  ),
+                  BottomBarItemWidget(
+                    title: 'Оттенок',
+                    icons: Icon(Icons.brightness_medium_sharp).icon,
+                    onTap: () => onHueSliderClick(),
+                  ),
+                  BottomBarItemWidget(
+                    title: 'Размытие',
+                    icons: Icon(MaterialCommunityIcons.blur).icon,
+                    onTap: () => onBlurClick(),
+                  ),
+                  BottomBarItemWidget(
+                    title: 'Фильтр',
+                    icons: Icon(Icons.photo).icon,
+                    onTap: () => onFilterClick(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

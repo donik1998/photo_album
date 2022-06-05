@@ -8,7 +8,7 @@ class AppRuntimeNotifier {
 
   static AppRuntimeNotifier get instance => AppRuntimeNotifier._();
 
-  void showErrorSnack({required BuildContext context, required String message}) => ScaffoldMessenger.of(context).showSnackBar(
+  void showSnack({required BuildContext context, required String message}) => ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             message,
@@ -24,6 +24,7 @@ class AppRuntimeNotifier {
   Future<dynamic> showCustomBottomSheet({required BuildContext context, required Widget sheet}) async => await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
+        clipBehavior: Clip.hardEdge,
         builder: (context) => BottomSheetContainer(child: sheet),
       );
 }

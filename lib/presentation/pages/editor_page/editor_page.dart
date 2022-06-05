@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_album/data/models/album_template.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
+import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/data/services/dataBase_services.dart';
+import 'package:photo_album/presentation/custom_widgets/back_image_substitution_dialog.dart';
 import 'package:photo_album/presentation/custom_widgets/sheets/album_back_sheet.dart';
 import 'package:photo_album/presentation/custom_widgets/sheets/elements_sheet.dart';
 import 'package:photo_album/presentation/pages/editor_page/widgets/redactor_page_element.dart';
@@ -16,14 +18,15 @@ import 'package:photo_album/presentation/theme/app_instets.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 import 'package:photo_album/presentation/utils/app_runtime_notifier.dart';
 import 'package:photo_album/presentation/utils/routes.dart';
-import 'package:photo_album/presentation/utils/ui_models/editor_page_model.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class RedactorPage extends StatefulWidget {
-  RedactorPage({Key? key}) : super(key: key);
+  RedactorPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<RedactorPage> createState() => _RedactorPageState();
@@ -38,12 +41,13 @@ class _RedactorPageState extends State<RedactorPage> {
       final backImages = await FirebaseFirestore.instance.collection('decorations').where('type', isEqualTo: 'Фоны альбомов').get();
       state.setAlbumBacks(List<AlbumDecoration>.from(backImages.docs.map((e) => AlbumDecoration.fromMap(e.data()))));
       final args = ModalRoute.of(context)!.settings.arguments as RedactorPageArgs;
-      setState(() {
-        if (args.album != null) state.setAlbumModel(args.album!);
-        state.addEditorPage(EditorPage(elements: [], backImage: args.backImage));
-        state.setSelectedPage(state.pages.first);
-      });
-      if (args.album == null) await DataBaseService.instance.saveAlbumToDB(state.albumModel);
+      if (args.localAlbum != null) {
+        state.setAlbumModel(args.localAlbum!);
+        args.localAlbum!.pages.forEach((element) {
+          print(element.toMap);
+        });
+      }
+      if (args.localAlbum == null) await DataBaseService.instance.saveAlbumToDB(state.albumModel);
       if (args.openElementsSheetFirst)
         _showBottomSheet(
           context: context,
@@ -100,7 +104,7 @@ class _RedactorPageState extends State<RedactorPage> {
                     ),
                   )
                       .then((value) async {
-                    await DataBaseService.instance.saveAlbumToDB(state.albumModel);
+                    await DataBaseService.instance.editAlbum(state.albumModel);
                   });
                 },
                 icon: SvgPicture.asset('assets/svgs/switch_back.svg'),
@@ -128,13 +132,13 @@ class _RedactorPageState extends State<RedactorPage> {
                     height: MediaQuery.of(context).size.height,
                     child: CachedNetworkImage(imageUrl: state.albumModel.cover.downloadLink, fit: BoxFit.fill),
                   ),
-                if (state.selectedPage.backImage != null)
+                if (state.selectedPage.background.downloadLink.isNotEmpty)
                   Container(
                     margin: AppInsets.horizontalInsets16,
                     width: MediaQuery.of(context).size.width,
-                    child: state.selectedPage.backImage,
+                    child: CachedNetworkImage(imageUrl: state.selectedPage.background.downloadLink),
                   ),
-                for (final element in state.selectedPage.elements)
+                for (final element in state.selectedPage.decorations)
                   Positioned(
                     top: element.y,
                     left: element.x,
@@ -176,21 +180,24 @@ class _RedactorPageState extends State<RedactorPage> {
           minimum: AppInsets.insetsAll16,
           child: SizedBox(
             height: 56,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: List.from(
-                state.pages.map(
-                  (e) => GestureDetector(
-                    onTap: () => state.setSelectedPage(e),
-                    child: Container(
-                      margin: AppInsets.horizontalInsets16,
-                      height: 48,
-                      width: 64,
-                      decoration: BoxDecoration(
-                        color: e == state.selectedPage ? AppColors.white : AppColors.pinkLight.withOpacity(0.5),
-                        border: Border.all(color: AppColors.pinkLight, width: 1),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: List<Widget>.from(
+                  state.albumModel.pages.map(
+                    (e) => GestureDetector(
+                      onTap: () => state.setSelectedPage(e),
+                      child: Container(
+                        margin: AppInsets.horizontalInsets16,
+                        height: 48,
+                        width: 64,
+                        decoration: BoxDecoration(
+                          color: e == state.selectedPage ? AppColors.white : AppColors.pinkLight.withOpacity(0.5),
+                          border: Border.all(color: AppColors.pinkLight, width: 1),
+                        ),
+                        child: Center(child: Text('${state.albumModel.pages.indexOf(e) + 1}', style: AppTextStyles.smallTitleBold)),
                       ),
-                      child: Center(child: Text('${state.pages.indexOf(e) + 1}', style: AppTextStyles.smallTitleBold)),
                     ),
                   ),
                 ),
@@ -207,5 +214,35 @@ class _RedactorPageState extends State<RedactorPage> {
           .showCustomBottomSheet(
               context: context,
               sheet: ElementsSheet(albumPageTemplateCategory: albumPageTemplateCategories, decorationCategories: decorationCategories))
-          .then((value) => context.read<RedactorPageState>().onElementAdded(context: context, value: value));
+          .then((value) {
+        final state = context.read<RedactorPageState>();
+        if (value is String) {
+          state.onBackgroundChanged(value);
+        }
+        if (value is AlbumPageTemplate) {
+          showDialog(
+            context: context,
+            builder: (context) => BackImageSubstitutionConfirmationDialog(
+              onCancel: () {
+                final newPage = AlbumPage(
+                  decorations: [],
+                  background: AlbumPageBackground(
+                    title: '',
+                    localPath: '',
+                    downloadLink: 'value',
+                  ),
+                );
+                state.addPage(newPage);
+                state.setSelectedPage(newPage);
+              },
+              onConfirm: () => state.onBackgroundChanged('value.downloadLinks'),
+            ),
+          );
+        }
+        if (value is AlbumDecoration) {
+          state.onDecorationAdded(value);
+        }
+
+        // context.read<RedactorPageState>().onElementAdded(context: context, value: value);
+      });
 }

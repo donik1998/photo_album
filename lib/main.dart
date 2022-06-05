@@ -6,6 +6,7 @@ import 'package:photo_album/presentation/pages/all_templates_page/all_templates_
 import 'package:photo_album/presentation/pages/auth/login_page/login_page.dart';
 import 'package:photo_album/presentation/pages/auth/login_with_email_page/login_with_email_page.dart';
 import 'package:photo_album/presentation/pages/editor_page/editor_page.dart';
+import 'package:photo_album/presentation/pages/my_albums_page/all_local_albums_page.dart';
 import 'package:photo_album/presentation/pages/root/root_page.dart';
 import 'package:photo_album/presentation/state/all_templates_page_state/all_templates_page_state.dart';
 import 'package:photo_album/presentation/state/auth/login_page_state.dart';
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
               create: (context) => RedactorPageState(),
               child: RedactorPage(),
             ),
+        AppRoutes.ALL_LOCAL_ALBUMS: (context) => AllLocalAlbumsPage(),
       },
       title: 'Screenlife',
       debugShowCheckedModeBanner: false,

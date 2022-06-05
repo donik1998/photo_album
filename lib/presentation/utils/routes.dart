@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
 import 'package:photo_album/data/models/album_template.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
@@ -13,6 +12,7 @@ class AppRoutes {
   static const String LOGIN_WITH_EMAIL_PAGE = '/login_with_email_page';
   static const String ALL_TEMPLATES_PAGE = '/all_templates_page';
   static const String EDITOR_PAGE = '/editor_page';
+  static const String ALL_LOCAL_ALBUMS = '/all_local_albums';
 }
 
 class AllTemplatesPageArgs {
@@ -22,11 +22,11 @@ class AllTemplatesPageArgs {
 }
 
 class RedactorPageArgs {
-  final Widget? backImage;
+  final AlbumPageBackground? backImage;
   final List<AlbumPageTemplateCategory> albumPageTemplateCategories;
   final List<DecorationCategory> decorationCategories;
   final bool openElementsSheetFirst;
-  final AlbumModel? album;
+  final AlbumModel? localAlbum;
   final List<AlbumDecoration> albumBacks;
 
   RedactorPageArgs({
@@ -34,22 +34,9 @@ class RedactorPageArgs {
     this.openElementsSheetFirst = false,
     required this.albumPageTemplateCategories,
     required this.decorationCategories,
-    this.album,
+    this.localAlbum,
     required this.albumBacks,
   });
-
-  RedactorPageArgs copyWith({
-    Widget? backImage,
-    List<AlbumPageTemplateCategory>? albumPageTemplateCategories,
-    List<DecorationCategory>? decorationCategories,
-    List<AlbumDecoration>? albumBacks,
-  }) =>
-      RedactorPageArgs(
-        backImage: backImage ?? this.backImage,
-        albumPageTemplateCategories: albumPageTemplateCategories ?? this.albumPageTemplateCategories,
-        decorationCategories: decorationCategories ?? this.decorationCategories,
-        albumBacks: albumBacks ?? this.albumBacks,
-      );
 }
 
 class PhotoEditorPageArgs {

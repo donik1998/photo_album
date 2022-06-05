@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,11 +8,10 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:photo_album/data/models/album_template.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
+import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/data/services/dataBase_services.dart';
-import 'package:photo_album/presentation/custom_widgets/back_image_substitution_dialog.dart';
 import 'package:photo_album/presentation/pages/editor_page/widgets/redactor_page_element.dart';
 import 'package:photo_album/presentation/state/base_provider.dart';
-import 'package:photo_album/presentation/utils/ui_models/editor_page_model.dart';
 import 'package:printing/printing.dart' as printing;
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
@@ -30,11 +28,21 @@ class RedactorPageState extends BaseProvider {
       widthCm: 25,
       widthInch: 25,
     );
-    selectedPage = EditorPage(elements: []);
+    albumModel.pages.add(
+      AlbumPage(
+        decorations: [],
+        background: AlbumPageBackground(
+          title: '',
+          downloadLink: '',
+          localPath: '',
+        ),
+      ),
+    );
+    selectedPage = albumModel.pages.first;
   }
-  List<EditorPage> pages = [];
+
   late AlbumModel albumModel;
-  late EditorPage selectedPage;
+  late AlbumPage selectedPage;
   AlbumDecoration? selectedElement;
   List<AlbumDecoration> albumBackImages = List<AlbumDecoration>.empty(growable: true);
   ScreenshotController screenshotController = ScreenshotController();
@@ -52,12 +60,12 @@ class RedactorPageState extends BaseProvider {
     notifyListeners();
   }
 
-  void addEditorPage(EditorPage page) {
-    pages.add(page);
+  void addPage(AlbumPage page) {
+    albumModel = albumModel.copyWith(pages: <AlbumPage>[...albumModel.pages, page]);
     notifyListeners();
   }
 
-  void setSelectedPage(EditorPage page) {
+  void setSelectedPage(AlbumPage page) {
     selectedPage = page;
     notifyListeners();
   }
@@ -69,7 +77,7 @@ class RedactorPageState extends BaseProvider {
 
   Future<void> captureAndSave() async {
     final pdfDoc = pw.Document();
-    for (final page in pages) {
+    for (final page in albumModel.pages) {
       setSelectedPage(page);
       setScreenshotInProgress(true);
 
@@ -90,7 +98,7 @@ class RedactorPageState extends BaseProvider {
 
   Future<void> captureAndShare() async {
     final pdfDoc = pw.Document();
-    for (final page in pages) {
+    for (final page in albumModel.pages) {
       setSelectedPage(page);
       setScreenshotInProgress(true);
       final screenshot = await screenshotController.capture(delay: Duration(milliseconds: 10));
@@ -117,17 +125,17 @@ class RedactorPageState extends BaseProvider {
   }
 
   void onPhotoModified({required AlbumDecoration currentElement, required String newPath}) {
-    final index = selectedPage.elements.indexOf(currentElement);
+    final index = selectedPage.decorations.indexOf(currentElement);
     if (index.isNegative) return;
-    selectedPage.elements[index] = currentElement.copyWith(localPath: newPath);
+    selectedPage.decorations[index] = currentElement.copyWith(localPath: newPath);
     DataBaseService.instance.editAlbum(albumModel);
     notifyListeners();
   }
 
   void onPhotoCropped({required AlbumDecoration currentElement, required CropData newFileData}) {
-    final index = selectedPage.elements.indexOf(currentElement);
+    final index = selectedPage.decorations.indexOf(currentElement);
     if (index.isNegative) return;
-    selectedPage.elements[index] = currentElement.copyWith(
+    selectedPage.decorations[index] = currentElement.copyWith(
       localPath: newFileData.file.path,
       width: newFileData.dimensions.width,
       height: newFileData.dimensions.height,
@@ -137,23 +145,23 @@ class RedactorPageState extends BaseProvider {
   }
 
   void onPhotoResized({required Size newSize, required AlbumDecoration currentElement}) {
-    final index = selectedPage.elements.indexOf(currentElement);
+    final index = selectedPage.decorations.indexOf(currentElement);
     if (index.isNegative) return;
-    selectedPage.elements[index] = currentElement.copyWith(width: newSize.width, height: newSize.height);
+    selectedPage.decorations[index] = currentElement.copyWith(width: newSize.width, height: newSize.height);
     DataBaseService.instance.editAlbum(albumModel);
     notifyListeners();
   }
 
   void onPhotoDeleted({required AlbumDecoration currentElement}) {
-    selectedPage.elements.remove(currentElement);
+    selectedPage.decorations.remove(currentElement);
     DataBaseService.instance.editAlbum(albumModel);
     notifyListeners();
   }
 
   void onPhotoDragged({required AlbumDecoration currentElement, required Offset offset}) {
-    final elementIndex = selectedPage.elements.indexOf(currentElement);
+    final elementIndex = selectedPage.decorations.indexOf(currentElement);
     if (elementIndex.isNegative) return;
-    selectedPage.elements[elementIndex] = currentElement.copyWith(x: currentElement.x + offset.dx, y: currentElement.y + offset.dy);
+    selectedPage.decorations[elementIndex] = currentElement.copyWith(x: currentElement.x + offset.dx, y: currentElement.y + offset.dy);
     selectedElement = currentElement;
     notifyListeners();
   }
@@ -163,31 +171,58 @@ class RedactorPageState extends BaseProvider {
     notifyListeners();
   }
 
+  void onBackgroundChanged(String value) {
+    final currentBack = selectedPage.background;
+
+    selectedPage = selectedPage.copyWith(
+      background: AlbumPageBackground(
+        title: currentBack.title,
+        downloadLink: value,
+        localPath: currentBack.localPath,
+      ),
+    );
+    final pageIndex = albumModel.pages.indexOf(selectedPage);
+    if (!pageIndex.isNegative) {
+      final currentBack = selectedPage.background;
+      albumModel.pages.removeAt(pageIndex);
+      albumModel.pages.insert(
+        pageIndex,
+        selectedPage.copyWith(
+          background: AlbumPageBackground(
+            title: currentBack.title,
+            downloadLink: value,
+            localPath: currentBack.localPath,
+          ),
+        ),
+      );
+    }
+    notifyListeners();
+    // final currentBack = selectedPage.background;
+    // if (selectedPage.background.downloadLink.isNotEmpty || selectedPage.background.localPath.isEmpty) {
+    //   selectedPage = selectedPage.copyWith(
+    //     background: AlbumPageBackground(
+    //       title: currentBack.title,
+    //       downloadLink: currentBack.downloadLink,
+    //       localPath: currentBack.localPath,
+    //     ),
+    //   );
+    //   notifyListeners();
+  }
+
+  void onDecorationAdded(AlbumDecoration decoration) {
+    selectedPage.decorations.add(decoration);
+    final pageIndex = albumModel.pages.indexOf(selectedPage);
+    if (!pageIndex.isNegative) {
+      albumModel.pages.elementAt(pageIndex).decorations.add(decoration);
+    }
+    selectedElement = decoration;
+    notifyListeners();
+  }
+
   Future<void> onElementAdded({required BuildContext context, dynamic value}) async {
     if (value is String) {
-      if (selectedPage.backImage == null) {
-        selectedPage.backImage = CachedNetworkImage(imageUrl: value, fit: BoxFit.fitWidth);
-        notifyListeners();
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) => BackImageSubstitutionConfirmationDialog(
-            onCancel: () {
-              final newPage = EditorPage(elements: [], backImage: CachedNetworkImage(imageUrl: value, fit: BoxFit.fitWidth));
-              addEditorPage(newPage);
-              setSelectedPage(newPage);
-            },
-            onConfirm: () {
-              selectedPage.backImage = CachedNetworkImage(imageUrl: value, fit: BoxFit.fitWidth);
-              notifyListeners();
-            },
-          ),
-        );
-      }
+    } else if (value is AlbumPageTemplate) {
     } else if (value is AlbumDecoration) {
-      selectedPage.elements.add(value);
-      selectedElement = value;
-      notifyListeners();
     } else if (value is AlbumCover) {
       albumModel = albumModel.copyWith(cover: value);
       notifyListeners();

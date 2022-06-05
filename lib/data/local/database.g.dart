@@ -16,6 +16,7 @@ class Album extends DataClass implements Insertable<Album> {
   final double heightInch;
   final String cover;
   final String pages;
+  final String timeStamp;
   Album(
       {required this.title,
       required this.type,
@@ -24,7 +25,8 @@ class Album extends DataClass implements Insertable<Album> {
       required this.widthInch,
       required this.heightInch,
       required this.cover,
-      required this.pages});
+      required this.pages,
+      required this.timeStamp});
   factory Album.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -45,6 +47,8 @@ class Album extends DataClass implements Insertable<Album> {
           .mapFromDatabaseResponse(data['${effectivePrefix}cover'])!,
       pages: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}pages'])!,
+      timeStamp: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}time_stamp'])!,
     );
   }
   @override
@@ -58,6 +62,7 @@ class Album extends DataClass implements Insertable<Album> {
     map['height_inch'] = Variable<double>(heightInch);
     map['cover'] = Variable<String>(cover);
     map['pages'] = Variable<String>(pages);
+    map['time_stamp'] = Variable<String>(timeStamp);
     return map;
   }
 
@@ -71,6 +76,7 @@ class Album extends DataClass implements Insertable<Album> {
       heightInch: Value(heightInch),
       cover: Value(cover),
       pages: Value(pages),
+      timeStamp: Value(timeStamp),
     );
   }
 
@@ -86,6 +92,7 @@ class Album extends DataClass implements Insertable<Album> {
       heightInch: serializer.fromJson<double>(json['heightInch']),
       cover: serializer.fromJson<String>(json['cover']),
       pages: serializer.fromJson<String>(json['pages']),
+      timeStamp: serializer.fromJson<String>(json['timeStamp']),
     );
   }
   @override
@@ -100,6 +107,7 @@ class Album extends DataClass implements Insertable<Album> {
       'heightInch': serializer.toJson<double>(heightInch),
       'cover': serializer.toJson<String>(cover),
       'pages': serializer.toJson<String>(pages),
+      'timeStamp': serializer.toJson<String>(timeStamp),
     };
   }
 
@@ -111,7 +119,8 @@ class Album extends DataClass implements Insertable<Album> {
           double? widthInch,
           double? heightInch,
           String? cover,
-          String? pages}) =>
+          String? pages,
+          String? timeStamp}) =>
       Album(
         title: title ?? this.title,
         type: type ?? this.type,
@@ -121,6 +130,7 @@ class Album extends DataClass implements Insertable<Album> {
         heightInch: heightInch ?? this.heightInch,
         cover: cover ?? this.cover,
         pages: pages ?? this.pages,
+        timeStamp: timeStamp ?? this.timeStamp,
       );
   @override
   String toString() {
@@ -132,14 +142,15 @@ class Album extends DataClass implements Insertable<Album> {
           ..write('widthInch: $widthInch, ')
           ..write('heightInch: $heightInch, ')
           ..write('cover: $cover, ')
-          ..write('pages: $pages')
+          ..write('pages: $pages, ')
+          ..write('timeStamp: $timeStamp')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      title, type, widthCm, heightCm, widthInch, heightInch, cover, pages);
+  int get hashCode => Object.hash(title, type, widthCm, heightCm, widthInch,
+      heightInch, cover, pages, timeStamp);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -151,7 +162,8 @@ class Album extends DataClass implements Insertable<Album> {
           other.widthInch == this.widthInch &&
           other.heightInch == this.heightInch &&
           other.cover == this.cover &&
-          other.pages == this.pages);
+          other.pages == this.pages &&
+          other.timeStamp == this.timeStamp);
 }
 
 class AlbumsCompanion extends UpdateCompanion<Album> {
@@ -163,6 +175,7 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
   final Value<double> heightInch;
   final Value<String> cover;
   final Value<String> pages;
+  final Value<String> timeStamp;
   const AlbumsCompanion({
     this.title = const Value.absent(),
     this.type = const Value.absent(),
@@ -172,6 +185,7 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     this.heightInch = const Value.absent(),
     this.cover = const Value.absent(),
     this.pages = const Value.absent(),
+    this.timeStamp = const Value.absent(),
   });
   AlbumsCompanion.insert({
     required String title,
@@ -182,6 +196,7 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     required double heightInch,
     required String cover,
     required String pages,
+    required String timeStamp,
   })  : title = Value(title),
         type = Value(type),
         widthCm = Value(widthCm),
@@ -189,7 +204,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
         widthInch = Value(widthInch),
         heightInch = Value(heightInch),
         cover = Value(cover),
-        pages = Value(pages);
+        pages = Value(pages),
+        timeStamp = Value(timeStamp);
   static Insertable<Album> custom({
     Expression<String>? title,
     Expression<String>? type,
@@ -199,6 +215,7 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     Expression<double>? heightInch,
     Expression<String>? cover,
     Expression<String>? pages,
+    Expression<String>? timeStamp,
   }) {
     return RawValuesInsertable({
       if (title != null) 'title': title,
@@ -209,6 +226,7 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
       if (heightInch != null) 'height_inch': heightInch,
       if (cover != null) 'cover': cover,
       if (pages != null) 'pages': pages,
+      if (timeStamp != null) 'time_stamp': timeStamp,
     });
   }
 
@@ -220,7 +238,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
       Value<double>? widthInch,
       Value<double>? heightInch,
       Value<String>? cover,
-      Value<String>? pages}) {
+      Value<String>? pages,
+      Value<String>? timeStamp}) {
     return AlbumsCompanion(
       title: title ?? this.title,
       type: type ?? this.type,
@@ -230,6 +249,7 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
       heightInch: heightInch ?? this.heightInch,
       cover: cover ?? this.cover,
       pages: pages ?? this.pages,
+      timeStamp: timeStamp ?? this.timeStamp,
     );
   }
 
@@ -260,6 +280,9 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     if (pages.present) {
       map['pages'] = Variable<String>(pages.value);
     }
+    if (timeStamp.present) {
+      map['time_stamp'] = Variable<String>(timeStamp.value);
+    }
     return map;
   }
 
@@ -273,7 +296,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
           ..write('widthInch: $widthInch, ')
           ..write('heightInch: $heightInch, ')
           ..write('cover: $cover, ')
-          ..write('pages: $pages')
+          ..write('pages: $pages, ')
+          ..write('timeStamp: $timeStamp')
           ..write(')'))
         .toString();
   }
@@ -324,9 +348,23 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
   late final GeneratedColumn<String?> pages = GeneratedColumn<String?>(
       'pages', aliasedName, false,
       type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _timeStampMeta = const VerificationMeta('timeStamp');
   @override
-  List<GeneratedColumn> get $columns =>
-      [title, type, widthCm, heightCm, widthInch, heightInch, cover, pages];
+  late final GeneratedColumn<String?> timeStamp = GeneratedColumn<String?>(
+      'time_stamp', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        title,
+        type,
+        widthCm,
+        heightCm,
+        widthInch,
+        heightInch,
+        cover,
+        pages,
+        timeStamp
+      ];
   @override
   String get aliasedName => _alias ?? 'albums';
   @override
@@ -385,6 +423,12 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
           _pagesMeta, pages.isAcceptableOrUnknown(data['pages']!, _pagesMeta));
     } else if (isInserting) {
       context.missing(_pagesMeta);
+    }
+    if (data.containsKey('time_stamp')) {
+      context.handle(_timeStampMeta,
+          timeStamp.isAcceptableOrUnknown(data['time_stamp']!, _timeStampMeta));
+    } else if (isInserting) {
+      context.missing(_timeStampMeta);
     }
     return context;
   }

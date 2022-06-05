@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
-import 'package:photo_album/presentation/theme/app_instets.dart';
 
 class BottomSheetContainer extends StatelessWidget {
   final Widget child;
@@ -17,7 +16,8 @@ class BottomSheetContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: AppInsets.horizontalInsets16,
+      padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).viewInsets.bottom),
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),

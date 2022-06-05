@@ -11,6 +11,9 @@ class Albums extends Table {
   RealColumn get heightInch => real()();
   TextColumn get cover => text()();
   TextColumn get pages => text()();
+
+  /// [timeStamp] stores last edited date
+  TextColumn get timeStamp => text()();
 }
 
 class DecorationElements extends Table {

@@ -55,6 +55,7 @@ class AlbumModel {
         widthInch: widthInch,
         heightInch: heightInch,
         cover: jsonEncode(cover.toMap),
+        timeStamp: DateTime.now().toIso8601String(),
         pages: jsonEncode(pages.map((e) => e.toMap).toList()),
       );
 
@@ -97,29 +98,30 @@ class AlbumModel {
 
 class AlbumPage {
   final List<AlbumDecoration> decorations;
-  final List<AlbumPhoto> photos;
-  final AlbumPageBackground background;
-  final AlbumPageLayout layout;
+  AlbumPageBackground background;
 
   AlbumPage({
     required this.decorations,
-    required this.photos,
     required this.background,
-    required this.layout,
   });
   factory AlbumPage.fromMap(Map<String, dynamic> data) => AlbumPage(
-        decorations: data['decorations'].map((entry) => AlbumDecoration.fromMap(entry)).toList(),
-        photos: data['photos'].map((entry) => AlbumPhoto.fromMap(entry)).toList(),
+        decorations: data['decorations'].map<AlbumDecoration>((entry) => AlbumDecoration.fromMap(entry)).toList(),
         background: AlbumPageBackground.fromMap(data['background']),
-        layout: AlbumPageLayout.fromMap(data['layout']),
       );
 
   Map<String, dynamic> get toMap => {
         'decorations': this.decorations.map((e) => e.toMap).toList(),
-        'photos': this.photos.map((e) => e.toMap).toList(),
         'background': this.background.toMap,
-        'layout': this.layout.toMap,
       };
+
+  AlbumPage copyWith({
+    List<AlbumDecoration>? decorations,
+    AlbumPageBackground? background,
+  }) =>
+      AlbumPage(
+        decorations: decorations ?? this.decorations,
+        background: background ?? this.background,
+      );
 }
 
 class AlbumPhoto {
@@ -176,6 +178,18 @@ class AlbumPageBackground extends DownloadableContent {
         title: data['title'],
         localPath: '',
         downloadLink: data['download_link'],
+      );
+
+  @override
+  AlbumPageBackground copyWith({
+    String? coverName,
+    String? localPath,
+    String? downloadLink,
+  }) =>
+      AlbumPageBackground(
+        title: coverName ?? this.title,
+        localPath: localPath ?? this.localPath,
+        downloadLink: downloadLink ?? this.downloadLink,
       );
 }
 

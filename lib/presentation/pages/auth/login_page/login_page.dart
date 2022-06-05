@@ -47,7 +47,7 @@ class LoginPage extends StatelessWidget {
                     if (signInSuccess)
                       Navigator.pushNamedAndRemoveUntil(context, AppRoutes.ROOT_PAGE, (route) => false);
                     else
-                      AppRuntimeNotifier.instance.showErrorSnack(context: context, message: 'Не получилось войти через Google');
+                      AppRuntimeNotifier.instance.showSnack(context: context, message: 'Не получилось войти через Google');
                   }),
                   color: AppColors.grey,
                   child: Row(

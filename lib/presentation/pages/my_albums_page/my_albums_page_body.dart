@@ -38,19 +38,20 @@ class MyAlbumsPageBody extends StatelessWidget {
               padding: AppInsets.insetsAll16,
               itemCount: snapshot.data!.length,
               itemBuilder: (BuildContext context, int index) {
+                snapshot.data?.forEach((element) {
+                  print(element.toMap);
+                });
                 return AlbumCard(
                   album: snapshot.data!.elementAt(index),
                   showText: true,
-                  onAlbumDeleted: () {
-                    DataBaseService.instance.deleteAlbum(snapshot.data!.elementAt(index));
-                  },
+                  onAlbumDeleted: () => DataBaseService.instance.deleteAlbum(snapshot.data!.elementAt(index)),
                   onTap: () => Navigator.pushNamed(
                     context,
                     AppRoutes.EDITOR_PAGE,
                     arguments: RedactorPageArgs(
                       decorationCategories: state.decorationCategories,
                       albumBacks: state.albumBacks,
-                      album: snapshot.data!.elementAt(index),
+                      localAlbum: snapshot.data!.elementAt(index),
                       albumPageTemplateCategories: state.templateCategories,
                     ),
                   ),
