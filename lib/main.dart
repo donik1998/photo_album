@@ -25,14 +25,13 @@ void main() async {
     SystemUiOverlay.top,
   ]);
   await initialize();
-  //
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.white,
-    statusBarBrightness: Brightness.light,
-    statusBarIconBrightness: Brightness.light,
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarDividerColor: Colors.white,
-    systemNavigationBarIconBrightness: Brightness.light,
+    statusBarColor: Colors.black,
+    statusBarBrightness: Brightness.dark,
+    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: Colors.black,
+    systemNavigationBarDividerColor: Colors.black,
+    systemNavigationBarIconBrightness: Brightness.dark,
   ));
   runApp(const MyApp());
 }
