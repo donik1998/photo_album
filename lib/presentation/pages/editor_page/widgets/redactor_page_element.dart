@@ -94,11 +94,6 @@ class _RedactorPageElementState extends State<RedactorPageElement> {
               ),
               AppSpacing.horizontalSpace16,
               CustomIconButton(
-                icon: Icon(Icons.delete, color: Colors.white, size: 18),
-                onTap: () => widget.onDeleted(),
-              ),
-              AppSpacing.horizontalSpace16,
-              CustomIconButton(
                 icon: Icon(Icons.filter, color: Colors.white, size: 18),
                 onTap: () => Navigator.push(
                   context,

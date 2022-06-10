@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:photo_album/data/models/album_model.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
-import 'package:photo_album/data/models/album_template.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
 

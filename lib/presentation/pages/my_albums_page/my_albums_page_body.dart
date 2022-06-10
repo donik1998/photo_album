@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:photo_album/data/models/album_template.dart';
+import 'package:photo_album/data/models/album_model.dart';
 import 'package:photo_album/data/services/dataBase_services.dart';
 import 'package:photo_album/presentation/custom_widgets/album_card.dart';
 import 'package:photo_album/presentation/custom_widgets/empty_list_widget.dart';
@@ -27,7 +27,10 @@ class MyAlbumsPageBody extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting)
             return Loader();
           else if (snapshot.hasData && (snapshot.data?.isEmpty ?? false || !snapshot.hasData))
-            return EmptyListWidget(message: 'На вашем устройстве нет сохраненных альбомов');
+            return Padding(
+              padding: AppInsets.insetsAll16,
+              child: EmptyListWidget(message: 'На вашем устройстве нет сохраненных альбомов'),
+            );
           return Consumer<MyAlbumsBodyState>(
             builder: (context, state, child) => GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -38,9 +41,6 @@ class MyAlbumsPageBody extends StatelessWidget {
               padding: AppInsets.insetsAll16,
               itemCount: snapshot.data!.length,
               itemBuilder: (BuildContext context, int index) {
-                snapshot.data?.forEach((element) {
-                  print(element.toMap);
-                });
                 return AlbumCard(
                   album: snapshot.data!.elementAt(index),
                   showText: true,

@@ -68,6 +68,8 @@ class AlbumDecoration {
         width: data['width'].toDouble(),
         x: data['x']?.toDouble() ?? 0,
         y: data['y']?.toDouble() ?? 0,
+        isLocal: data['is_local'] ?? false,
+        isText: data['is_text'] ?? false,
       );
 
   bool get isCached => localPath.isNotEmpty;
@@ -80,6 +82,8 @@ class AlbumDecoration {
         'y': this.y,
         'title': this.title,
         'local_path': this.localPath,
+        'is_text': this.isText,
+        'is_local': this.isLocal,
       };
 
   AlbumDecoration copyWith({

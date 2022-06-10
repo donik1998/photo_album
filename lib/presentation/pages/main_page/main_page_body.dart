@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_album/data/models/album_template.dart';
+import 'package:photo_album/data/models/album_model.dart';
 import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/data/services/auth_service.dart';
 import 'package:photo_album/presentation/custom_widgets/resolution_template.dart';

@@ -1,5 +1,5 @@
 import 'package:photo_album/data/local/database.dart';
-import 'package:photo_album/data/models/album_template.dart';
+import 'package:photo_album/data/models/album_model.dart';
 
 class DataBaseService {
   DataBaseService._();

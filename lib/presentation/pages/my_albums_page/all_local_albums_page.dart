@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:photo_album/data/models/album_template.dart';
+import 'package:photo_album/data/models/album_model.dart';
 import 'package:photo_album/data/services/dataBase_services.dart';
 import 'package:photo_album/presentation/custom_widgets/album_card.dart';
 import 'package:photo_album/presentation/custom_widgets/empty_list_widget.dart';

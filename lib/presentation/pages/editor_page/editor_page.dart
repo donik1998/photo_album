@@ -1,12 +1,10 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:photo_album/data/models/album_template.dart';
+import 'package:photo_album/data/models/album_model.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
-import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/data/services/dataBase_services.dart';
 import 'package:photo_album/presentation/custom_widgets/back_image_substitution_dialog.dart';
 import 'package:photo_album/presentation/custom_widgets/sheets/album_back_sheet.dart';
@@ -15,6 +13,7 @@ import 'package:photo_album/presentation/pages/editor_page/widgets/redactor_page
 import 'package:photo_album/presentation/state/editor_page_state.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
+import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
 import 'package:photo_album/presentation/utils/app_runtime_notifier.dart';
 import 'package:photo_album/presentation/utils/routes.dart';
@@ -38,14 +37,11 @@ class _RedactorPageState extends State<RedactorPage> {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
       final state = context.read<RedactorPageState>();
-      final backImages = await FirebaseFirestore.instance.collection('decorations').where('type', isEqualTo: 'Фоны альбомов').get();
-      state.setAlbumBacks(List<AlbumDecoration>.from(backImages.docs.map((e) => AlbumDecoration.fromMap(e.data()))));
       final args = ModalRoute.of(context)!.settings.arguments as RedactorPageArgs;
       if (args.localAlbum != null) {
         state.setAlbumModel(args.localAlbum!);
-        args.localAlbum!.pages.forEach((element) {
-          print(element.toMap);
-        });
+        print(args.localAlbum!.pages.isNotEmpty);
+        if (args.localAlbum!.pages.isNotEmpty) state.setSelectedPage(args.localAlbum!.pages.first);
       }
       if (args.localAlbum == null) await DataBaseService.instance.saveAlbumToDB(state.albumModel);
       if (args.openElementsSheetFirst)
@@ -148,7 +144,7 @@ class _RedactorPageState extends State<RedactorPage> {
                       onEdited: (newPath) => state.onPhotoModified(currentElement: element, newPath: newPath),
                       onCropped: (newFileData) => state.onPhotoCropped(newFileData: newFileData, currentElement: element),
                       onResized: (newSize) => state.onPhotoResized(newSize: newSize, currentElement: element),
-                      onDeleted: () => state.onPhotoDeleted(currentElement: element),
+                      onDeleted: () => state.onItemDeleted(currentElement: element),
                       onDragged: (newOffset) => state.onPhotoDragged(currentElement: element, offset: newOffset),
                       dragEnded: () => state.saveChangesToLocalDB(),
                     ),
@@ -178,31 +174,88 @@ class _RedactorPageState extends State<RedactorPage> {
       bottomNavigationBar: Consumer<RedactorPageState>(
         builder: (context, state, child) => SafeArea(
           minimum: AppInsets.insetsAll16,
-          child: SizedBox(
-            height: 56,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: List<Widget>.from(
-                  state.albumModel.pages.map(
-                    (e) => GestureDetector(
-                      onTap: () => state.setSelectedPage(e),
-                      child: Container(
-                        margin: AppInsets.horizontalInsets16,
-                        height: 48,
-                        width: 64,
-                        decoration: BoxDecoration(
-                          color: e == state.selectedPage ? AppColors.white : AppColors.pinkLight.withOpacity(0.5),
-                          border: Border.all(color: AppColors.pinkLight, width: 1),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 56,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: List<Widget>.from(
+                      state.albumModel.pages.map(
+                        (e) => GestureDetector(
+                          onTap: () => state.setSelectedPage(e),
+                          child: Container(
+                            margin: AppInsets.horizontalInsets16,
+                            height: 48,
+                            width: 64,
+                            decoration: BoxDecoration(
+                              color: e == state.selectedPage ? AppColors.white : AppColors.pinkLight.withOpacity(0.5),
+                              border: Border.all(color: AppColors.pinkLight, width: 1),
+                            ),
+                            child:
+                                Center(child: Text('${state.albumModel.pages.indexOf(e) + 1}', style: AppTextStyles.smallTitleBold)),
+                          ),
                         ),
-                        child: Center(child: Text('${state.albumModel.pages.indexOf(e) + 1}', style: AppTextStyles.smallTitleBold)),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
+              if (state.selectedElement != null) AppSpacing.verticalSpace10,
+              if (state.selectedElement != null)
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        GestureDetector(
+                          onTap: () => state.bringSelectedElementToFront(),
+                          child: SvgPicture.asset('assets/svgs/Copy.svg'),
+                        ),
+                        AppSpacing.horizontalSpace24,
+                        GestureDetector(
+                          onTap: () => state.onItemDeleted(currentElement: state.selectedElement!),
+                          child: SvgPicture.asset('assets/svgs/Delete.svg'),
+                        ),
+                        AppSpacing.horizontalSpace24,
+                        GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            'Эффекты',
+                            style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
+                          ),
+                        ),
+                        AppSpacing.horizontalSpace24,
+                        GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            'Фильтры',
+                            style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
+                          ),
+                        ),
+                        AppSpacing.horizontalSpace24,
+                        GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            'Настроить',
+                            style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              AppSpacing.verticalSpace16,
+            ],
           ),
         ),
       ),
@@ -216,10 +269,10 @@ class _RedactorPageState extends State<RedactorPage> {
               sheet: ElementsSheet(albumPageTemplateCategory: albumPageTemplateCategories, decorationCategories: decorationCategories))
           .then((value) {
         final state = context.read<RedactorPageState>();
-        if (value is String) {
+        if (value is String && state.selectedPage.background.downloadLink.isEmpty) {
           state.onBackgroundChanged(value);
         }
-        if (value is AlbumPageTemplate) {
+        if (value is String && state.selectedPage.background.downloadLink.isNotEmpty) {
           showDialog(
             context: context,
             builder: (context) => BackImageSubstitutionConfirmationDialog(
@@ -229,20 +282,22 @@ class _RedactorPageState extends State<RedactorPage> {
                   background: AlbumPageBackground(
                     title: '',
                     localPath: '',
-                    downloadLink: 'value',
+                    downloadLink: value,
                   ),
                 );
                 state.addPage(newPage);
                 state.setSelectedPage(newPage);
               },
-              onConfirm: () => state.onBackgroundChanged('value.downloadLinks'),
+              onConfirm: () => state.onBackgroundChanged(value),
             ),
           );
         }
         if (value is AlbumDecoration) {
           state.onDecorationAdded(value);
         }
-
-        // context.read<RedactorPageState>().onElementAdded(context: context, value: value);
+        if (value is AlbumCover) {
+          state.setAlbumModel(state.albumModel.copyWith(cover: value));
+        }
+        state.setFabIsVisible(true);
       });
 }

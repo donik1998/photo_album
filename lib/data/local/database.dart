@@ -33,7 +33,9 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<Album>> getAllAlbums() => select(albums).get();
   Future insertAlbum(Album album) => into(albums).insert(album);
-  Future deleteAlbum(Album album) => delete(albums).delete(album);
+  dynamic deleteAlbum(Album album) => delete(albums)
+    ..where((tbl) => tbl.title.equals(album.title))
+    ..go();
   Stream<List<Album>> get localAlbumStream => select(albums).watch();
   editAlbum(Album album) => update(albums)
     ..where((tbl) => tbl.title.equals(album.title))
