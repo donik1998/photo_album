@@ -51,8 +51,8 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
           ),
           // top left
           Positioned(
-            top: top - ballDiameter / 2,
-            left: left - ballDiameter / 2,
+            top: 0,
+            left: 0,
             child: ManipulatingBall(
               onDrag: (dx, dy) {
                 var mid = (dx + dy) / 2;
@@ -68,11 +68,10 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
               },
             ),
           ),
-
           // top right
           Positioned(
-            top: top - ballDiameter / 2,
-            left: left + width - ballDiameter / 2,
+            top: 0,
+            right: 0,
             child: ManipulatingBall(
               onDrag: (dx, dy) {
                 var mid = (dx + (dy * -1)) / 2;
@@ -92,8 +91,8 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
           ),
           // bottom right
           Positioned(
-            top: top + height - ballDiameter / 2,
-            left: left + width - ballDiameter / 2,
+            bottom: 0,
+            right: 0,
             child: ManipulatingBall(
               onDrag: (dx, dy) {
                 var mid = (dx + dy) / 2;
@@ -113,8 +112,8 @@ class _ResizeWrapperState extends State<ResizeWrapper> {
           ),
           // bottom left
           Positioned(
-            top: top + height - ballDiameter / 2,
-            left: left - ballDiameter / 2,
+            bottom: 0,
+            left: 0,
             child: ManipulatingBall(
               onDrag: (dx, dy) {
                 var mid = ((dx * -1) + dy) / 2;

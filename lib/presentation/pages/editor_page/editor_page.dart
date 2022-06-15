@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:photo_album/data/models/album_model.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
 import 'package:photo_album/data/services/dataBase_services.dart';
 import 'package:photo_album/presentation/custom_widgets/back_image_substitution_dialog.dart';
 import 'package:photo_album/presentation/custom_widgets/sheets/album_back_sheet.dart';
 import 'package:photo_album/presentation/custom_widgets/sheets/elements_sheet.dart';
+import 'package:photo_album/presentation/pages/editor_page/photo_editor_page.dart';
 import 'package:photo_album/presentation/pages/editor_page/widgets/redactor_page_element.dart';
 import 'package:photo_album/presentation/state/editor_page_state.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
@@ -40,10 +42,21 @@ class _RedactorPageState extends State<RedactorPage> {
       final args = ModalRoute.of(context)!.settings.arguments as RedactorPageArgs;
       if (args.localAlbum != null) {
         state.setAlbumModel(args.localAlbum!);
-        print(args.localAlbum!.pages.isNotEmpty);
-        if (args.localAlbum!.pages.isNotEmpty) state.setSelectedPage(args.localAlbum!.pages.first);
+        if (args.localAlbum!.pages.isNotEmpty) {
+          state.setSelectedPage(args.localAlbum!.pages.first);
+          if (args.localAlbum!.pages.first.decorations.isNotEmpty) {
+            state.setSelectedElement(args.localAlbum!.pages.first.decorations.first);
+          }
+        }
       }
-      if (args.localAlbum == null) await DataBaseService.instance.saveAlbumToDB(state.albumModel);
+      if (args.localAlbum == null) {
+        if (args.backImage != null) {
+          final newPage = AlbumPage(decorations: [], background: args.backImage!);
+          state.setAlbumModel(state.albumModel.copyWith(pages: [newPage]));
+          state.setSelectedPage(newPage);
+        }
+        await DataBaseService.instance.saveAlbumToDB(state.albumModel);
+      }
       if (args.openElementsSheetFirst)
         _showBottomSheet(
           context: context,
@@ -139,14 +152,12 @@ class _RedactorPageState extends State<RedactorPage> {
                     top: element.y,
                     left: element.x,
                     child: RedactorPageElement(
-                      hideControls: state.screenshotInProgress,
-                      child: element,
-                      onEdited: (newPath) => state.onPhotoModified(currentElement: element, newPath: newPath),
-                      onCropped: (newFileData) => state.onPhotoCropped(newFileData: newFileData, currentElement: element),
+                      decoration: element,
+                      hasResizeControls: state.canResizeSelectedElement && state.selectedElement == element,
+                      onTapped: () => state.setSelectedElement(element),
                       onResized: (newSize) => state.onPhotoResized(newSize: newSize, currentElement: element),
-                      onDeleted: () => state.onItemDeleted(currentElement: element),
                       onDragged: (newOffset) => state.onPhotoDragged(currentElement: element, offset: newOffset),
-                      dragEnded: () => state.saveChangesToLocalDB(),
+                      dragEnded: () => state.notifyListeners(),
                     ),
                   ),
               ],
@@ -192,11 +203,12 @@ class _RedactorPageState extends State<RedactorPage> {
                             height: 48,
                             width: 64,
                             decoration: BoxDecoration(
-                              color: e == state.selectedPage ? AppColors.white : AppColors.pinkLight.withOpacity(0.5),
-                              border: Border.all(color: AppColors.pinkLight, width: 1),
+                              color: e == state.selectedPage ? AppColors.white : Colors.transparent,
+                              border: Border.all(color: e == state.selectedPage ? AppColors.pinkLight : AppColors.grey, width: 1),
                             ),
-                            child:
-                                Center(child: Text('${state.albumModel.pages.indexOf(e) + 1}', style: AppTextStyles.smallTitleBold)),
+                            child: Center(
+                              child: Text('${state.albumModel.pages.indexOf(e) + 1}', style: AppTextStyles.smallTitleBold),
+                            ),
                           ),
                         ),
                       ),
@@ -228,28 +240,43 @@ class _RedactorPageState extends State<RedactorPage> {
                         ),
                         AppSpacing.horizontalSpace24,
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () => state.setCanResizeSelectedElement(true),
                           child: Text(
-                            'Эффекты',
+                            'Изменить размер',
                             style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
                           ),
                         ),
-                        AppSpacing.horizontalSpace24,
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            'Фильтры',
-                            style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
+                        if (state.selectedElement?.isLocal ?? false) AppSpacing.horizontalSpace24,
+                        if (state.selectedElement?.isLocal ?? false)
+                          GestureDetector(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PhotoEditScreen(file: File(state.selectedElement!.localPath)),
+                              ),
+                            ).then((value) {
+                              if (value is String) state.onPhotoModified(currentElement: state.selectedElement!, newPath: value);
+                            }),
+                            child: Text(
+                              'Реадктировать',
+                              style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
+                            ),
                           ),
-                        ),
-                        AppSpacing.horizontalSpace24,
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            'Настроить',
-                            style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
+                        if (state.selectedElement?.isLocal ?? false) AppSpacing.horizontalSpace24,
+                        if (state.selectedElement?.isLocal ?? false)
+                          GestureDetector(
+                            onTap: () async {
+                              final newImage = await ImageCropper.platform.cropImage(sourcePath: state.selectedElement!.localPath);
+                              if (newImage != null) {
+                                final oldItem = state.selectedElement!;
+                                state.setSelectedElement(state.selectedElement!.copyWith(localPath: newImage.path));
+                              }
+                            },
+                            child: Text(
+                              'Обрезать',
+                              style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),

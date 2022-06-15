@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 class AlbumDecoration {
   final String downloadLink;
   final String title;
@@ -68,11 +70,10 @@ class AlbumDecoration {
         width: data['width'].toDouble(),
         x: data['x']?.toDouble() ?? 0,
         y: data['y']?.toDouble() ?? 0,
+        localPath: data['local_path'] ?? '',
         isLocal: data['is_local'] ?? false,
         isText: data['is_text'] ?? false,
       );
-
-  bool get isCached => localPath.isNotEmpty;
 
   Map<String, dynamic> get toMap => {
         'download_link': this.downloadLink,
@@ -106,4 +107,6 @@ class AlbumDecoration {
         y: y ?? this.y,
         isLocal: isLocal ?? this.isLocal,
       );
+
+  Size get size => Size(width, height);
 }

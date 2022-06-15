@@ -365,103 +365,100 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
         ),
         key: scaffoldKey,
         resizeToAvoidBottomInset: false,
-        body: Container(
-          height: context.height(),
-          width: context.width(),
-          child: Column(
-            children: [
-              Container(
-                height: imageHeight,
-                width: imageWidth,
-                child: Stack(
-                  fit: StackFit.loose,
-                  children: [
-                    /// This widget will be saved as edited Image
-                    Screenshot(
-                      controller: screenshotController,
-                      key: screenshotKey,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        //fit: StackFit.expand,
-                        children: [
-                          (filter != null && filter!.matrix != null)
-                              ? ColorFiltered(
-                                  colorFilter: ColorFilter.matrix(filter!.matrix!),
-                                  child: Center(
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              height: imageHeight,
+              width: imageWidth,
+              child: Stack(
+                fit: StackFit.loose,
+                children: [
+                  /// This widget will be saved as edited Image
+                  Screenshot(
+                    controller: screenshotController,
+                    key: screenshotKey,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      //fit: StackFit.expand,
+                      children: [
+                        (filter != null && filter!.matrix != null)
+                            ? ColorFiltered(
+                                colorFilter: ColorFilter.matrix(filter!.matrix!),
+                                child: Center(
+                                  child: ImageFilterWidget(
+                                    brightness: brightness,
+                                    saturation: saturation,
+                                    hue: hue,
+                                    contrast: contrast,
+                                    child: Image.file(croppedFile!, fit: BoxFit.fitHeight),
+                                  ),
+                                ),
+                              )
+                            : Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  SizedBox(
                                     child: ImageFilterWidget(
                                       brightness: brightness,
                                       saturation: saturation,
                                       hue: hue,
                                       contrast: contrast,
-                                      child: Image.file(croppedFile!, fit: BoxFit.fitWidth),
+                                      child: Image.file(croppedFile!, fit: BoxFit.fitHeight, key: imageKey),
                                     ),
                                   ),
-                                )
-                              : Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    SizedBox(
-                                      child: ImageFilterWidget(
-                                        brightness: brightness,
-                                        saturation: saturation,
-                                        hue: hue,
-                                        contrast: contrast,
-                                        child: Image.file(croppedFile!, fit: BoxFit.fitWidth, key: imageKey),
-                                      ),
-                                    ),
-                                    if (filter != null && filter!.color != null)
-                                      Container(
-                                        height: imageHeight,
-                                        width: imageWidth,
-                                        color: Colors.black12,
-                                      ).withShaderMaskGradient(
-                                        LinearGradient(colors: filter!.color!, begin: Alignment.topLeft, end: Alignment.bottomRight),
-                                        blendMode: BlendMode.srcOut,
-                                      ),
-                                  ],
-                                ),
-                          ClipRRect(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                              child: Container(
-                                alignment: Alignment.center,
-                                color: Colors.grey.withOpacity(0.1),
-                              ),
-                            ),
-                          ),
-                          /*(filter != null && filter!.color != null)
-                                  ? Container(
-                                      //height: context.height(),
-                                      width: context.width(),
+                                  if (filter != null && filter!.color != null)
+                                    Container(
+                                      height: imageHeight,
+                                      width: imageWidth,
                                       color: Colors.black12,
-                                      child: SizedBox(),
                                     ).withShaderMaskGradient(
                                       LinearGradient(colors: filter!.color!, begin: Alignment.topLeft, end: Alignment.bottomRight),
                                       blendMode: BlendMode.srcOut,
-                                    )
-                                  : SizedBox(),*/
-                          frame != null
-                              ? Container(
-                                  color: Colors.black12,
-                                  child: Image.asset(
-                                    frame!,
-                                    fit: BoxFit.fill,
-                                    height: context.height(),
+                                    ),
+                                ],
+                              ),
+                        ClipRRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                            child: Container(
+                              alignment: Alignment.center,
+                              color: Colors.grey.withOpacity(0.1),
+                            ),
+                          ),
+                        ),
+                        /*(filter != null && filter!.color != null)
+                                ? Container(
+                                    //height: context.height(),
                                     width: context.width(),
-                                  ),
-                                )
-                              : SizedBox(),
-                          StackedWidgetComponent(mStackedWidgetList),
-                        ],
-                      ).center(),
-                    ),
-                    if (mShowBeforeImage) Image.file(croppedFile!, fit: BoxFit.cover),
-                  ],
-                ),
+                                    color: Colors.black12,
+                                    child: SizedBox(),
+                                  ).withShaderMaskGradient(
+                                    LinearGradient(colors: filter!.color!, begin: Alignment.topLeft, end: Alignment.bottomRight),
+                                    blendMode: BlendMode.srcOut,
+                                  )
+                                : SizedBox(),*/
+                        frame != null
+                            ? Container(
+                                color: Colors.black12,
+                                child: Image.asset(
+                                  frame!,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              )
+                            : SizedBox(),
+                        StackedWidgetComponent(mStackedWidgetList),
+                      ],
+                    ).center(),
+                  ),
+                  if (mShowBeforeImage) Image.file(croppedFile!, fit: BoxFit.fitHeight),
+                ],
               ),
-              Spacer(),
-              if (mIsFilterViewVisible)
-                AnimatedContainer(
+            ),
+            if (mIsFilterViewVisible)
+              Positioned(
+                bottom: 0,
+                child: AnimatedContainer(
                   duration: Duration(milliseconds: 200),
                   height: mIsFilterViewVisible ? 60 : 0,
                   width: context.width(),
@@ -473,8 +470,11 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
                     },
                   ),
                 ),
-              if (mIsBrightnessSliderVisible)
-                AnimatedContainer(
+              ),
+            if (mIsBrightnessSliderVisible)
+              Positioned(
+                bottom: 0,
+                child: AnimatedContainer(
                   duration: Duration(milliseconds: 200),
                   height: mIsBrightnessSliderVisible ? 120 : 0,
                   width: context.width(),
@@ -499,8 +499,11 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
                     ),
                   ),
                 ),
-              if (mIsContrastSliderVisible)
-                AnimatedContainer(
+              ),
+            if (mIsContrastSliderVisible)
+              Positioned(
+                bottom: 0,
+                child: AnimatedContainer(
                   duration: Duration(milliseconds: 200),
                   height: mIsContrastSliderVisible ? 60 : 0,
                   width: context.width(),
@@ -526,8 +529,11 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
                     ),
                   ),
                 ),
-              if (mIsSaturationSliderVisible)
-                AnimatedContainer(
+              ),
+            if (mIsSaturationSliderVisible)
+              Positioned(
+                bottom: 0,
+                child: AnimatedContainer(
                   duration: Duration(milliseconds: 200),
                   height: mIsSaturationSliderVisible ? 60 : 0,
                   width: context.width(),
@@ -552,8 +558,11 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
                     ),
                   ),
                 ),
-              if (mIsHueSliderVisible)
-                AnimatedContainer(
+              ),
+            if (mIsHueSliderVisible)
+              Positioned(
+                bottom: 0,
+                child: AnimatedContainer(
                   duration: Duration(milliseconds: 200),
                   height: mIsHueSliderVisible ? 60 : 0,
                   width: context.width(),
@@ -578,8 +587,11 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
                     ),
                   ),
                 ),
-              if (mIsBlurVisible)
-                AnimatedContainer(
+              ),
+            if (mIsBlurVisible)
+              Positioned(
+                bottom: 0,
+                child: AnimatedContainer(
                   duration: Duration(milliseconds: 200),
                   height: mIsBlurVisible ? 60 : 0,
                   color: Colors.white38,
@@ -592,55 +604,57 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
                     },
                   ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
         bottomNavigationBar: SafeArea(
-          minimum: EdgeInsets.only(bottom: 16),
-          child: SizedBox(
-            height: 80,
-            width: MediaQuery.of(context).size.width,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  BottomBarItemWidget(
-                    title: 'Очистить',
-                    icons: Icon(FontAwesomeIcons.eraser).icon,
-                    onTap: () => onEraserClick(),
-                  ),
-                  BottomBarItemWidget(
-                    title: 'Яркость',
-                    icons: Icon(Icons.brightness_2_outlined).icon,
-                    onTap: () => onBrightnessSliderClick(),
-                  ),
-                  BottomBarItemWidget(
-                    title: 'Контраст',
-                    icons: Icon(Icons.brightness_4_outlined).icon,
-                    onTap: () => onContrastSliderClick(),
-                  ),
-                  BottomBarItemWidget(
-                    title: 'Сатурация',
-                    icons: Icon(Icons.brightness_4_sharp).icon,
-                    onTap: () => onSaturationSliderClick(),
-                  ),
-                  BottomBarItemWidget(
-                    title: 'Оттенок',
-                    icons: Icon(Icons.brightness_medium_sharp).icon,
-                    onTap: () => onHueSliderClick(),
-                  ),
-                  BottomBarItemWidget(
-                    title: 'Размытие',
-                    icons: Icon(MaterialCommunityIcons.blur).icon,
-                    onTap: () => onBlurClick(),
-                  ),
-                  BottomBarItemWidget(
-                    title: 'Фильтр',
-                    icons: Icon(Icons.photo).icon,
-                    onTap: () => onFilterClick(),
-                  ),
-                ],
+          child: ColoredBox(
+            color: AppColors.white,
+            child: SizedBox(
+              height: 80,
+              width: MediaQuery.of(context).size.width,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    BottomBarItemWidget(
+                      title: 'Очистить',
+                      icons: Icon(FontAwesomeIcons.eraser).icon,
+                      onTap: () => onEraserClick(),
+                    ),
+                    BottomBarItemWidget(
+                      title: 'Яркость',
+                      icons: Icon(Icons.brightness_2_outlined).icon,
+                      onTap: () => onBrightnessSliderClick(),
+                    ),
+                    BottomBarItemWidget(
+                      title: 'Контраст',
+                      icons: Icon(Icons.brightness_4_outlined).icon,
+                      onTap: () => onContrastSliderClick(),
+                    ),
+                    BottomBarItemWidget(
+                      title: 'Сатурация',
+                      icons: Icon(Icons.brightness_4_sharp).icon,
+                      onTap: () => onSaturationSliderClick(),
+                    ),
+                    BottomBarItemWidget(
+                      title: 'Оттенок',
+                      icons: Icon(Icons.brightness_medium_sharp).icon,
+                      onTap: () => onHueSliderClick(),
+                    ),
+                    BottomBarItemWidget(
+                      title: 'Размытие',
+                      icons: Icon(MaterialCommunityIcons.blur).icon,
+                      onTap: () => onBlurClick(),
+                    ),
+                    BottomBarItemWidget(
+                      title: 'Фильтр',
+                      icons: Icon(Icons.photo).icon,
+                      onTap: () => onFilterClick(),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

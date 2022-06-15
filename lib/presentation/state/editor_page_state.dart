@@ -16,6 +16,8 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 class RedactorPageState extends BaseProvider {
+  bool canResizeSelectedElement = false;
+
   RedactorPageState() {
     albumModel = AlbumModel(
       pages: [
@@ -74,7 +76,18 @@ class RedactorPageState extends BaseProvider {
     notifyListeners();
   }
 
+  void setSelectedElement(AlbumDecoration element) {
+    selectedElement = element;
+    notifyListeners();
+  }
+
+  void setCanResizeSelectedElement(bool value) {
+    canResizeSelectedElement = value;
+    notifyListeners();
+  }
+
   Future<void> captureAndSave() async {
+    if (canResizeSelectedElement) setCanResizeSelectedElement(false);
     final pdfDoc = pw.Document();
     for (final page in albumModel.pages) {
       setSelectedPage(page);
@@ -94,6 +107,7 @@ class RedactorPageState extends BaseProvider {
   }
 
   Future<void> captureAndShare() async {
+    if (canResizeSelectedElement) setCanResizeSelectedElement(false);
     final pdfDoc = pw.Document();
     for (final page in albumModel.pages) {
       setSelectedPage(page);
@@ -122,14 +136,15 @@ class RedactorPageState extends BaseProvider {
   }
 
   void onPhotoModified({required AlbumDecoration currentElement, required String newPath}) {
+    if (canResizeSelectedElement) setCanResizeSelectedElement(false);
     final index = selectedPage.decorations.indexOf(currentElement);
     if (index.isNegative) return;
     selectedPage.decorations[index] = currentElement.copyWith(localPath: newPath);
-    DataBaseService.instance.editAlbum(albumModel);
     notifyListeners();
   }
 
   void onPhotoCropped({required AlbumDecoration currentElement, required CropData newFileData}) {
+    if (canResizeSelectedElement) setCanResizeSelectedElement(false);
     final index = selectedPage.decorations.indexOf(currentElement);
     if (index.isNegative) return;
     selectedPage.decorations[index] = currentElement.copyWith(
@@ -137,27 +152,30 @@ class RedactorPageState extends BaseProvider {
       width: newFileData.dimensions.width,
       height: newFileData.dimensions.height,
     );
-    DataBaseService.instance.editAlbum(albumModel);
     notifyListeners();
   }
 
   void onPhotoResized({required Size newSize, required AlbumDecoration currentElement}) {
     final index = selectedPage.decorations.indexOf(currentElement);
-    if (index.isNegative) return;
-    selectedPage.decorations[index] = currentElement.copyWith(width: newSize.width, height: newSize.height);
-    DataBaseService.instance.editAlbum(albumModel);
+    final pageIndex = albumModel.pages.indexOf(selectedPage);
+    if (index.isNegative || pageIndex.isNegative) return;
+    selectedPage.decorations[index] = selectedPage.decorations[index].copyWith(width: newSize.width, height: newSize.height);
+    albumModel.pages[pageIndex] = selectedPage;
+    setSelectedElement(selectedPage.decorations.elementAt(index));
     notifyListeners();
   }
 
   void onItemDeleted({required AlbumDecoration currentElement}) {
+    if (canResizeSelectedElement) setCanResizeSelectedElement(false);
     selectedPage.decorations.remove(currentElement);
     final pageIndex = albumModel.pages.indexOf(selectedPage);
     albumModel.pages[pageIndex] = selectedPage;
-    DataBaseService.instance.editAlbum(albumModel);
+    selectedElement = null;
     notifyListeners();
   }
 
   void onPhotoDragged({required AlbumDecoration currentElement, required Offset offset}) {
+    if (canResizeSelectedElement) setCanResizeSelectedElement(false);
     final elementIndex = selectedPage.decorations.indexOf(currentElement);
     if (elementIndex.isNegative) return;
     selectedPage.decorations[elementIndex] = currentElement.copyWith(x: currentElement.x + offset.dx, y: currentElement.y + offset.dy);
@@ -171,6 +189,7 @@ class RedactorPageState extends BaseProvider {
   }
 
   void onBackgroundChanged(String value) {
+    if (canResizeSelectedElement) setCanResizeSelectedElement(false);
     print(value);
     final currentBack = selectedPage.background;
 
@@ -191,7 +210,17 @@ class RedactorPageState extends BaseProvider {
     notifyListeners();
   }
 
-  void onDecorationAdded(AlbumDecoration decoration) {
+  void onDecorationAdded(AlbumDecoration decoration) async {
+    if (decoration.isLocal) {
+      final decorationFile = File(decoration.localPath);
+      final docDir = await getApplicationDocumentsDirectory();
+      final newPath = '${docDir.path}/${decoration.title}';
+      final newFile = File(newPath);
+      await newFile.writeAsBytes(decorationFile.readAsBytesSync());
+      await newFile.create();
+      decoration = decoration.copyWith(localPath: newFile.path);
+    }
+    if (canResizeSelectedElement) setCanResizeSelectedElement(false);
     final pageIndex = albumModel.pages.indexOf(selectedPage);
     if (!pageIndex.isNegative) {
       albumModel.pages.elementAt(pageIndex).decorations.add(decoration);
@@ -200,15 +229,19 @@ class RedactorPageState extends BaseProvider {
     notifyListeners();
   }
 
-  Future<void> saveChangesToLocalDB() async {
-    await DataBaseService.instance.editAlbum(albumModel);
-  }
-
   void bringSelectedElementToFront() {
+    if (canResizeSelectedElement) setCanResizeSelectedElement(false);
+    if (selectedPage.decorations.last == selectedElement) return;
     int pageIndex = albumModel.pages.indexOf(selectedPage);
     int itemIndex = albumModel.pages.elementAt(pageIndex).decorations.indexOf(selectedElement!);
     albumModel.pages.elementAt(pageIndex).decorations.removeAt(itemIndex);
     albumModel.pages.elementAt(pageIndex).decorations.add(selectedElement!);
     notifyListeners();
+  }
+
+  @override
+  void notifyListeners() {
+    DataBaseService.instance.editAlbum(albumModel);
+    super.notifyListeners();
   }
 }
