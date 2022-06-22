@@ -20,7 +20,7 @@ class StackedItemConfigWidget extends StatefulWidget {
 }
 
 class StackedItemConfigWidgetState extends State<StackedItemConfigWidget> {
-  List<FontData> fontList = getFontFamilies();
+  List<FontData> fontList = fontFamilies;
   FontData? selectedFontFamily;
 
   @override
@@ -36,8 +36,6 @@ class StackedItemConfigWidgetState extends State<StackedItemConfigWidget> {
     bool isTextTypeWidget = widget.stackedWidgetModel!.widgetType.validate() == WidgetTypeNeon ||
         widget.stackedWidgetModel!.widgetType.validate() == WidgetTypeText;
     bool isTextWidget = widget.stackedWidgetModel!.widgetType.validate() == WidgetTypeText;
-    bool isNeonWidget = widget.stackedWidgetModel!.widgetType.validate() == WidgetTypeNeon;
-    bool isEmojiWidget = widget.stackedWidgetModel!.widgetType.validate() == WidgetTypeEmoji;
     bool isStickerWidget = widget.stackedWidgetModel!.widgetType.validate() == WidgetTypeSticker;
 
     return Container(

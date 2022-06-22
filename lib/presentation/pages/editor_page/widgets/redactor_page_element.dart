@@ -28,33 +28,37 @@ class RedactorPageElement extends StatelessWidget {
       onPanUpdate: (details) => onDragged(details.delta),
       onTap: () => onTapped,
       onPanEnd: (details) => dragEnded(),
-      child: hasResizeControls
-          ? ResizeWrapper(
-              child: decoration.isLocal
-                  ? Image.file(File(decoration.localPath))
-                  : decoration.isText
-                      ? Text(
-                          decoration.title,
-                          style: TextStyle(fontFamily: decoration.fontFamily),
-                        )
-                      : CachedNetworkImage(imageUrl: decoration.downloadLink),
-              childSize: decoration.size,
-              onDragEnd: (width, height) {
-                final newSize = Size(width, height);
-                onResized(newSize);
-              },
+      child: decoration.isText
+          ? Text(
+              decoration.title,
+              style: TextStyle(
+                fontFamily: decoration.fontFamily,
+                fontSize: decoration.fontSize.toDouble(),
+              ),
             )
-          : SizedBox.fromSize(
-              size: decoration.size,
-              child: decoration.isLocal
-                  ? Image.file(File(decoration.localPath))
-                  : decoration.isText
-                      ? Text(
-                          decoration.title,
-                          style: TextStyle(fontFamily: decoration.fontFamily),
-                        )
-                      : CachedNetworkImage(imageUrl: decoration.downloadLink),
-            ),
+          : hasResizeControls
+              ? ResizeWrapper(
+                  child: decoration.isLocal
+                      ? Image.file(File(decoration.localPath))
+                      : CachedNetworkImage(
+                          imageUrl: decoration.downloadLink,
+                          progressIndicatorBuilder: (context, url, progress) => Center(child: CircularProgressIndicator()),
+                        ),
+                  childSize: decoration.size,
+                  onDragEnd: (width, height) {
+                    final newSize = Size(width, height);
+                    onResized(newSize);
+                  },
+                )
+              : SizedBox.fromSize(
+                  size: decoration.size,
+                  child: decoration.isLocal
+                      ? Image.file(File(decoration.localPath))
+                      : CachedNetworkImage(
+                          imageUrl: decoration.downloadLink,
+                          progressIndicatorBuilder: (context, url, progress) => Center(child: CircularProgressIndicator()),
+                        ),
+                ),
     );
   }
 }

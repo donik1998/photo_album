@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
+import 'package:photo_album/presentation/theme/app_spacing.dart';
 
 class BottomSheetContainer extends StatelessWidget {
   final Widget child;
@@ -44,6 +45,8 @@ class BottomSheetContainer extends StatelessWidget {
               ),
             ),
           ),
+          AppSpacing.verticalSpace4,
+          AppSpacing.verticalSpace4,
           child,
         ],
       ),

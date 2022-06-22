@@ -6,6 +6,7 @@ class AlbumDecoration {
   final String localPath;
   final String fontFamily;
   final double height, width, x, y;
+  final int fontSize;
   final bool isLocal;
   final bool isText;
 
@@ -14,10 +15,11 @@ class AlbumDecoration {
     this.isLocal = false,
     this.isText = false,
     this.fontFamily = '',
+    this.fontSize = 12,
     required this.title,
     this.localPath = '',
-    required this.height,
-    required this.width,
+    this.height = 0,
+    this.width = 0,
     required this.x,
     required this.y,
   });
@@ -45,8 +47,6 @@ class AlbumDecoration {
   factory AlbumDecoration.text({
     required String title,
     required String family,
-    required double height,
-    required double width,
     required double x,
     required double y,
   }) =>
@@ -54,8 +54,6 @@ class AlbumDecoration {
         downloadLink: '',
         title: title,
         localPath: '',
-        height: height,
-        width: width,
         x: x,
         y: y,
         isLocal: false,
@@ -73,9 +71,11 @@ class AlbumDecoration {
         localPath: data['local_path'] ?? '',
         isLocal: data['is_local'] ?? false,
         isText: data['is_text'] ?? false,
+        fontFamily: data['font_family'] ?? '',
+        fontSize: data['font_size'] ?? 12,
       );
 
-  Map<String, dynamic> get toMap => {
+  Map<String, dynamic> get asMap => {
         'download_link': this.downloadLink,
         'height': this.height,
         'width': this.width,
@@ -85,10 +85,13 @@ class AlbumDecoration {
         'local_path': this.localPath,
         'is_text': this.isText,
         'is_local': this.isLocal,
+        'font_family': this.fontFamily,
+        'font_size': this.fontSize,
       };
 
   AlbumDecoration copyWith({
     String? downloadLink,
+    String? fontFamily,
     String? title,
     String? localPath,
     double? height,
@@ -96,16 +99,21 @@ class AlbumDecoration {
     double? x,
     double? y,
     bool? isLocal,
+    bool? isText,
+    int? fontSize,
   }) =>
       AlbumDecoration(
         downloadLink: downloadLink ?? this.downloadLink,
         title: title ?? this.title,
         localPath: localPath ?? this.localPath,
         width: width ?? this.width,
+        fontFamily: fontFamily ?? this.fontFamily,
         height: height ?? this.height,
         x: x ?? this.x,
         y: y ?? this.y,
         isLocal: isLocal ?? this.isLocal,
+        isText: isText ?? this.isText,
+        fontSize: fontSize ?? this.fontSize,
       );
 
   Size get size => Size(width, height);

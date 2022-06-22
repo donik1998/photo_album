@@ -41,6 +41,8 @@ class RedactorPageState extends BaseProvider {
     selectedPage = albumModel.pages.first;
   }
 
+  int fontSize = 12;
+
   late AlbumModel albumModel;
   late AlbumPage selectedPage;
   AlbumDecoration? selectedElement;
@@ -49,6 +51,18 @@ class RedactorPageState extends BaseProvider {
 
   bool fabIsVisible = true;
   bool screenshotInProgress = false;
+
+  bool get inTextEditingMode => selectedElement != null && (selectedElement?.isText ?? false) && canResizeSelectedElement;
+
+  void setFontSize(int size) {
+    fontSize = size;
+    final pageIndex = albumModel.pages.indexOf(selectedPage);
+    final elementIndex = selectedPage.decorations.indexOf(selectedElement!);
+    selectedElement = selectedElement!.copyWith(fontSize: size);
+    albumModel.pages.elementAt(pageIndex).decorations[elementIndex] = selectedElement!;
+
+    notifyListeners();
+  }
 
   void setAlbumBacks(List<AlbumDecoration> backs) {
     albumBackImages = backs;
@@ -151,6 +165,7 @@ class RedactorPageState extends BaseProvider {
       localPath: newFileData.file.path,
       width: newFileData.dimensions.width,
       height: newFileData.dimensions.height,
+      isLocal: true,
     );
     notifyListeners();
   }
@@ -178,7 +193,11 @@ class RedactorPageState extends BaseProvider {
     if (canResizeSelectedElement) setCanResizeSelectedElement(false);
     final elementIndex = selectedPage.decorations.indexOf(currentElement);
     if (elementIndex.isNegative) return;
-    selectedPage.decorations[elementIndex] = currentElement.copyWith(x: currentElement.x + offset.dx, y: currentElement.y + offset.dy);
+    selectedPage.decorations[elementIndex] = currentElement.copyWith(
+      x: currentElement.x + offset.dx,
+      y: currentElement.y + offset.dy,
+      isText: currentElement.isText,
+    );
     selectedElement = selectedPage.decorations[elementIndex];
     notifyListeners();
   }
@@ -243,5 +262,21 @@ class RedactorPageState extends BaseProvider {
   void notifyListeners() {
     DataBaseService.instance.editAlbum(albumModel);
     super.notifyListeners();
+  }
+
+  void onTextDecorationEdited(String value) {
+    final pageIndex = albumModel.pages.indexOf(selectedPage);
+    final elementIndex = selectedPage.decorations.indexOf(selectedElement!);
+    selectedElement = selectedElement!.copyWith(title: value);
+    albumModel.pages.elementAt(pageIndex).decorations[elementIndex] = selectedElement!;
+    notifyListeners();
+  }
+
+  void changeFontFamily(String value) {
+    final pageIndex = albumModel.pages.indexOf(selectedPage);
+    final elementIndex = selectedPage.decorations.indexOf(selectedElement!);
+    selectedElement = selectedElement!.copyWith(fontFamily: value);
+    albumModel.pages.elementAt(pageIndex).decorations[elementIndex] = selectedElement!;
+    notifyListeners();
   }
 }

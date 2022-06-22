@@ -110,7 +110,7 @@ class AlbumPage {
       );
 
   Map<String, dynamic> get toMap => {
-        'decorations': this.decorations.map((e) => e.toMap).toList(),
+        'decorations': this.decorations.map((e) => e.asMap).toList(),
         'background': this.background.toMap,
       };
 

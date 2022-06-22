@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:photo_album/data/models/album_page_template_category.dart';
 import 'package:photo_album/data/models/decoration_category.dart';
 import 'package:photo_album/data/models/decoration_element.dart';
+import 'package:photo_album/data/models/font_data.dart';
 import 'package:photo_album/data/models/pages_template_model.dart';
 import 'package:photo_album/presentation/custom_widgets/custom_button.dart';
 import 'package:photo_album/presentation/custom_widgets/empty_list_widget.dart';
@@ -14,6 +15,7 @@ import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
 import 'package:photo_album/presentation/theme/app_spacing.dart';
 import 'package:photo_album/presentation/theme/app_text_styles.dart';
+import 'package:photo_album/presentation/utils/data_provider.dart';
 
 class ElementsSheet extends StatefulWidget {
   final List<DecorationCategory> decorationCategories;
@@ -33,7 +35,7 @@ class _ElementsSheetState extends State<ElementsSheet> {
   DecorationCategory? _selectedCategory;
   CrossFadeState _sheetFadeState = CrossFadeState.showFirst;
   AlbumPageTemplate? _selectedTemplate;
-  List<String> fonts = ['Oswald', 'Roboto', 'Sans serif'];
+  List<FontData> fonts = fontFamilies;
 
   @override
   void initState() {
@@ -180,10 +182,10 @@ class _ElementsSheetState extends State<ElementsSheet> {
                 Expanded(
                   child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                      crossAxisCount: 3,
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,
-                      childAspectRatio: 110 / 110,
+                      childAspectRatio: 96 / 96,
                     ),
                     itemCount: fonts.length,
                     itemBuilder: (context, index) {
@@ -192,10 +194,8 @@ class _ElementsSheetState extends State<ElementsSheet> {
                           Navigator.pop(
                             context,
                             AlbumDecoration.text(
-                              title: fonts.elementAt(index),
-                              family: fonts.elementAt(index),
-                              height: 32,
-                              width: MediaQuery.of(context).size.width - 4,
+                              title: fonts.elementAt(index).fontName ?? '',
+                              family: fonts.elementAt(index).fontFamily ?? '',
                               x: MediaQuery.of(context).size.width / 2,
                               y: MediaQuery.of(context).size.height / 2,
                             ),
@@ -205,11 +205,13 @@ class _ElementsSheetState extends State<ElementsSheet> {
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: AppColors.black, width: 1),
                           ),
                           child: Center(
                             child: Text(
-                              fonts.elementAt(index),
-                              style: TextStyle(fontFamily: fonts.elementAt(index), fontSize: 14),
+                              fonts.elementAt(index).fontName ?? '',
+                              style: TextStyle(fontFamily: fonts.elementAt(index).fontFamily, fontSize: 14),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),

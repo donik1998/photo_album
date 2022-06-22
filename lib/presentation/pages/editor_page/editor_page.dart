@@ -10,8 +10,10 @@ import 'package:photo_album/data/services/dataBase_services.dart';
 import 'package:photo_album/presentation/custom_widgets/back_image_substitution_dialog.dart';
 import 'package:photo_album/presentation/custom_widgets/sheets/album_back_sheet.dart';
 import 'package:photo_album/presentation/custom_widgets/sheets/elements_sheet.dart';
+import 'package:photo_album/presentation/custom_widgets/sheets/fonts_sheet.dart';
 import 'package:photo_album/presentation/pages/editor_page/photo_editor_page.dart';
 import 'package:photo_album/presentation/pages/editor_page/widgets/redactor_page_element.dart';
+import 'package:photo_album/presentation/pages/editor_page/widgets/set_text_album_decoration_dialog.dart';
 import 'package:photo_album/presentation/state/editor_page_state.dart';
 import 'package:photo_album/presentation/theme/app_colors.dart';
 import 'package:photo_album/presentation/theme/app_instets.dart';
@@ -58,7 +60,7 @@ class _RedactorPageState extends State<RedactorPage> {
         await DataBaseService.instance.saveAlbumToDB(state.albumModel);
       }
       if (args.openElementsSheetFirst)
-        _showBottomSheet(
+        _showElementsSheet(
           context: context,
           albumPageTemplateCategories: args.albumPageTemplateCategories,
           decorationCategories: args.decorationCategories,
@@ -108,7 +110,7 @@ class _RedactorPageState extends State<RedactorPage> {
                       backImages: args.albumBacks,
                       onSelected: (back) {
                         Navigator.pop(context);
-                        state.setAlbumModel(state.albumModel.copyWith(cover: AlbumCover.fromMap(back.toMap)));
+                        state.setAlbumModel(state.albumModel.copyWith(cover: AlbumCover.fromMap(back.asMap)));
                       },
                     ),
                   )
@@ -173,7 +175,7 @@ class _RedactorPageState extends State<RedactorPage> {
             child: Icon(Icons.add, color: Colors.white),
             onPressed: () {
               state.setFabIsVisible(false);
-              _showBottomSheet(
+              _showElementsSheet(
                 context: context,
                 albumPageTemplateCategories: args.albumPageTemplateCategories,
                 decorationCategories: args.decorationCategories,
@@ -216,71 +218,127 @@ class _RedactorPageState extends State<RedactorPage> {
                   ),
                 ),
               ),
-              if (state.selectedElement != null) AppSpacing.verticalSpace10,
-              if (state.selectedElement != null)
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                  ),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        GestureDetector(
-                          onTap: () => state.bringSelectedElementToFront(),
-                          child: SvgPicture.asset('assets/svgs/Copy.svg'),
+              AppSpacing.verticalSpace10,
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      GestureDetector(
+                        onTap: () => state.bringSelectedElementToFront(),
+                        child: SvgPicture.asset('assets/svgs/Copy.svg'),
+                      ),
+                      AppSpacing.horizontalSpace24,
+                      GestureDetector(
+                        onTap: () => state.onItemDeleted(currentElement: state.selectedElement!),
+                        child: SvgPicture.asset('assets/svgs/Delete.svg'),
+                      ),
+                      AppSpacing.horizontalSpace24,
+                      GestureDetector(
+                        onTap: () {
+                          if (state.inTextEditingMode) {
+                            state.setCanResizeSelectedElement(false);
+                          } else {
+                            state.setCanResizeSelectedElement(true);
+                          }
+                        },
+                        child: Text(
+                          state.inTextEditingMode ? 'Готово' : 'Изменить размер',
+                          style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
                         ),
-                        AppSpacing.horizontalSpace24,
-                        GestureDetector(
-                          onTap: () => state.onItemDeleted(currentElement: state.selectedElement!),
-                          child: SvgPicture.asset('assets/svgs/Delete.svg'),
+                      ),
+                      if (state.inTextEditingMode)
+                        Slider(
+                          value: state.fontSize.toDouble(),
+                          min: 10,
+                          max: 96,
+                          divisions: 100,
+                          label: '${state.fontSize}',
+                          onChanged: (value) => state.setFontSize(value.toInt()),
                         ),
-                        AppSpacing.horizontalSpace24,
+                      if (state.selectedElement?.isLocal ?? false) AppSpacing.horizontalSpace24,
+                      if (state.selectedElement?.isLocal ?? false)
                         GestureDetector(
-                          onTap: () => state.setCanResizeSelectedElement(true),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PhotoEditScreen(file: File(state.selectedElement!.localPath)),
+                            ),
+                          ).then((value) {
+                            if (value is String) state.onPhotoModified(currentElement: state.selectedElement!, newPath: value);
+                          }),
                           child: Text(
-                            'Изменить размер',
+                            'Реадктировать',
                             style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
                           ),
                         ),
-                        if (state.selectedElement?.isLocal ?? false) AppSpacing.horizontalSpace24,
-                        if (state.selectedElement?.isLocal ?? false)
-                          GestureDetector(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PhotoEditScreen(file: File(state.selectedElement!.localPath)),
-                              ),
+                      if (state.selectedElement?.isLocal ?? false) AppSpacing.horizontalSpace24,
+                      if (state.selectedElement?.isLocal ?? false)
+                        GestureDetector(
+                          onTap: () async {
+                            final newImage = await ImageCropper.platform.cropImage(sourcePath: state.selectedElement!.localPath);
+                            if (newImage != null) {
+                              final bytes = await newImage.readAsBytes();
+                              final image = await decodeImageFromList(bytes);
+                              state.onPhotoCropped(
+                                currentElement: state.selectedElement!,
+                                newFileData: CropData(
+                                  file: File(newImage.path),
+                                  dimensions: Size(
+                                    image.width.toDouble() / 4,
+                                    image.height.toDouble() / 4,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: Text(
+                            'Обрезать',
+                            style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
+                          ),
+                        ),
+                      if (state.selectedElement?.isText ?? false) AppSpacing.horizontalSpace24,
+                      if (state.selectedElement?.isText ?? false)
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => SetTextAlbumDecorationDialog(),
                             ).then((value) {
-                              if (value is String) state.onPhotoModified(currentElement: state.selectedElement!, newPath: value);
-                            }),
-                            child: Text(
-                              'Реадктировать',
-                              style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
-                            ),
+                              if (value is String) state.onTextDecorationEdited(value);
+                            });
+                          },
+                          child: Text(
+                            'Изменить текст',
+                            style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
                           ),
-                        if (state.selectedElement?.isLocal ?? false) AppSpacing.horizontalSpace24,
-                        if (state.selectedElement?.isLocal ?? false)
-                          GestureDetector(
-                            onTap: () async {
-                              final newImage = await ImageCropper.platform.cropImage(sourcePath: state.selectedElement!.localPath);
-                              if (newImage != null) {
-                                final oldItem = state.selectedElement!;
-                                state.setSelectedElement(state.selectedElement!.copyWith(localPath: newImage.path));
-                              }
-                            },
-                            child: Text(
-                              'Обрезать',
-                              style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
-                            ),
+                        ),
+                      if (state.selectedElement?.isText ?? false) AppSpacing.horizontalSpace16,
+                      if (state.selectedElement?.isText ?? false)
+                        GestureDetector(
+                          onTap: () => AppRuntimeNotifier.instance
+                              .showCustomBottomSheet(
+                            context: context,
+                            sheet: FontsSheet(),
+                          )
+                              .then((value) {
+                            if (value is String) state.changeFontFamily(value);
+                          }),
+                          child: Text(
+                            'Изменить шрифт',
+                            style: AppTextStyles.smallTitleBold.copyWith(fontSize: 15),
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                 ),
+              ),
               AppSpacing.verticalSpace16,
             ],
           ),
@@ -289,17 +347,17 @@ class _RedactorPageState extends State<RedactorPage> {
     );
   }
 
-  void _showBottomSheet({required BuildContext context, required albumPageTemplateCategories, required decorationCategories}) =>
+  void _showElementsSheet({required BuildContext context, required albumPageTemplateCategories, required decorationCategories}) =>
       AppRuntimeNotifier.instance
           .showCustomBottomSheet(
               context: context,
               sheet: ElementsSheet(albumPageTemplateCategory: albumPageTemplateCategories, decorationCategories: decorationCategories))
-          .then((value) {
+          .then((decoration) {
         final state = context.read<RedactorPageState>();
-        if (value is String && state.selectedPage.background.downloadLink.isEmpty) {
-          state.onBackgroundChanged(value);
+        if (decoration is String && state.selectedPage.background.downloadLink.isEmpty) {
+          state.onBackgroundChanged(decoration);
         }
-        if (value is String && state.selectedPage.background.downloadLink.isNotEmpty) {
+        if (decoration is String && state.selectedPage.background.downloadLink.isNotEmpty) {
           showDialog(
             context: context,
             builder: (context) => BackImageSubstitutionConfirmationDialog(
@@ -309,21 +367,30 @@ class _RedactorPageState extends State<RedactorPage> {
                   background: AlbumPageBackground(
                     title: '',
                     localPath: '',
-                    downloadLink: value,
+                    downloadLink: decoration,
                   ),
                 );
                 state.addPage(newPage);
                 state.setSelectedPage(newPage);
               },
-              onConfirm: () => state.onBackgroundChanged(value),
+              onConfirm: () => state.onBackgroundChanged(decoration),
             ),
           );
         }
-        if (value is AlbumDecoration) {
-          state.onDecorationAdded(value);
+        if (decoration is AlbumDecoration) {
+          if (decoration.isText) {
+            showDialog(
+              context: context,
+              builder: (context) => SetTextAlbumDecorationDialog(),
+            ).then((value) {
+              state.onDecorationAdded(decoration.copyWith(title: value));
+            });
+          } else {
+            state.onDecorationAdded(decoration);
+          }
         }
-        if (value is AlbumCover) {
-          state.setAlbumModel(state.albumModel.copyWith(cover: value));
+        if (decoration is AlbumCover) {
+          state.setAlbumModel(state.albumModel.copyWith(cover: decoration));
         }
         state.setFabIsVisible(true);
       });

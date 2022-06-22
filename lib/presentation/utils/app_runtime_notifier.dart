@@ -24,6 +24,12 @@ class AppRuntimeNotifier {
   Future<dynamic> showCustomBottomSheet({required BuildContext context, required Widget sheet}) async => await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
         clipBehavior: Clip.hardEdge,
         builder: (context) => BottomSheetContainer(child: sheet),
       );
