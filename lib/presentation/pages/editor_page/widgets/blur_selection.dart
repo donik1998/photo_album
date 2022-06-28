@@ -37,7 +37,7 @@ class BlurSelectorBottomSheetState extends State<BlurSelectorBottomSheet> {
     return Row(
       children: [
         8.width,
-        Text('Blur'),
+        Text('Размытие'),
         8.width,
         Slider(
           value: widget.sliderValue!,

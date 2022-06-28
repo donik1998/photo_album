@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "176483108320-s31c0581c57ql8lusvno85r05teemim6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.photo.edit.photo_album",
+            "certificate_hash": "43093b2b7f5719b8a2a57a15127c160ab06a0d61"
+          }
+        },
+        {
           "client_id": "176483108320-1b4rk3frcdcucsp6pmg0ociuavugiei9.apps.googleusercontent.com",
           "client_type": 3
         }
