@@ -46,7 +46,6 @@ class RedactorPageState extends BaseProvider {
   late AlbumModel albumModel;
   late AlbumPage selectedPage;
   AlbumDecoration? selectedElement;
-  List<AlbumDecoration> albumBackImages = List<AlbumDecoration>.empty(growable: true);
   ScreenshotController screenshotController = ScreenshotController();
 
   bool fabIsVisible = true;
@@ -60,23 +59,20 @@ class RedactorPageState extends BaseProvider {
     final elementIndex = selectedPage.decorations.indexOf(selectedElement!);
     selectedElement = selectedElement!.copyWith(fontSize: size);
     albumModel.pages.elementAt(pageIndex).decorations[elementIndex] = selectedElement!;
-
-    notifyListeners();
-  }
-
-  void setAlbumBacks(List<AlbumDecoration> backs) {
-    albumBackImages = backs;
+    _updateDb();
     notifyListeners();
   }
 
   void setAlbumModel(AlbumModel albumModel) {
     this.albumModel = albumModel;
     if (this.albumModel.pages.isNotEmpty) setSelectedPage(this.albumModel.pages.first);
+    _updateDb();
     notifyListeners();
   }
 
   void addPage(AlbumPage page) {
     albumModel = albumModel.copyWith(pages: <AlbumPage>[...albumModel.pages, page]);
+    _updateDb();
     notifyListeners();
   }
 
@@ -154,6 +150,7 @@ class RedactorPageState extends BaseProvider {
     final index = selectedPage.decorations.indexOf(currentElement);
     if (index.isNegative) return;
     selectedPage.decorations[index] = currentElement.copyWith(localPath: newPath);
+    _updateDb();
     notifyListeners();
   }
 
@@ -167,6 +164,7 @@ class RedactorPageState extends BaseProvider {
       height: newFileData.dimensions.height,
       isLocal: true,
     );
+    _updateDb();
     notifyListeners();
   }
 
@@ -177,6 +175,7 @@ class RedactorPageState extends BaseProvider {
     selectedPage.decorations[index] = selectedPage.decorations[index].copyWith(width: newSize.width, height: newSize.height);
     albumModel.pages[pageIndex] = selectedPage;
     setSelectedElement(selectedPage.decorations.elementAt(index));
+    _updateDb();
     notifyListeners();
   }
 
@@ -186,6 +185,7 @@ class RedactorPageState extends BaseProvider {
     final pageIndex = albumModel.pages.indexOf(selectedPage);
     albumModel.pages[pageIndex] = selectedPage;
     selectedElement = null;
+    _updateDb();
     notifyListeners();
   }
 
@@ -199,6 +199,7 @@ class RedactorPageState extends BaseProvider {
       isText: currentElement.isText,
     );
     selectedElement = selectedPage.decorations[elementIndex];
+    _updateDb();
     notifyListeners();
   }
 
@@ -209,9 +210,7 @@ class RedactorPageState extends BaseProvider {
 
   void onBackgroundChanged(String value) {
     if (canResizeSelectedElement) setCanResizeSelectedElement(false);
-    print(value);
     final currentBack = selectedPage.background;
-
     final pageIndex = albumModel.pages.indexOf(selectedPage);
     final newBack = AlbumPageBackground(
       title: currentBack.title,
@@ -226,6 +225,7 @@ class RedactorPageState extends BaseProvider {
       );
     }
     selectedPage = selectedPage.copyWith(background: newBack);
+    _updateDb();
     notifyListeners();
   }
 
@@ -245,6 +245,7 @@ class RedactorPageState extends BaseProvider {
       albumModel.pages.elementAt(pageIndex).decorations.add(decoration);
     }
     selectedElement = decoration;
+    _updateDb();
     notifyListeners();
   }
 
@@ -255,13 +256,8 @@ class RedactorPageState extends BaseProvider {
     int itemIndex = albumModel.pages.elementAt(pageIndex).decorations.indexOf(selectedElement!);
     albumModel.pages.elementAt(pageIndex).decorations.removeAt(itemIndex);
     albumModel.pages.elementAt(pageIndex).decorations.add(selectedElement!);
+    _updateDb();
     notifyListeners();
-  }
-
-  @override
-  void notifyListeners() {
-    DataBaseService.instance.editAlbum(albumModel);
-    super.notifyListeners();
   }
 
   void onTextDecorationEdited(String value) {
@@ -269,6 +265,7 @@ class RedactorPageState extends BaseProvider {
     final elementIndex = selectedPage.decorations.indexOf(selectedElement!);
     selectedElement = selectedElement!.copyWith(title: value);
     albumModel.pages.elementAt(pageIndex).decorations[elementIndex] = selectedElement!;
+    _updateDb();
     notifyListeners();
   }
 
@@ -276,6 +273,19 @@ class RedactorPageState extends BaseProvider {
     final pageIndex = albumModel.pages.indexOf(selectedPage);
     final elementIndex = selectedPage.decorations.indexOf(selectedElement!);
     selectedElement = selectedElement!.copyWith(fontFamily: value);
+    albumModel.pages.elementAt(pageIndex).decorations[elementIndex] = selectedElement!;
+    _updateDb();
+    notifyListeners();
+  }
+
+  void saveElement({required AlbumDecoration element}) => _updateDb();
+
+  void _updateDb() => DataBaseService.instance.editAlbum(albumModel);
+
+  void onScaled({required AlbumDecoration element}) {
+    final pageIndex = albumModel.pages.indexOf(selectedPage);
+    final elementIndex = selectedPage.decorations.indexOf(selectedElement!);
+    selectedElement = element;
     albumModel.pages.elementAt(pageIndex).decorations[elementIndex] = selectedElement!;
     notifyListeners();
   }

@@ -115,7 +115,7 @@ class PhotoEditScreenState extends State<PhotoEditScreen> {
   @override
   void initState() {
     //saveToDirectory(originalFile);
-    WidgetsBinding.instance?.addPostFrameCallback((_) => getImageSize());
+    WidgetsBinding.instance.addPostFrameCallback((_) => getImageSize());
     setState(() {});
 
     super.initState();

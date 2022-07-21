@@ -39,7 +39,7 @@ class _RedactorPageState extends State<RedactorPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final state = context.read<RedactorPageState>();
       final args = ModalRoute.of(context)!.settings.arguments as RedactorPageArgs;
       if (args.localAlbum != null) {
@@ -126,43 +126,66 @@ class _RedactorPageState extends State<RedactorPage> {
       ),
       body: SafeArea(
         child: Consumer<RedactorPageState>(
-          builder: (context, state, child) => Screenshot(
-            controller: state.screenshotController,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (state.albumModel.cover.localPath.isNotEmpty)
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: Image.file(File(state.albumModel.cover.localPath), fit: BoxFit.fill),
+          builder: (context, state, child) => GestureDetector(
+            onScaleEnd: (details) {
+              if (state.selectedElement != null) {
+                state.saveElement(element: state.selectedElement!);
+              }
+            },
+            onScaleUpdate: (details) {
+              final newHeight = state.selectedElement!.height * (details.scale);
+              final newWidth = state.selectedElement!.width * (details.scale);
+              if (state.selectedElement != null &&
+                  newWidth <= MediaQuery.of(context).size.width &&
+                  newWidth >= 50 &&
+                  newHeight <= MediaQuery.of(context).size.height &&
+                  newHeight >= 100) {
+                state.onScaled(
+                  element: state.selectedElement!.copyWith(
+                    height: newHeight,
+                    width: newWidth,
                   ),
-                if (state.albumModel.cover.downloadLink.isNotEmpty)
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: CachedNetworkImage(imageUrl: state.albumModel.cover.downloadLink, fit: BoxFit.fill),
-                  ),
-                if (state.selectedPage.background.downloadLink.isNotEmpty)
-                  Container(
-                    margin: AppInsets.horizontalInsets16,
-                    width: MediaQuery.of(context).size.width,
-                    child: CachedNetworkImage(imageUrl: state.selectedPage.background.downloadLink),
-                  ),
-                for (final element in state.selectedPage.decorations)
-                  Positioned(
-                    top: element.y,
-                    left: element.x,
-                    child: RedactorPageElement(
-                      decoration: element,
-                      hasResizeControls: state.canResizeSelectedElement && state.selectedElement == element,
-                      onTapped: () => state.setSelectedElement(element),
-                      onResized: (newSize) => state.onPhotoResized(newSize: newSize, currentElement: element),
-                      onDragged: (newOffset) => state.onPhotoDragged(currentElement: element, offset: newOffset),
-                      dragEnded: () => state.notifyListeners(),
+                );
+              }
+            },
+            child: Screenshot(
+              controller: state.screenshotController,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (state.albumModel.cover.localPath.isNotEmpty)
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: Image.file(File(state.albumModel.cover.localPath), fit: BoxFit.fill),
                     ),
-                  ),
-              ],
+                  if (state.albumModel.cover.downloadLink.isNotEmpty)
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: CachedNetworkImage(imageUrl: state.albumModel.cover.downloadLink, fit: BoxFit.fill),
+                    ),
+                  if (state.selectedPage.background.downloadLink.isNotEmpty)
+                    Container(
+                      margin: AppInsets.horizontalInsets16,
+                      width: MediaQuery.of(context).size.width,
+                      child: CachedNetworkImage(imageUrl: state.selectedPage.background.downloadLink),
+                    ),
+                  for (final element in state.selectedPage.decorations)
+                    Positioned(
+                      top: element.y,
+                      left: element.x,
+                      child: RedactorPageElement(
+                        decoration: element,
+                        hasResizeControls: state.canResizeSelectedElement && state.selectedElement == element,
+                        onTapped: () => state.setSelectedElement(element),
+                        onResized: (newSize) => state.onPhotoResized(newSize: newSize, currentElement: element),
+                        onDragged: (newOffset) => state.onPhotoDragged(currentElement: element, offset: newOffset),
+                        dragEnded: () => state.notifyListeners(),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
